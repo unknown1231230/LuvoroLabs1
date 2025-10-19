@@ -377,29 +377,29 @@ const UnitTestingPage = () => {
       {isCalculatorVisible && <Calculator onClose={() => setIsCalculatorVisible(false)} />}
       {isLineReaderVisible && <LineReader />}
       <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
-        <header className="flex items-center justify-between px-6 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm">
-          <div className="flex items-center gap-4">
-            <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+        <header className="flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm sm:px-6">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <h1 className="text-base font-semibold text-gray-800 dark:text-gray-100 sm:text-xl">
               {currentSection.title}
             </h1>
-            <span className="text-sm text-muted-foreground">
+            <span className="hidden text-sm text-muted-foreground sm:inline">
               Module {currentSectionIndex + 1}: {module?.title}
             </span>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-lg font-mono text-primary">
-              <Clock className="h-5 w-5" />
+          <div className="flex items-center gap-2 sm:gap-4">
+            <div className="flex items-center gap-1 text-base font-mono text-primary sm:text-lg">
+              <Clock className="h-4 w-4 sm:h-5 sm:w-5" />
               <span>{formatTime(timeLeft)}</span>
             </div>
-            <Button variant="ghost" size="sm" disabled>
-              <MessageSquareQuote className="h-4 w-4 md:mr-1" />
-              <span className="hidden md:inline">Annotate</span>
+            <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9" disabled>
+              <MessageSquareQuote className="h-4 w-4" />
+              <span className="sr-only">Annotate</span>
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9">
                   <MoreHorizontal className="h-5 w-5" />
-                  <span className="hidden md:inline ml-1">More Tools</span>
+                  <span className="sr-only">More Tools</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -492,12 +492,13 @@ const UnitTestingPage = () => {
           </div>
         </div>
 
-        <footer className="flex items-center justify-between px-6 py-3 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shadow-sm">
+        <footer className="flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shadow-sm sm:px-6">
           <Dialog open={isPaletteOpen} onOpenChange={setIsPaletteOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" className="flex items-center gap-2">
                 <ListChecks className="h-4 w-4" />
-                Question {globalQuestionIndex + 1} of {allQuestions.length}
+                <span className="hidden sm:inline">Question {globalQuestionIndex + 1} of {allQuestions.length}</span>
+                <span className="inline sm:hidden">{globalQuestionIndex + 1}/{allQuestions.length}</span>
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px] max-h-[80vh] flex flex-col">
@@ -547,8 +548,11 @@ const UnitTestingPage = () => {
               onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
               disabled={currentQuestionIndex === 0}
               variant="outline"
+              size="icon" // Make previous button icon-only on small screens
+              className="sm:w-auto sm:px-4"
             >
-              <ChevronLeft className="mr-2 h-4 w-4" /> Previous
+              <ChevronLeft className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Previous</span>
             </Button>
             {isLastQuestionInSection ? (
               isLastSection ? (
@@ -563,14 +567,19 @@ const UnitTestingPage = () => {
                   onClick={handleNextSection}
                   className="bg-blue-600 hover:bg-blue-700 text-white"
                 >
-                  Next Section <ChevronRight className="ml-2 h-4 w-4" />
+                  <span className="hidden sm:inline">Next Section</span>
+                  <span className="inline sm:hidden">Next</span>
+                  <ChevronRight className="ml-1 h-4 w-4 sm:ml-2" />
                 </Button>
               )
             ) : (
               <Button
                 onClick={() => setCurrentQuestionIndex(prev => Math.min(currentSection.questions.length - 1, prev + 1))}
+                size="icon" // Make next button icon-only on small screens
+                className="sm:w-auto sm:px-4"
               >
-                Next <ChevronRight className="ml-2 h-4 w-4" />
+                <span className="hidden sm:inline">Next</span>
+                <ChevronRight className="h-4 w-4 sm:ml-2" />
               </Button>
             )}
           </div>
