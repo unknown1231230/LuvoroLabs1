@@ -3,13 +3,13 @@
 import React, { useContext } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Home, BookOpen, LogOut } from 'lucide-react';
-import { AuthContext } from '@/App'; // Import AuthContext
-import { supabase } from '@/lib/supabase'; // Import supabase
-import { showSuccess, showError } from '@/utils/toast'; // Import toast utilities
+import { Home, BookOpen, LogOut, LayoutDashboard } from 'lucide-react'; // Import LayoutDashboard
+import { AuthContext } from '@/App';
+import { supabase } from '@/lib/supabase';
+import { showSuccess, showError } from '@/utils/toast';
 
 const PublicLayout = () => {
-  const { session } = useContext(AuthContext); // Get session from AuthContext
+  const { session } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -43,9 +43,14 @@ const PublicLayout = () => {
               <Link to="/courses"><BookOpen className="mr-2 h-4 w-4" />Courses</Link>
             </Button>
             {session ? (
-              <Button variant="ghost" onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />Logout
-              </Button>
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to="/dashboard"><LayoutDashboard className="mr-2 h-4 w-4" />Dashboard</Link>
+                </Button>
+                <Button variant="ghost" onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />Logout
+                </Button>
+              </>
             ) : (
               <Button asChild>
                 <Link to="/auth">Login / Sign Up</Link>

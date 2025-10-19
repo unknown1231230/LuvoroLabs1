@@ -5,7 +5,7 @@ import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
 import { showSuccess, showError } from '@/utils/toast';
-import { Home, BookOpen, Award, Settings, LogOut } from 'lucide-react';
+import { Home, BookOpen, Award, Settings, LogOut, LayoutDashboard } from 'lucide-react'; // Import LayoutDashboard
 
 const Layout = () => {
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ const Layout = () => {
           </Link>
           <nav className="flex items-center space-x-4">
             <Button variant="ghost" asChild>
-              <Link to="/"><Home className="mr-2 h-4 w-4" />Dashboard</Link>
+              <Link to="/dashboard"><LayoutDashboard className="mr-2 h-4 w-4" />Dashboard</Link> {/* Link to new dashboard path */}
             </Button>
             <Button variant="ghost" asChild>
               <Link to="/courses"><BookOpen className="mr-2 h-4 w-4" />Courses</Link>

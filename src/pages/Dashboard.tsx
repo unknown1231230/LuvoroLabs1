@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { BarChart, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Bar } from 'recharts';
-import { Flame, Trophy, Lightbulb, BookOpen, Users } from 'lucide-react'; // Import Users icon
+import { Flame, Trophy, Lightbulb, BookOpen, Users } from 'lucide-react';
 import { useContext, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AuthContext } from "@/App";
 import { getTotalLessonsCount } from "@/utils/courseContent";
-import { fetchUserCompletedLessonsCount, fetchSiteMetric } from "@/utils/supabaseUtils"; // Import fetchSiteMetric
+import { fetchUserCompletedLessonsCount, fetchSiteMetric } from "@/utils/supabaseUtils";
 
 const fetchUserStreak = async (userId: string) => {
   const { data, error } = await supabase
@@ -21,7 +21,7 @@ const fetchUserStreak = async (userId: string) => {
     .eq('user_id', userId)
     .single();
 
-  if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
+  if (error && error.code !== 'PGRST116') {
     console.error("Error fetching streak:", error);
     return 0;
   }
@@ -41,7 +41,7 @@ const fetchUserAchievements = async (userId: string) => {
   return count || 0;
 };
 
-const Index = () => {
+const Dashboard = () => { // Renamed from Index to Dashboard
   const { user, loading: authLoading } = useContext(AuthContext);
   const userId = user?.id || null;
 
@@ -259,4 +259,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Dashboard;

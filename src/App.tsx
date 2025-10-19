@@ -5,7 +5,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Index from "./pages/Index";
+import HomePage from "./pages/HomePage"; // New: Import HomePage
+import Dashboard from "./pages/Dashboard"; // Renamed: Import Dashboard
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Layout from "./components/Layout";
@@ -13,7 +14,7 @@ import PublicLayout from "./components/PublicLayout";
 import CourseCatalog from "./pages/CourseCatalog";
 import APPhysicsCourse from "./pages/APPhysicsCourse";
 import LessonPage from "./pages/LessonPage";
-import { useEffect, useState, createContext } from "react"; // Import createContext
+import { useEffect, useState, createContext } from "react";
 import { supabase } from "./lib/supabase";
 import { Session, User } from "@supabase/supabase-js";
 
@@ -29,24 +30,24 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null); // New state for user
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      setUser(session?.user || null); // Set user
+      setUser(session?.user || null);
       setLoading(false);
-      console.log("Initial session:", session); // Debug log
+      console.log("Initial session:", session);
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      setUser(session?.user || null); // Set user on auth state change
+      setUser(session?.user || null);
       setLoading(false);
-      console.log("Auth state changed:", _event, session); // Debug log
+      console.log("Auth state changed:", _event, session);
     });
 
     return () => subscription.unsubscribe();
@@ -66,15 +67,15 @@ const App = () => {
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <AuthContext.Provider value={{ session, user, loading }}> {/* Provide context */}
+          <AuthContext.Provider value={{ session, user, loading }}>
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<PublicLayout />}>
-                <Route index element={<Index />} />
+                <Route index element={<HomePage />} /> {/* New: HomePage as root */}
                 <Route path="courses" element={<CourseCatalog />} />
                 <Route path="courses/ap-physics" element={<APPhysicsCourse />} />
                 <Route path="courses/ap-physics/lessons/:lessonId" element={<LessonPage />} />
-                <Route path="auth" element={!session ? <Auth /> : <Navigate to="/" />} />
+                <Route path="auth" element={!session ? <Auth /> : <Navigate to="/dashboard" />} /> {/* Redirect to dashboard */}
               </Route>
 
               {/* Authenticated Routes */}
@@ -83,6 +84,7 @@ const App = () => {
                 element={session ? <Layout /> : <Navigate to="/auth" replace />}
               >
                 {/* These routes are only accessible when logged in */}
+                <Route path="/dashboard" element={<Dashboard />} /> {/* Renamed: Dashboard */}
                 <Route path="/lessons" element={<div>Lessons Page (Coming Soon!)</div>} />
                 <Route path="/achievements" element={<div>Achievements Page (Coming Soon!)</div>} />
                 <Route path="/settings" element={<div>Settings Page (Coming Soon!)</div>} />
