@@ -63,14 +63,15 @@ export const courses: Course[] = [
               <p>Kinematics is the branch of classical mechanics that describes the motion of points, bodies (objects), and systems of bodies without considering the forces that cause them to move. In one-dimensional (1D) kinematics, we focus on motion along a straight line.</p>
               <h3 class="text-xl font-semibold mt-4 mb-2">Key Concepts:</h3>
               <ul class="list-disc list-inside space-y-1">
-                <li><strong>Position:</strong> The location of an object relative to a reference point.</li>
-                <li><strong>Displacement:</strong> The change in position of an object. It is a vector quantity.</li>
-                <li><strong>Distance:</strong> The total path length covered by an object. It is a scalar quantity.</li>
-                <li><strong>Velocity:</strong> The rate at which an object changes its position. It is a vector quantity (speed with direction).</li>
-                <li><strong>Speed:</strong> The magnitude of velocity. It is a scalar quantity.</li>
-                <li><strong>Acceleration:</strong> The rate at which an object changes its velocity. It is a vector quantity.</li>
+                <li><strong>Position:</strong> The location of an object relative to a reference point. It's a vector quantity, meaning it has both magnitude and direction from an origin.</li>
+                <li><strong>Displacement:</strong> The change in position of an object. It is a vector quantity, calculated as final position minus initial position (Δx = x_f - x_i).</li>
+                <li><strong>Distance:</strong> The total path length covered by an object. It is a scalar quantity, always positive, and does not depend on direction.</li>
+                <li><strong>Velocity:</strong> The rate at which an object changes its position. It is a vector quantity (speed with direction). Average velocity is Δx/Δt, while instantaneous velocity is the velocity at a specific moment.</li>
+                <li><strong>Speed:</strong> The magnitude of velocity. It is a scalar quantity. Average speed is total distance/total time.</li>
+                <li><strong>Acceleration:</strong> The rate at which an object changes its velocity. It is a vector quantity. A positive acceleration doesn't always mean speeding up; it depends on the direction of velocity.</li>
               </ul>
               <h3 class="text-xl font-semibold mt-4 mb-2">Equations of Motion (Constant Acceleration):</h3>
+              <p>These equations are fundamental for solving problems involving constant acceleration in one dimension:</p>
               <ul class="list-disc list-inside space-y-1">
                 <li>v = v₀ + at</li>
                 <li>Δx = v₀t + ½at²</li>
@@ -78,6 +79,11 @@ export const courses: Course[] = [
                 <li>Δx = (v₀ + v)/2 * t</li>
               </ul>
               <p class="mt-4">Where: v = final velocity, v₀ = initial velocity, a = acceleration, t = time, Δx = displacement.</p>
+              <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning & Practice:</h3>
+              <ul class="list-disc list-inside space-y-1">
+                <li><strong>Khan Academy Video:</strong> <a href="https://www.khanacademy.org/science/physics/one-dimensional-motion/introduction-to-kinematics/v/introduction-to-kinematics" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Introduction to Kinematics</a></li>
+                <li><strong>Phet Simulation:</strong> Explore motion with the <a href="https://phet.colorado.edu/sims/html/moving-man/latest/moving-man_en.html" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">The Moving Man</a> simulation to visualize position, velocity, and acceleration graphs.</li>
+              </ul>
             `,
             questions: [
               {
@@ -104,14 +110,31 @@ export const courses: Course[] = [
             description: 'Analyze motion in two dimensions, focusing on projectile motion.',
             link: '/courses/ap-physics/lessons/kinematics-2d',
             content: `
-              <p>Two-dimensional kinematics extends the concepts of 1D motion to motion in a plane. This is particularly useful for analyzing projectile motion, where an object moves under the influence of gravity alone.</p>
+              <p>Two-dimensional kinematics extends the concepts of 1D motion to motion in a plane. This is particularly useful for analyzing projectile motion, where an object moves under the influence of gravity alone. The key to solving 2D motion problems is to break them down into independent 1D problems for the horizontal (x) and vertical (y) components.</p>
               <h3 class="text-xl font-semibold mt-4 mb-2">Projectile Motion:</h3>
-              <p>Projectile motion is the motion of an object thrown or projected into the air, subject only to the acceleration of gravity. The key is to treat horizontal and vertical motions independently.</p>
+              <p>Projectile motion is the motion of an object thrown or projected into the air, subject only to the acceleration of gravity. We typically neglect air resistance for AP Physics 1 problems.</p>
               <ul class="list-disc list-inside space-y-1">
-                <li><strong>Horizontal Motion:</strong> Constant velocity (assuming no air resistance). a_x = 0.</li>
-                <li><strong>Vertical Motion:</strong> Constant acceleration due to gravity (a_y = -9.8 m/s²).</li>
+                <li><strong>Horizontal Motion:</strong> In the absence of air resistance, there are no horizontal forces acting on the projectile. Therefore, the horizontal velocity (v_x) remains constant throughout the flight. The horizontal acceleration (a_x) is 0.</li>
+                <li><strong>Vertical Motion:</strong> The vertical motion is governed by gravity. The vertical acceleration (a_y) is constant and equal to -9.8 m/s² (downwards). The vertical velocity (v_y) changes due to gravity.</li>
               </ul>
-              <p class="mt-4">The time an object spends in the air is determined by its vertical motion, and this time is the same for both horizontal and vertical components.</p>
+              <p class="mt-4">The time an object spends in the air is determined by its vertical motion, and this time is the same for both horizontal and vertical components. This is a crucial link between the two independent motions.</p>
+              <h3 class="text-xl font-semibold mt-4 mb-2">Key Equations for Projectile Motion:</h3>
+              <p>Apply the 1D kinematic equations separately for x and y components:</p>
+              <ul class="list-disc list-inside space-y-1">
+                <li><strong>Horizontal:</strong> Δx = v_x * t</li>
+                <li><strong>Vertical:</strong>
+                  <ul>
+                    <li>v_y = v_0y + a_y * t</li>
+                    <li>Δy = v_0y * t + ½a_y * t²</li>
+                    <li>v_y² = v_0y² + 2a_y * Δy</li>
+                  </ul>
+                </li>
+              </ul>
+              <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning & Practice:</h3>
+              <ul class="list-disc list-inside space-y-1">
+                <li><strong>Khan Academy Video:</strong> <a href="https://www.khanacademy.org/science/physics/two-dimensional-motion/two-dimensional-projectile-mot/v/projectile-motion-introduction" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Projectile motion introduction</a></li>
+                <li><strong>Phet Simulation:</strong> Experiment with launch angles and initial speeds using the <a href="https://phet.colorado.edu/sims/html/projectile-motion/latest/projectile-motion_en.html" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Projectile Motion</a> simulation.</li>
+              </ul>
             `,
             questions: [
               {
@@ -130,11 +153,18 @@ export const courses: Course[] = [
             description: 'Explore how velocities are perceived from different frames of reference.',
             link: '/courses/ap-physics/lessons/relative-velocity',
             content: `
-              <p>Relative velocity is the velocity of an object or observer B in the rest frame of another object or observer A. It is the velocity that A would perceive B to have.</p>
+              <p>Relative velocity is the velocity of an object or observer B in the rest frame of another object or observer A. It is the velocity that A would perceive B to have. Understanding relative velocity is crucial when dealing with situations where motion is observed from a moving reference frame, such as a boat in a river or an airplane in wind.</p>
               <h3 class="text-xl font-semibold mt-4 mb-2">Key Concepts:</h3>
               <ul class="list-disc list-inside space-y-1">
-                <li><strong>Relative Velocity Equation:</strong> V_AB = V_A - V_B (velocity of A relative to B).</li>
-                <li>This concept is crucial for understanding motion in different reference frames, such as a boat moving in a river or an airplane flying in wind.</li>
+                <li><strong>Reference Frames:</strong> All motion is relative. The velocity of an object depends on the observer's frame of reference.</li>
+                <li><strong>Relative Velocity Equation (1D):</strong> If you want to find the velocity of object A relative to object B (V_AB), you can use the formula: V_AB = V_A - V_B. This means if A is moving at 10 m/s and B is moving at 3 m/s in the same direction, A's velocity relative to B is 7 m/s. If they are moving in opposite directions, their relative velocity would be 13 m/s (assuming B is moving in the negative direction).</li>
+                <li><strong>Relative Velocity Equation (2D):</strong> For two-dimensional problems, you apply the vector subtraction (or addition, depending on the setup) to the x and y components separately. For example, V_boat/ground = V_boat/water + V_water/ground.</li>
+              </ul>
+              <p class="mt-4">This concept is crucial for understanding motion in different reference frames, such as a boat moving in a river or an airplane flying in wind. Always clearly define your reference frames and the velocities relative to those frames.</p>
+              <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning & Practice:</h3>
+              <ul class="list-disc list-inside space-y-1">
+                <li><strong>Khan Academy Video:</strong> <a href="https://www.khanacademy.org/science/physics/two-dimensional-motion/two-dimensional-relative-velocity/v/relative-velocity-in-one-dimension" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Relative velocity in one dimension</a></li>
+                <li><strong>Phet Simulation:</strong> While there isn't a direct Phet simulation for relative velocity, understanding vector addition is key. The <a href="https://phet.colorado.edu/sims/html/vector-addition/latest/vector-addition_en.html" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Vector Addition</a> simulation can help visualize how velocities combine.</li>
               </ul>
             `,
             questions: [
@@ -162,12 +192,17 @@ export const courses: Course[] = [
             description: 'Learn about inertia, F=ma, and action-reaction pairs.',
             link: '/courses/ap-physics/lessons/newtons-laws',
             content: `
-              <p>Newton's Laws of Motion are three fundamental laws of classical mechanics that describe the relationship between a body and the forces acting upon it, and its motion in response to those forces.</p>
+              <p>Newton's Laws of Motion are three fundamental laws of classical mechanics that describe the relationship between a body and the forces acting upon it, and its motion in response to those forces. These laws form the basis of dynamics, the study of why objects move as they do.</p>
               <h3 class="text-xl font-semibold mt-4 mb-2">The Three Laws:</h3>
               <ul class="list-disc list-inside space-y-1">
-                <li><strong>First Law (Inertia):</strong> An object at rest stays at rest and an object in motion stays in motion with the same speed and in the same direction unless acted upon by an unbalanced force.</li>
-                <li><strong>Second Law (F=ma):</strong> The acceleration of an object as produced by a net force is directly proportional to the magnitude of the net force, in the same direction as the net force, and inversely proportional to the mass of the object.</li>
-                <li><strong>Third Law (Action-Reaction):</b> For every action, there is an equal and opposite reaction.</li>
+                <li><strong>First Law (Law of Inertia):</strong> An object at rest stays at rest and an object in motion stays in motion with the same speed and in the same direction unless acted upon by an unbalanced force. This law introduces the concept of inertia, which is an object's resistance to changes in its state of motion. Mass is a quantitative measure of inertia.</li>
+                <li><strong>Second Law (F=ma):</strong> The acceleration of an object as produced by a net force is directly proportional to the magnitude of the net force, in the same direction as the net force, and inversely proportional to the mass of the object. Mathematically, this is expressed as ΣF = ma, where ΣF is the net force, m is mass, and a is acceleration. This is the most powerful of Newton's laws, allowing us to quantify the relationship between force and motion.</li>
+                <li><strong>Third Law (Action-Reaction):</strong> For every action, there is an equal and opposite reaction. This means that forces always occur in pairs. If object A exerts a force on object B, then object B simultaneously exerts an equal and opposite force on object A. These forces act on *different* objects and therefore do not cancel each other out.</li>
+              </ul>
+              <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning & Practice:</h3>
+              <ul class="list-disc list-inside space-y-1">
+                <li><strong>Khan Academy Video:</strong> <a href="https://www.khanacademy.org/science/physics/forces-newtons-laws/newtons-laws-of-motion/v/newton-s-first-law-of-motion" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Newton's First Law of Motion</a></li>
+                <li><strong>Phet Simulation:</strong> Explore forces and motion with the <a href="https://phet.colorado.edu/sims/html/forces-and-motion-basics/latest/forces-and-motion-basics_en.html" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Forces and Motion: Basics</a> simulation.</li>
               </ul>
             `,
             questions: [
@@ -187,13 +222,20 @@ export const courses: Course[] = [
             description: 'Understand static and kinetic friction, and apply force concepts.',
             link: '/courses/ap-physics/lessons/friction',
             content: `
-              <p>Friction is a force that opposes motion between two surfaces in contact. It can be static (preventing motion) or kinetic (opposing motion once it has started).</p>
+              <p>Friction is a force that opposes motion between two surfaces in contact. It is a crucial force in everyday life, allowing us to walk, drive, and hold objects. Understanding friction is essential for analyzing many physical systems.</p>
               <h3 class="text-xl font-semibold mt-4 mb-2">Types of Friction:</h3>
               <ul class="list-disc list-inside space-y-1">
-                <li><strong>Static Friction (f_s):</strong> Acts to prevent an object from sliding. Its magnitude varies from zero up to a maximum value.</li>
-                <li><strong>Kinetic Friction (f_k):</strong> Acts on an object in motion. Its magnitude is generally constant for a given pair of surfaces.</li>
+                <li><strong>Static Friction (f_s):</strong> This force acts to prevent an object from sliding when a force is applied. It opposes the *tendency* of motion. Its magnitude varies from zero up to a maximum value, given by f_s,max = μ_s * N, where μ_s is the coefficient of static friction and N is the normal force. Once the applied force exceeds f_s,max, the object begins to move.</li>
+                <li><strong>Kinetic Friction (f_k):</strong> This force acts on an object that is already in motion, opposing its sliding motion. Its magnitude is generally constant for a given pair of surfaces and is given by f_k = μ_k * N, where μ_k is the coefficient of kinetic friction. Typically, μ_k is less than μ_s, meaning it takes more force to start an object moving than to keep it moving.</li>
               </ul>
-              <p class="mt-4">Both types of friction depend on the normal force and the coefficient of friction (μ).</p>
+              <p class="mt-4">Both types of friction depend on the normal force (the force perpendicular to the surfaces in contact) and the coefficient of friction (μ), which is a property of the two surfaces in contact.</p>
+              <h3 class="text-xl font-semibold mt-4 mb-2">Applying Force Concepts:</h3>
+              <p>When solving problems involving friction, it's critical to draw a free-body diagram, identify all forces acting on the object (gravity, normal force, applied force, friction), and then apply Newton's Second Law (ΣF = ma) in both the horizontal and vertical directions.</p>
+              <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning & Practice:</h3>
+              <ul class="list-disc list-inside space-y-1">
+                <li><strong>Khan Academy Video:</strong> <a href="https://www.khanacademy.org/science/physics/forces-newtons-laws/inclined-planes-friction/v/introduction-to-friction" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Introduction to friction</a></li>
+                <li><strong>Phet Simulation:</strong> Explore how friction affects motion with the <a href="https://phet.colorado.edu/sims/html/friction/latest/friction_en.html" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Friction</a> simulation.</li>
+              </ul>
             `,
             questions: [
               {
@@ -220,12 +262,18 @@ export const courses: Course[] = [
             description: 'Define work, calculate work done by forces, and understand its relation to kinetic energy.',
             link: '/courses/ap-physics/lessons/work-energy-theorem',
             content: `
-              <p>Work is done when a force causes a displacement of an object. The Work-Energy Theorem states that the net work done on an object equals the change in its kinetic energy.</p>
+              <p>In physics, work has a very specific definition. Work is done when a force causes a displacement of an object. For work to be done, there must be a force, a displacement, and at least some component of the force must be in the direction of the displacement.</p>
               <h3 class="text-xl font-semibold mt-4 mb-2">Key Concepts:</h3>
               <ul class="list-disc list-inside space-y-1">
-                <li><strong>Work (W):</strong> W = Fd cos(θ), where F is force, d is displacement, and θ is the angle between them.</li>
-                <li><strong>Kinetic Energy (KE):</strong> KE = ½mv², where m is mass and v is velocity.</li>
-                <li><strong>Work-Energy Theorem:</strong> W_net = ΔKE = KE_f - KE_i.</li>
+                <li><strong>Work (W):</strong> The work done by a constant force is calculated as W = Fd cos(θ), where F is the magnitude of the force, d is the magnitude of the displacement, and θ is the angle between the force vector and the displacement vector. The unit of work is the Joule (J), which is equivalent to N·m.</li>
+                <li><strong>Kinetic Energy (KE):</strong> Kinetic energy is the energy an object possesses due to its motion. It is a scalar quantity and is given by the formula KE = ½mv², where m is the mass of the object and v is its speed. The unit of kinetic energy is also the Joule.</li>
+                <li><strong>Work-Energy Theorem:</strong> This fundamental theorem states that the net work done on an object (the work done by the net force) equals the change in its kinetic energy. Mathematically, W_net = ΔKE = KE_f - KE_i. This theorem provides a powerful way to relate forces and motion without directly using acceleration.</li>
+              </ul>
+              <p class="mt-4">Understanding the Work-Energy Theorem allows us to analyze situations where forces are not constant or where the path taken is complex, by focusing on the initial and final states of kinetic energy.</p>
+              <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning & Practice:</h3>
+              <ul class="list-disc list-inside space-y-1">
+                <li><strong>Khan Academy Video:</strong> <a href="https://www.khanacademy.org/science/physics/work-and-energy/work-and-kinetic-energy/v/introduction-to-work-and-energy" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Introduction to work and energy</a></li>
+                <li><strong>Phet Simulation:</strong> Explore how work and energy are related with the <a href="https://phet.colorado.edu/sims/html/energy-skate-park-basics/latest/energy-skate-park-basics_en.html" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Energy Skate Park: Basics</a> simulation.</li>
               </ul>
             `,
             questions: [
