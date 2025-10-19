@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
 import { showSuccess, showError } from '@/utils/toast';
 import { Home, BookOpen, Award, Settings, LogOut } from 'lucide-react';
-import { MadeWithDyad } from './made-with-dyad';
 
 const Layout = () => {
   const navigate = useNavigate();
@@ -53,7 +52,7 @@ const Layout = () => {
         <Outlet />
       </main>
       <footer className="border-t bg-card py-4">
-        <MadeWithDyad />
+        {/* MadeWithDyad component removed */}
       </footer>
     </div>
   );

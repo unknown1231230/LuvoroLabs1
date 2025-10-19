@@ -3,7 +3,6 @@
 import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { MadeWithDyad } from './made-with-dyad';
 import { Home, BookOpen } from 'lucide-react';
 
 const PublicLayout = () => {
@@ -29,7 +28,7 @@ const PublicLayout = () => {
         <Outlet />
       </main>
       <footer className="border-t bg-card py-4">
-        <MadeWithDyad />
+        {/* MadeWithDyad component removed */}
       </footer>
     </div>
   );
