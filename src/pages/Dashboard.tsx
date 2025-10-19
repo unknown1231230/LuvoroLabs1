@@ -81,10 +81,11 @@ const Dashboard = () => { // Renamed from Index to Dashboard
     enabled: !authLoading, // Recommendations can be generated even if user is null (will return login message)
   });
 
-  const { data: studentsHelped = 0, isLoading: isLoadingStudentsHelped } = useQuery({
-    queryKey: ['studentsHelped'],
-    queryFn: () => fetchSiteMetric('students_helped'),
-  });
+  // Removed the useQuery for studentsHelped as it's no longer needed on the dashboard.
+  // const { data: studentsHelped = 0, isLoading: isLoadingStudentsHelped } = useQuery({
+  //   queryKey: ['studentsHelped'],
+  //   queryFn: () => fetchSiteMetric('students_helped'),
+  // });
 
   const userProgress = totalLessonsCount > 0 ? Math.round((userCompletedLessonsCount / totalLessonsCount) * 100) : 0;
 
@@ -167,8 +168,9 @@ const Dashboard = () => { // Renamed from Index to Dashboard
 
       <Separator />
 
-      {/* Global Metrics Section */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Global Metrics Section (Removed Students Helped) */}
+      {/* This section is now empty, consider removing if no other global metrics are added */}
+      {/* <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><Users className="text-purple-500" />Students Helped</CardTitle>
@@ -184,8 +186,7 @@ const Dashboard = () => { // Renamed from Index to Dashboard
             )}
           </CardContent>
         </Card>
-        {/* Placeholder for other global metrics if needed */}
-      </section>
+      </section> */}
 
       <Separator />
 
@@ -201,7 +202,7 @@ const Dashboard = () => { // Renamed from Index to Dashboard
       <Separator />
 
       {/* Progress & Analytics Section */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <section className="grid grid-cols-1 lg:col-span-2 lg:grid-cols-2 gap-6">
         <Card className="shadow-sm">
           <CardHeader>
             <CardTitle>Overall Progress</CardTitle>
