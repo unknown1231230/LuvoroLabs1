@@ -33,41 +33,6 @@ const LessonPage = () => {
   const courseId = 'ap-physics';
   const lesson = findLessonById(courseId, lessonId || '');
 
-  // Memoize handleCompleteLesson to prevent unnecessary re-creations
-  const handleCompleteLesson = useCallback(async () => {
-    if (!user || isCompletingLesson || isLessonMarkedComplete) {
-      return;
-    }
-
-    const currentAllQuestionsCorrect = lesson?.questions?.every(q =>
-      userQuizAttempts.some(a => a.question_id === q.id && a.is_correct)
-    );
-
-    if (!currentAllQuestionsCorrect) {
-      showError("Please answer all questions correctly before completing the lesson.");
-      return;
-    }
-
-    setIsCompletingLesson(true);
-    const success = await markLessonAsCompleted(user.id, courseId, lessonId!);
-    if (success) {
-      const correctCount = lesson?.questions?.filter(q =>
-        userQuizAttempts.some(a => a.question_id === q.id && a.is_correct)
-      ).length || 0;
-      const totalCount = lesson?.questions?.length || 0;
-      setLessonScore({ correct: correctCount, total: totalCount });
-
-      await updateUserStreak(user.id);
-      queryClient.invalidateQueries({ queryKey: ['userStreak', user.id] });
-      queryClient.invalidateQueries({ queryKey: ['userCompletedLessonsCount', user.id] });
-      queryClient.invalidateQueries({ queryKey: ['userCompletedLessonIds', user.id] });
-      queryClient.invalidateQueries({ queryKey: ['weeklyLessons', user.id] });
-      setIsLessonMarkedComplete(true);
-      showSuccess("Lesson completed and streak updated!");
-    }
-    setIsCompletingLesson(false);
-  }, [user, isCompletingLesson, isLessonMarkedComplete, lesson?.questions, userQuizAttempts, courseId, lessonId, queryClient]);
-
   useEffect(() => {
     const fetchData = async () => {
       if (user && lessonId) {
@@ -93,11 +58,6 @@ const LessonPage = () => {
         setSelectedAnswers(initialSelected);
         setSubmittedAnswers(initialSubmitted);
 
-        const allCorrectInitially = lesson?.questions?.every(q =>
-          attempts.some(a => a.question_id === q.id && a.is_correct)
-        );
-        setAllQuestionsCorrect(!!allCorrectInitially);
-
         if (lessonIsDone) {
           const correctCount = lesson?.questions?.filter(q =>
             attempts.some(a => a.question_id === q.id && a.is_correct)
@@ -110,12 +70,45 @@ const LessonPage = () => {
     fetchData();
   }, [user, lessonId, courseId, lesson?.questions]);
 
-  // Effect to trigger auto-completion if all questions become correct
+  // Effect to check if all questions are correct whenever attempts change
   useEffect(() => {
-    if (user && allQuestionsCorrect && !isLessonMarkedComplete && !isCompletingLesson) {
-      handleCompleteLesson();
+    if (lesson?.questions && userQuizAttempts.length > 0) {
+      const allCorrect = lesson.questions.every(q =>
+        userQuizAttempts.some(a => a.question_id === q.id && a.is_correct)
+      );
+      setAllQuestionsCorrect(allCorrect);
     }
-  }, [allQuestionsCorrect, isLessonMarkedComplete, isCompletingLesson, user, handleCompleteLesson]);
+  }, [userQuizAttempts, lesson?.questions]);
+
+  // Effect to trigger auto-completion when all questions become correct
+  useEffect(() => {
+    const completeLesson = async () => {
+      if (!user || isCompletingLesson) return;
+
+      setIsCompletingLesson(true);
+      const success = await markLessonAsCompleted(user.id, courseId, lessonId!);
+      if (success) {
+        const correctCount = lesson?.questions?.filter(q =>
+          userQuizAttempts.some(a => a.question_id === q.id && a.is_correct)
+        ).length || 0;
+        const totalCount = lesson?.questions?.length || 0;
+        setLessonScore({ correct: correctCount, total: totalCount });
+
+        await updateUserStreak(user.id);
+        queryClient.invalidateQueries({ queryKey: ['userStreak', user.id] });
+        queryClient.invalidateQueries({ queryKey: ['userCompletedLessonsCount', user.id] });
+        queryClient.invalidateQueries({ queryKey: ['userCompletedLessonIds', user.id] });
+        queryClient.invalidateQueries({ queryKey: ['weeklyLessons', user.id] });
+        setIsLessonMarkedComplete(true);
+        showSuccess("Lesson completed and streak updated!");
+      }
+      setIsCompletingLesson(false);
+    };
+
+    if (allQuestionsCorrect && !isLessonMarkedComplete) {
+      completeLesson();
+    }
+  }, [allQuestionsCorrect, isLessonMarkedComplete, isCompletingLesson, user, courseId, lessonId, lesson?.questions, queryClient, userQuizAttempts]);
 
 
   if (!lesson) {
@@ -154,20 +147,17 @@ const LessonPage = () => {
         selected_answer: selectedAnswer,
       };
 
-      // Record quiz attempt in Supabase
       const { error } = await supabase.from('user_quiz_attempts').insert(newAttemptForSupabase);
 
       if (error) {
         console.error("Error recording quiz attempt:", error.message);
         showError("Failed to record quiz attempt.");
-        return; // Stop execution if recording fails
+        return;
       }
 
-      // If recording is successful, update local state
       setSubmittedAnswers((prev) => ({ ...prev, [questionId]: true }));
       const newAttemptForState = { ...newAttemptForSupabase, attempted_at: new Date().toISOString() };
-      const updatedAttempts = [...userQuizAttempts, newAttemptForState];
-      setUserQuizAttempts(updatedAttempts);
+      setUserQuizAttempts((prevAttempts) => [...prevAttempts, newAttemptForState]);
 
       if (isCorrect) {
         showSuccess("Correct answer!");
@@ -177,12 +167,6 @@ const LessonPage = () => {
 
       queryClient.invalidateQueries({ queryKey: ['weeklyQuizzes', user.id] });
       queryClient.invalidateQueries({ queryKey: ['userQuizAttempts', user.id, courseId, lessonId] });
-      
-      // Re-evaluate if all questions are now correct based on updated attempts
-      const allCorrectAfterSubmission = lesson.questions?.every(q =>
-        updatedAttempts.some(a => a.question_id === q.id && a.is_correct)
-      );
-      setAllQuestionsCorrect(!!allCorrectAfterSubmission);
     } else {
       showError("Please select an answer before submitting.");
     }
@@ -199,10 +183,8 @@ const LessonPage = () => {
       <h1 className="text-4xl font-bold text-center text-primary">{lesson.title}</h1>
       <div className="prose dark:prose-invert max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: lesson.content || '' }} />
 
-      {/* Conditionally render the simulation component */}
       {lessonId === 'kinematics-1d' && <Kinematics1DSimulation />}
 
-      {/* Conditionally render the video embed or placeholder */}
       <h3 className="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
       {lesson.videoUrl && lesson.videoUrl !== "ADD_YOUR_VIDEO_EMBED_URL_HERE" ? (
         <div className="aspect-video w-full max-w-2xl mx-auto shadow-md rounded-lg overflow-hidden">
@@ -232,10 +214,9 @@ const LessonPage = () => {
           <div className="space-y-6">
             {lesson.questions.map((q) => {
               const hasCorrectAttempt = userQuizAttempts.some(a => a.question_id === q.id && a.is_correct);
-              const hasAnyAttempt = submittedAnswers[q.id]; // True if user has submitted any answer for this question
-              const isQuestionDisabled = isLessonMarkedComplete || hasAnyAttempt; // Disable if lesson complete or any attempt made
+              const hasAnyAttempt = submittedAnswers[q.id];
+              const isQuestionDisabled = isLessonMarkedComplete || hasAnyAttempt;
               
-              // Get the user's selected answer for display, prioritizing a correct attempt if available
               const userSelectedAnswerForDisplay = hasCorrectAttempt 
                 ? userQuizAttempts.find(a => a.question_id === q.id && a.is_correct)?.selected_answer 
                 : selectedAnswers[q.id];
@@ -253,14 +234,14 @@ const LessonPage = () => {
                         onValueChange={(value) => handleAnswerChange(q.id, value)}
                         value={userSelectedAnswerForDisplay || selectedAnswers[q.id]}
                         className="grid gap-4"
-                        disabled={isQuestionDisabled} // Disable if lesson completed or any attempt made
+                        disabled={isQuestionDisabled}
                       >
                         {q.options.map((option, index) => (
                           <div key={index} className="flex items-center space-x-2">
                             <RadioGroupItem value={option} id={`${q.id}-${index}`} disabled={isQuestionDisabled} />
                             <Label htmlFor={`${q.id}-${index}`} className={cn(
-                              isQuestionDisabled && option === q.correctAnswer && "font-bold text-green-600", // Correct answer in green
-                              isQuestionDisabled && option === userSelectedAnswerForDisplay && option !== q.correctAnswer && "line-through text-red-500" // Incorrect selected answer with strikethrough
+                              isQuestionDisabled && option === q.correctAnswer && "font-bold text-green-600",
+                              isQuestionDisabled && option === userSelectedAnswerForDisplay && option !== q.correctAnswer && "line-through text-red-500"
                             )}>
                               {option}
                               {isQuestionDisabled && option === q.correctAnswer && <CheckCircle className="ml-2 h-4 w-4 inline text-green-500" />}
@@ -270,16 +251,16 @@ const LessonPage = () => {
                         ))}
                       </RadioGroup>
                     )}
-                    {!isQuestionDisabled && ( // Only show submit button if not disabled
+                    {!isQuestionDisabled && (
                       <Button
                         onClick={() => handleSubmitAnswer(q.id, q.correctAnswer)}
                         className="mt-4"
-                        disabled={!selectedAnswers[q.id]} // Disable if no answer selected
+                        disabled={!selectedAnswers[q.id]}
                       >
                         Submit Answer
                       </Button>
                     )}
-                    {hasAnyAttempt && ( // Show feedback if any attempt was made
+                    {hasAnyAttempt && (
                       <div className="mt-4 p-3 rounded-md flex flex-col gap-2">
                         <div className="flex items-center gap-2">
                           {isCurrentlyCorrect ? (
@@ -312,20 +293,6 @@ const LessonPage = () => {
         </>
       )}
 
-
-      {user && allQuestionsCorrect && !isLessonMarkedComplete && (
-        <div className="text-center mt-8">
-          <Button onClick={() => handleCompleteLesson()} disabled={isCompletingLesson}> {/* Call without args, it will use current state */}
-            {isCompletingLesson ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Completing...
-              </>
-            ) : (
-              "Complete Lesson"
-            )}
-          </Button>
-        </div>
-      )}
       {isLessonMarkedComplete && (
         <div className="text-center mt-8 text-green-600 font-semibold flex flex-col items-center justify-center gap-2">
           <CheckCircle className="h-5 w-5" />
