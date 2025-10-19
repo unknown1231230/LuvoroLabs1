@@ -109,6 +109,30 @@ const LessonPage = () => {
       {/* Conditionally render the simulation component */}
       {lessonId === 'kinematics-1d' && <Kinematics1DSimulation />}
 
+      {/* Conditionally render the video embed or placeholder */}
+      <h3 className="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
+      {lesson.videoUrl && lesson.videoUrl !== "ADD_YOUR_VIDEO_EMBED_URL_HERE" ? (
+        <div className="aspect-video w-full max-w-2xl mx-auto">
+          <iframe
+            width="100%"
+            height="100%"
+            src={lesson.videoUrl}
+            title={`Educational Video on ${lesson.title}`}
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
+        </div>
+      ) : (
+        <div className="aspect-video w-full max-w-2xl mx-auto bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-muted-foreground p-4 rounded-md">
+          <p className="text-center">
+            <strong>Video Placeholder:</strong> Please add an embed URL for this lesson.
+            <br/>
+            You can edit <code>src/utils/courseContent.tsx</code> and update the <code>videoUrl</code> property for this lesson.
+          </p>
+        </div>
+      )}
+
       {lesson.questions && lesson.questions.length > 0 && (
         <>
           <h2 className="text-3xl font-bold text-primary mt-10">Practice Questions</h2>
