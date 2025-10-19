@@ -392,12 +392,14 @@ const UnitTestingPage = () => {
               <span>{formatTime(timeLeft)}</span>
             </div>
             <Button variant="ghost" size="sm" disabled>
-              <MessageSquareQuote className="h-4 w-4 mr-1" /> Annotate
+              <MessageSquareQuote className="h-4 w-4 md:mr-1" />
+              <span className="hidden md:inline">Annotate</span>
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm">
-                  <MoreHorizontal className="h-5 w-5" /> More Tools
+                  <MoreHorizontal className="h-5 w-5" />
+                  <span className="hidden md:inline ml-1">More Tools</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">

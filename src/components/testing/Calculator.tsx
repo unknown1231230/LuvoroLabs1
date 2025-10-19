@@ -23,45 +23,69 @@ const Calculator: React.FC<CalculatorProps> = ({ onClose }) => {
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const calculatorRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleDragStart = (clientX: number, clientY: number) => {
     if (calculatorRef.current) {
       const rect = calculatorRef.current.getBoundingClientRect();
       setOffset({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
+        x: clientX - rect.left,
+        y: clientY - rect.top,
       });
       setIsDragging(true);
-      e.preventDefault(); // Prevents text selection while dragging
     }
   };
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    handleDragStart(e.clientX, e.clientY);
+    e.preventDefault();
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    const touch = e.touches[0];
+    handleDragStart(touch.clientX, touch.clientY);
+  };
+
+  const handleDragMove = useCallback((clientX: number, clientY: number) => {
     if (isDragging) {
       setPosition({
-        x: e.clientX - offset.x,
-        y: e.clientY - offset.y,
+        x: clientX - offset.x,
+        y: clientY - offset.y,
       });
     }
   }, [isDragging, offset]);
 
-  const handleMouseUp = useCallback(() => {
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    handleDragMove(e.clientX, e.clientY);
+  }, [handleDragMove]);
+
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    const touch = e.touches[0];
+    handleDragMove(touch.clientX, touch.clientY);
+  }, [handleDragMove]);
+
+  const handleDragEnd = useCallback(() => {
     setIsDragging(false);
   }, []);
 
   useEffect(() => {
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('mouseup', handleDragEnd);
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener('touchend', handleDragEnd);
     } else {
       document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('mouseup', handleDragEnd);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleDragEnd);
     }
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('mouseup', handleDragEnd);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleDragEnd);
     };
-  }, [isDragging, handleMouseMove, handleMouseUp]);
+  }, [isDragging, handleMouseMove, handleDragEnd, handleTouchMove]);
   // --- End Custom Dragging Logic ---
 
   const evaluateExpression = (expr: string) => {
@@ -130,9 +154,10 @@ const Calculator: React.FC<CalculatorProps> = ({ onClose }) => {
       className="fixed z-50"
       style={{ top: `${position.y}px`, left: `${position.x}px` }}
     >
-      <Card className="w-80 shadow-2xl">
+      <Card className="w-[90vw] max-w-[320px] shadow-2xl">
         <CardHeader
           onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
           className="handle cursor-move flex flex-row items-center justify-between p-2 bg-muted/50"
         >
           <CardTitle className="text-sm font-semibold">Scientific Calculator</CardTitle>
