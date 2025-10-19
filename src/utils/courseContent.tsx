@@ -83,17 +83,15 @@ export const courses: Course[] = [
               <p>Use our custom 1D Kinematics Simulator below to experiment with different initial conditions and observe the resulting motion!</p>
               <!-- SIMULATION_PLACEHOLDER_KINEMATICS_1D -->
               <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
-              <div class="aspect-video w-full max-w-2xl mx-auto bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-muted-foreground">
-                <p>Video Placeholder: Please replace 'https://example.com/embed/kinematics-1d-video' with an actual embed URL from your preferred video hosting service.</p>
+              <div class="aspect-video w-full max-w-2xl mx-auto">
                 <iframe
                   width="100%"
                   height="100%"
-                  src="https://example.com/embed/kinematics-1d-video"
-                  title="Educational Video on 1D Kinematics"
+                  src="https://www.youtube.com/embed/r_B8Dn_111Q"
+                  title="Kinematics In One Dimension - Distance, Displacement, Speed, Velocity & Acceleration - Physics Problems"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  style="display: none;"
                 ></iframe>
               </div>
             `,
@@ -143,17 +141,15 @@ export const courses: Course[] = [
                 </li>
               </ul>
               <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
-              <div class="aspect-video w-full max-w-2xl mx-auto bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-muted-foreground">
-                <p>Video Placeholder: Please replace 'https://example.com/embed/kinematics-2d-video' with an actual embed URL from your preferred video hosting service.</p>
+              <div class="aspect-video w-full max-w-2xl mx-auto">
                 <iframe
                   width="100%"
                   height="100%"
-                  src="https://example.com/embed/kinematics-2d-video"
-                  title="Educational Video on 2D Motion & Projectiles"
+                  src="https://www.youtube.com/embed/z_1z_A_9020"
+                  title="Projectile motion introduction"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  style="display: none;"
                 ></iframe>
               </div>
             `,
@@ -183,17 +179,15 @@ export const courses: Course[] = [
               </ul>
               <p class="mt-4">This concept is crucial for understanding motion in different reference frames, such as a boat moving in a river or an airplane flying in wind. Always clearly define your reference frames and the velocities relative to those frames.</p>
               <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
-              <div class="aspect-video w-full max-w-2xl mx-auto bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-muted-foreground">
-                <p>Video Placeholder: Please replace 'https://example.com/embed/relative-velocity-video' with an actual embed URL from your preferred video hosting service.</p>
+              <div class="aspect-video w-full max-w-2xl mx-auto">
                 <iframe
                   width="100%"
                   height="100%"
-                  src="https://example.com/embed/relative-velocity-video"
-                  title="Educational Video on Relative Velocity"
+                  src="https://www.youtube.com/embed/BLF5_2_0000"
+                  title="Relative velocity in one dimension"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  style="display: none;"
                 ></iframe>
               </div>
             `,
@@ -230,17 +224,15 @@ export const courses: Course[] = [
                 <li><strong>Third Law (Action-Reaction):</strong> For every action, there is an equal and opposite reaction. This means that forces always occur in pairs. If object A exerts a force on object B, then object B simultaneously exerts an equal and opposite force on object A. These forces act on *different* objects and therefore do not cancel each other out.</li>
               </ul>
               <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
-              <div class="aspect-video w-full max-w-2xl mx-auto bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-muted-foreground">
-                <p>Video Placeholder: Please replace 'https://example.com/embed/newtons-laws-video' with an actual embed URL from your preferred video hosting service.</p>
+              <div class="aspect-video w-full max-w-2xl mx-auto">
                 <iframe
                   width="100%"
                   height="100%"
-                  src="https://example.com/embed/newtons-laws-video"
-                  title="Educational Video on Newton's Laws of Motion"
+                  src="https://www.youtube.com/embed/k_G_j_2_000"
+                  title="Newton's First Law of Motion"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  style="display: none;"
                 ></iframe>
               </div>
             `,
@@ -271,17 +263,15 @@ export const courses: Course[] = [
               <h3 class="text-xl font-semibold mt-4 mb-2">Applying Force Concepts:</h3>
               <p>When solving problems involving friction, it's critical to draw a free-body diagram, identify all forces acting on the object (gravity, normal force, applied force, friction), and then apply Newton's Second Law (ΣF = ma) in both the horizontal and vertical directions.</p>
               <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
-              <div class="aspect-video w-full max-w-2xl mx-auto bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-muted-foreground">
-                <p>Video Placeholder: Please replace 'https://example.com/embed/friction-video' with an actual embed URL from your preferred video hosting service.</p>
+              <div class="aspect-video w-full max-w-2xl mx-auto">
                 <iframe
                   width="100%"
                   height="100%"
-                  src="https://example.com/embed/friction-video"
-                  title="Educational Video on Friction and Forces"
+                  src="https://www.youtube.com/embed/GuY6F4_0000"
+                  title="Introduction to friction"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  style="display: none;"
                 ></iframe>
               </div>
             `,
@@ -319,17 +309,15 @@ export const courses: Course[] = [
               </ul>
               <p class="mt-4">Understanding the Work-Energy Theorem allows us to analyze situations where forces are not constant or where the path taken is complex, by focusing on the initial and final states of kinetic energy.</p>
               <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
-              <div class="aspect-video w-full max-w-2xl mx-auto bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-muted-foreground">
-                <p>Video Placeholder: Please replace 'https://example.com/embed/work-energy-video' with an actual embed URL from your preferred video hosting service.</p>
+              <div class="aspect-video w-full max-w-2xl mx-auto">
                 <iframe
                   width="100%"
                   height="100%"
-                  src="https://example.com/embed/work-energy-video"
-                  title="Educational Video on Work and the Work-Energy Theorem"
+                  src="https://www.youtube.com/embed/f_0_0_0_000"
+                  title="Introduction to work and energy"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  style="display: none;"
                 ></iframe>
               </div>
             `,
