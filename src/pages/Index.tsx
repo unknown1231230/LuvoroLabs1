@@ -102,7 +102,10 @@ const Index = () => {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-4xl font-bold text-center text-primary">Luvoro Labs Dashboard</h1>
+      <h1 className="text-4xl font-bold text-center text-primary flex items-center justify-center gap-3">
+        <img src="/logo.png" alt="Luvoro Labs Logo" className="h-10 w-10" />
+        Luvoro Labs Dashboard
+      </h1>
       <p className="text-center text-muted-foreground max-w-2xl mx-auto">
         Welcome to your personalized learning hub. Track your progress, unlock achievements, and explore new courses!
       </p>
