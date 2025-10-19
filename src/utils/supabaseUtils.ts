@@ -184,6 +184,66 @@ const getStartOfDayUTC = (date: Date): Date => {
   return d;
 };
 
+export const fetchLessonsCompletedToday = async (userId: string): Promise<number> => {
+  try {
+    const todayUtc = getStartOfDayUTC(new Date());
+    const tomorrowUtc = new Date(todayUtc);
+    tomorrowUtc.setUTCDate(todayUtc.getUTCDate() + 1);
+
+    const { count, error } = await supabase
+      .from('user_lesson_progress')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .gte('completed_at', todayUtc.toISOString())
+      .lt('completed_at', tomorrowUtc.toISOString());
+
+    if (error) throw error;
+    return count || 0;
+  } catch (error: any) {
+    console.error("Error fetching lessons completed today:", error.message);
+    showError(`Failed to fetch lessons completed today: ${error.message}`);
+    return 0;
+  }
+};
+
+export const fetchTotalQuizAttempts = async (userId: string): Promise<number> => {
+  try {
+    const { count, error } = await supabase
+      .from('user_quiz_attempts')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId);
+
+    if (error) throw error;
+    return count || 0;
+  } catch (error: any) {
+    console.error("Error fetching total quiz attempts:", error.message);
+    showError(`Failed to fetch total quiz attempts: ${error.message}`);
+    return 0;
+  }
+};
+
+export const fetchQuizzesTakenToday = async (userId: string): Promise<number> => {
+  try {
+    const todayUtc = getStartOfDayUTC(new Date());
+    const tomorrowUtc = new Date(todayUtc);
+    tomorrowUtc.setUTCDate(todayUtc.getUTCDate() + 1);
+
+    const { count, error } = await supabase
+      .from('user_quiz_attempts')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .gte('attempted_at', todayUtc.toISOString())
+      .lt('attempted_at', tomorrowUtc.toISOString());
+
+    if (error) throw error;
+    return count || 0;
+  } catch (error: any) {
+    console.error("Error fetching quizzes taken today:", error.message);
+    showError(`Failed to fetch quizzes taken today: ${error.message}`);
+    return 0;
+  }
+};
+
 export const fetchDailyLessonCompletions = async (userId: string): Promise<{ name: string; lessons: number }[]> => {
   try {
     const { data, error } = await supabase

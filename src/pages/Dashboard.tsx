@@ -3,16 +3,24 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { BarChart, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Bar } from 'recharts';
-import { Flame, Trophy, Lightbulb, BookOpen, Users } from 'lucide-react';
-import { useContext, useEffect, useState } from "react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Flame, Trophy, Lightbulb, BookOpen, Users, CheckCircle, ClipboardCheck } from 'lucide-react';
+import { useContext } from "react";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AuthContext } from "@/App";
 import { getTotalLessonsCount, findPersonalizedRecommendations } from "@/utils/courseContent";
-import { fetchUserCompletedLessonsCount, fetchSiteMetric, fetchUserLessonProgress, fetchDailyLessonCompletions, fetchDailyQuizAttempts, fetchStreakHistory } from "@/utils/supabaseUtils"; // Updated imports
+import { 
+  fetchUserCompletedLessonsCount, 
+  fetchSiteMetric, 
+  fetchUserLessonProgress, 
+  fetchStreakHistory,
+  fetchLessonsCompletedToday, // New import
+  fetchTotalQuizAttempts,     // New import
+  fetchQuizzesTakenToday      // New import
+} from "@/utils/supabaseUtils";
 
 const fetchUserStreak = async (userId: string) => {
   const { data, error } = await supabase
@@ -86,15 +94,22 @@ const Dashboard = () => {
     queryFn: () => fetchSiteMetric('students_helped'),
   });
 
-  const { data: dailyLessons = [], isLoading: isLoadingDailyLessons } = useQuery({ // Changed to dailyLessons
-    queryKey: ['dailyLessons', userId],
-    queryFn: () => userId ? fetchDailyLessonCompletions(userId) : Promise.resolve([]), // Changed function
+  // New queries for daily and total activity
+  const { data: lessonsCompletedToday = 0, isLoading: isLoadingLessonsToday } = useQuery({
+    queryKey: ['lessonsCompletedToday', userId],
+    queryFn: () => userId ? fetchLessonsCompletedToday(userId) : Promise.resolve(0),
     enabled: !!userId && !authLoading,
   });
 
-  const { data: dailyQuizzes = [], isLoading: isLoadingDailyQuizzes } = useQuery({ // Changed to dailyQuizzes
-    queryKey: ['dailyQuizzes', userId],
-    queryFn: () => userId ? fetchDailyQuizAttempts(userId) : Promise.resolve([]), // Changed function
+  const { data: totalQuizAttempts = 0, isLoading: isLoadingTotalQuizzes } = useQuery({
+    queryKey: ['totalQuizAttempts', userId],
+    queryFn: () => userId ? fetchTotalQuizAttempts(userId) : Promise.resolve(0),
+    enabled: !!userId && !authLoading,
+  });
+
+  const { data: quizzesTakenToday = 0, isLoading: isLoadingQuizzesToday } = useQuery({
+    queryKey: ['quizzesTakenToday', userId],
+    queryFn: () => userId ? fetchQuizzesTakenToday(userId) : Promise.resolve(0),
     enabled: !!userId && !authLoading,
   });
 
@@ -105,13 +120,6 @@ const Dashboard = () => {
   });
 
   const userProgress = totalLessonsCount > 0 ? Math.round((userCompletedLessonsCount / totalLessonsCount) * 100) : 0;
-
-  // Combine daily lessons and quizzes for the chart
-  const combinedDailyData = dailyLessons.map((lessonDay, index) => ({
-    name: lessonDay.name,
-    lessons: lessonDay.lessons,
-    quizzes: dailyQuizzes.find(quizDay => quizDay.name === lessonDay.name)?.quizzes || 0,
-  }));
 
   // Prepare streak history data for Recharts
   const formattedStreakHistory = streakHistory.map(entry => ({
@@ -216,7 +224,7 @@ const Dashboard = () => {
 
       <Separator />
 
-      {/* Progress & Analytics Section */}
+      {/* Progress & Activity Summary Section */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="shadow-sm">
           <CardHeader>
@@ -239,24 +247,45 @@ const Dashboard = () => {
 
         <Card className="shadow-sm">
           <CardHeader>
-            <CardTitle>Daily Activity</CardTitle> {/* Changed title */}
+            <CardTitle className="flex items-center gap-2">Activity Summary</CardTitle>
           </CardHeader>
-          <CardContent>
-            {isLoadingDailyLessons || isLoadingDailyQuizzes || authLoading ? (
-              <p className="text-center text-muted-foreground">Loading...</p>
-            ) : (
-              <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={combinedDailyData}> {/* Changed data source */}
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="lessons" fill="#8884d8" name="Lessons Completed" />
-                  <Bar dataKey="quizzes" fill="#82ca9d" name="Quizzes Taken" />
-                </BarChart>
-              </ResponsiveContainer>
-            )}
+          <CardContent className="grid grid-cols-2 gap-4">
+            <div className="text-center">
+              <CheckCircle className="h-8 w-8 text-green-500 mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">Lessons Today</p>
+              {isLoadingLessonsToday || authLoading ? (
+                <p className="text-xl font-bold">...</p>
+              ) : (
+                <p className="text-xl font-bold">{lessonsCompletedToday}</p>
+              )}
+            </div>
+            <div className="text-center">
+              <ClipboardCheck className="h-8 w-8 text-blue-500 mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">Quizzes Today</p>
+              {isLoadingQuizzesToday || authLoading ? (
+                <p className="text-xl font-bold">...</p>
+              ) : (
+                <p className="text-xl font-bold">{quizzesTakenToday}</p>
+              )}
+            </div>
+            <div className="text-center">
+              <CheckCircle className="h-8 w-8 text-green-500 mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">Total Lessons</p>
+              {isLoadingUserCompletedLessons || authLoading ? (
+                <p className="text-xl font-bold">...</p>
+              ) : (
+                <p className="text-xl font-bold">{userCompletedLessonsCount}</p>
+              )}
+            </div>
+            <div className="text-center">
+              <ClipboardCheck className="h-8 w-8 text-blue-500 mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">Total Quizzes</p>
+              {isLoadingTotalQuizzes || authLoading ? (
+                <p className="text-xl font-bold">...</p>
+              ) : (
+                <p className="text-xl font-bold">{totalQuizAttempts}</p>
+              )}
+            </div>
           </CardContent>
         </Card>
 
