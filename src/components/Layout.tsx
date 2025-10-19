@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -33,7 +35,7 @@ const Layout = () => {
               <Link to="/"><Home className="mr-2 h-4 w-4" />Dashboard</Link>
             </Button>
             <Button variant="ghost" asChild>
-              <Link to="/lessons"><BookOpen className="mr-2 h-4 w-4" />Lessons</Link>
+              <Link to="/courses"><BookOpen className="mr-2 h-4 w-4" />Courses</Link>
             </Button>
             <Button variant="ghost" asChild>
               <Link to="/achievements"><Award className="mr-2 h-4 w-4" />Achievements</Link>

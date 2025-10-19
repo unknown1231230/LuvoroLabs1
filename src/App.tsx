@@ -1,3 +1,5 @@
+"use client";
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,6 +9,9 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Layout from "./components/Layout";
+import PublicLayout from "./components/PublicLayout"; // Import PublicLayout
+import CourseCatalog from "./pages/CourseCatalog"; // Import CourseCatalog
+import APPhysicsCourse from "./pages/APPhysicsCourse"; // Import APPhysicsCourse
 import { useEffect, useState } from "react";
 import { supabase } from "./lib/supabase";
 import { Session } from "@supabase/supabase-js";
@@ -48,17 +53,26 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/auth" element={!session ? <Auth /> : <Navigate to="/" />} />
+            {/* Public Routes */}
+            <Route path="/" element={<PublicLayout />}>
+              <Route index element={<Index />} />
+              <Route path="courses" element={<CourseCatalog />} />
+              <Route path="courses/ap-physics" element={<APPhysicsCourse />} />
+              <Route path="auth" element={!session ? <Auth /> : <Navigate to="/" />} />
+            </Route>
+
+            {/* Authenticated Routes */}
             <Route
               path="/"
               element={session ? <Layout /> : <Navigate to="/auth" replace />}
             >
-              <Route index element={<Index />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              {/* These routes are only accessible when logged in */}
               <Route path="/lessons" element={<div>Lessons Page (Coming Soon!)</div>} />
               <Route path="/achievements" element={<div>Achievements Page (Coming Soon!)</div>} />
               <Route path="/settings" element={<div>Settings Page (Coming Soon!)</div>} />
             </Route>
+            
+            {/* Catch-all for 404 */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
