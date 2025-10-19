@@ -207,6 +207,7 @@ const LessonPage = () => {
               const hasCorrectAttempt = userQuizAttempts.some(a => a.question_id === q.id && a.is_correct);
               const isQuestionDisabled = isLessonMarkedComplete || hasCorrectAttempt;
               const userSelectedAnswerForDisplay = hasCorrectAttempt ? userQuizAttempts.find(a => a.question_id === q.id && a.is_correct)?.selected_answer : selectedAnswers[q.id];
+              const isCurrentlyCorrect = userSelectedAnswerForDisplay === q.correctAnswer;
 
               return (
                 <Card key={q.id} className="shadow-sm">
@@ -217,16 +218,16 @@ const LessonPage = () => {
                     {q.type === 'multiple-choice' && (
                       <RadioGroup
                         onValueChange={(value) => handleAnswerChange(q.id, value)}
-                        value={userSelectedAnswerForDisplay || selectedAnswers[q.id]} // Prioritize stored correct answer
+                        value={userSelectedAnswerForDisplay || selectedAnswers[q.id]}
                         className="grid gap-4"
-                        disabled={isQuestionDisabled} // Disable if lesson completed or already correct
+                        disabled={isQuestionDisabled}
                       >
                         {q.options.map((option, index) => (
                           <div key={index} className="flex items-center space-x-2">
                             <RadioGroupItem value={option} id={`${q.id}-${index}`} disabled={isQuestionDisabled} />
                             <Label htmlFor={`${q.id}-${index}`} className={cn(
                               isQuestionDisabled && option === q.correctAnswer && "font-bold text-green-600",
-                              isQuestionDisabled && option === userSelectedAnswerForDisplay && option !== q.correctAnswer && "line-through text-red-500" // Strikethrough incorrect selected if disabled
+                              isQuestionDisabled && option === userSelectedAnswerForDisplay && option !== q.correctAnswer && "line-through text-red-500"
                             )}>
                               {option}
                               {isQuestionDisabled && option === q.correctAnswer && <CheckCircle className="ml-2 h-4 w-4 inline text-green-500" />}
@@ -236,7 +237,7 @@ const LessonPage = () => {
                         ))}
                       </RadioGroup>
                     )}
-                    {!isQuestionDisabled && ( // Only show submit button if not disabled
+                    {!isQuestionDisabled && (
                       <Button
                         onClick={() => handleSubmitAnswer(q.id, q.correctAnswer)}
                         className="mt-4"
@@ -245,16 +246,28 @@ const LessonPage = () => {
                         {submittedAnswers[q.id] ? "Answer Submitted" : "Submit Answer"}
                       </Button>
                     )}
-                    {(submittedAnswers[q.id] || isQuestionDisabled) && ( // Show feedback if submitted or disabled
-                      <div className="mt-4 p-3 rounded-md flex items-start gap-2">
-                        {userSelectedAnswerForDisplay === q.correctAnswer ? (
-                          <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                        ) : (
-                          <XCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
+                    {(submittedAnswers[q.id] || isQuestionDisabled) && (
+                      <div className="mt-4 p-3 rounded-md flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                          {isCurrentlyCorrect ? (
+                            <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                          ) : (
+                            <XCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
+                          )}
+                          <p className={isCurrentlyCorrect ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}>
+                            {isCurrentlyCorrect ? "Correct!" : "Incorrect."}
+                          </p>
+                        </div>
+                        {!isCurrentlyCorrect && userSelectedAnswerForDisplay && (
+                          <p className="text-muted-foreground text-sm">
+                            Your answer: <span className="font-bold line-through">{userSelectedAnswerForDisplay}</span>
+                          </p>
                         )}
-                        <p className={userSelectedAnswerForDisplay === q.correctAnswer ? "text-green-600" : "text-red-600"}>
-                          {userSelectedAnswerForDisplay === q.correctAnswer ? "Correct!" : "Incorrect."}
-                          <span className="block text-muted-foreground text-sm mt-1">{q.explanation}</span>
+                        <p className="text-muted-foreground text-sm">
+                          Correct answer: <span className="font-bold text-green-600">{q.correctAnswer}</span>
+                        </p>
+                        <p className="text-muted-foreground text-sm mt-1">
+                          Explanation: {q.explanation}
                         </p>
                       </div>
                     )}
