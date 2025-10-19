@@ -1,11 +1,31 @@
 "use client";
 
-import React from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Home, BookOpen } from 'lucide-react';
+import { Home, BookOpen, LogOut } from 'lucide-react';
+import { AuthContext } from '@/App'; // Import AuthContext
+import { supabase } from '@/lib/supabase'; // Import supabase
+import { showSuccess, showError } from '@/utils/toast'; // Import toast utilities
 
 const PublicLayout = () => {
+  const { session } = useContext(AuthContext); // Get session from AuthContext
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        showError(error.message);
+      } else {
+        showSuccess("Logged out successfully!");
+        navigate('/auth');
+      }
+    } catch (error: any) {
+      showError(error.message);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="sticky top-0 z-40 w-full py-2">
@@ -22,9 +42,15 @@ const PublicLayout = () => {
             <Button variant="ghost" asChild>
               <Link to="/courses"><BookOpen className="mr-2 h-4 w-4" />Courses</Link>
             </Button>
-            <Button asChild>
-              <Link to="/auth">Login / Sign Up</Link>
-            </Button>
+            {session ? (
+              <Button variant="ghost" onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />Logout
+              </Button>
+            ) : (
+              <Button asChild>
+                <Link to="/auth">Login / Sign Up</Link>
+              </Button>
+            )}
           </nav>
         </div>
       </header>

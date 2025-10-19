@@ -121,3 +121,52 @@ export const updateUserStreak = async (userId: string) => {
     return null;
   }
 };
+
+export const fetchSiteMetric = async (metricName: string): Promise<number> => {
+  try {
+    const { data, error } = await supabase
+      .from('site_metrics')
+      .select('value')
+      .eq('metric_name', metricName)
+      .single();
+
+    if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
+      throw error;
+    }
+    return data?.value || 0;
+  } catch (error: any) {
+    console.error(`Error fetching site metric '${metricName}':`, error.message);
+    return 0;
+  }
+};
+
+export const incrementSiteMetric = async (metricName: string, incrementBy: number = 1) => {
+  try {
+    // Fetch current value
+    const { data: currentMetric, error: fetchError } = await supabase
+      .from('site_metrics')
+      .select('value')
+      .eq('metric_name', metricName)
+      .single();
+
+    if (fetchError && fetchError.code !== 'PGRST116') {
+      throw fetchError;
+    }
+
+    const newValue = (currentMetric?.value || 0) + incrementBy;
+
+    const { error: updateError } = await supabase
+      .from('site_metrics')
+      .upsert({ metric_name: metricName, value: newValue, updated_at: new Date().toISOString() }, { onConflict: 'metric_name' });
+
+    if (updateError) {
+      throw updateError;
+    }
+    console.log(`Site metric '${metricName}' incremented to ${newValue}`);
+    return newValue;
+  } catch (error: any) {
+    console.error(`Error incrementing site metric '${metricName}':`, error.message);
+    showError(`Failed to update site metric: ${error.message}`);
+    return null;
+  }
+};

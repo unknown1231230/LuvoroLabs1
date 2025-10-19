@@ -4,35 +4,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { BarChart, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Bar } from 'recharts';
-import { Flame, Trophy, Lightbulb, BookOpen } from 'lucide-react';
+import { Flame, Trophy, Lightbulb, BookOpen, Users } from 'lucide-react'; // Import Users icon
 import { useContext, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AuthContext } from "@/App";
-import { getTotalLessonsCount } from "@/utils/courseContent"; // Import new function
-import { fetchUserCompletedLessonsCount } from "@/utils/supabaseUtils"; // Import new function
-
-// --- Supabase Data Fetching Functions (Conceptual - requires database tables) ---
-// You will need to create 'streaks' and 'achievements' tables in Supabase.
-// Example 'streaks' table schema:
-// CREATE TABLE streaks (
-//   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-//   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-//   current_streak INT DEFAULT 0,
-//   last_active_date DATE,
-//   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-// );
-//
-// Example 'achievements' table schema:
-// CREATE TABLE achievements (
-//   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-//   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-//   achievement_name TEXT NOT NULL,
-//   description TEXT,
-//   unlocked_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-// );
+import { getTotalLessonsCount } from "@/utils/courseContent";
+import { fetchUserCompletedLessonsCount, fetchSiteMetric } from "@/utils/supabaseUtils"; // Import fetchSiteMetric
 
 const fetchUserStreak = async (userId: string) => {
   const { data, error } = await supabase
@@ -87,6 +67,11 @@ const Index = () => {
     queryKey: ['userCompletedLessonsCount', userId],
     queryFn: () => userId ? fetchUserCompletedLessonsCount(userId) : Promise.resolve(0),
     enabled: !!userId && !authLoading,
+  });
+
+  const { data: studentsHelped = 0, isLoading: isLoadingStudentsHelped } = useQuery({
+    queryKey: ['studentsHelped'],
+    queryFn: () => fetchSiteMetric('students_helped'),
   });
 
   const userProgress = totalLessonsCount > 0 ? Math.round((userCompletedLessonsCount / totalLessonsCount) * 100) : 0;
@@ -169,6 +154,28 @@ const Index = () => {
             </ul>
           </CardContent>
         </Card>
+      </section>
+
+      <Separator />
+
+      {/* Global Metrics Section */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="shadow-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><Users className="text-purple-500" />Students Helped</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoadingStudentsHelped ? (
+              <p className="text-center text-muted-foreground">Loading...</p>
+            ) : (
+              <>
+                <p className="text-5xl font-extrabold text-center text-purple-600">{studentsHelped.toLocaleString()}</p>
+                <p className="text-center text-muted-foreground mt-2">And counting!</p>
+              </>
+            )}
+          </CardContent>
+        </Card>
+        {/* Placeholder for other global metrics if needed */}
       </section>
 
       <Separator />
