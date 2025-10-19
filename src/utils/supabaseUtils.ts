@@ -208,9 +208,10 @@ export const fetchWeeklyLessonCompletions = async (userId: string): Promise<{ na
       weekStarts.unshift(getStartOfWeek(date)); // Add to the beginning to keep them in chronological order
     }
 
-    // Initialize weeklyData with week names and zero counts
+    // Initialize weeklyData with more descriptive week names and zero counts
+    const weekLabels = ["Week 1", "Week 2", "Week 3", "Current Week"];
     weekStarts.forEach((_, index) => {
-      weeklyData[`Week ${index + 1}`] = 0;
+      weeklyData[weekLabels[index]] = 0;
     });
 
     data.forEach(item => {
@@ -220,7 +221,7 @@ export const fetchWeeklyLessonCompletions = async (userId: string): Promise<{ na
       for (let i = 0; i < weekStarts.length; i++) {
         // Compare timestamps for equality
         if (weekStartOfCompletedDate.getTime() === weekStarts[i].getTime()) {
-          weeklyData[`Week ${i + 1}`]++;
+          weeklyData[weekLabels[i]]++;
           break;
         }
       }
@@ -228,7 +229,12 @@ export const fetchWeeklyLessonCompletions = async (userId: string): Promise<{ na
 
     const result = Object.entries(weeklyData)
       .map(([name, lessons]) => ({ name, lessons }))
-      .sort((a, b) => parseInt(a.name.replace('Week ', '')) - parseInt(b.name.replace('Week ', '')));
+      .sort((a, b) => {
+        // Custom sort to ensure "Current Week" is always last
+        if (a.name === "Current Week") return 1;
+        if (b.name === "Current Week") return -1;
+        return parseInt(a.name.replace('Week ', '')) - parseInt(b.name.replace('Week ', ''));
+      });
 
     return result;
 
@@ -260,9 +266,10 @@ export const fetchWeeklyQuizAttempts = async (userId: string): Promise<{ name: s
       weekStarts.unshift(getStartOfWeek(date)); // Add to the beginning to keep them in chronological order
     }
 
-    // Initialize weeklyData with week names and zero counts
+    // Initialize weeklyData with more descriptive week names and zero counts
+    const weekLabels = ["Week 1", "Week 2", "Week 3", "Current Week"];
     weekStarts.forEach((_, index) => {
-      weeklyData[`Week ${index + 1}`] = 0;
+      weeklyData[weekLabels[index]] = 0;
     });
 
     data.forEach(item => {
@@ -272,7 +279,7 @@ export const fetchWeeklyQuizAttempts = async (userId: string): Promise<{ name: s
       for (let i = 0; i < weekStarts.length; i++) {
         // Compare timestamps for equality
         if (weekStartOfAttemptedDate.getTime() === weekStarts[i].getTime()) {
-          weeklyData[`Week ${i + 1}`]++;
+          weeklyData[weekLabels[i]]++;
           break;
         }
       }
@@ -280,7 +287,12 @@ export const fetchWeeklyQuizAttempts = async (userId: string): Promise<{ name: s
 
     const result = Object.entries(weeklyData)
       .map(([name, quizzes]) => ({ name, quizzes }))
-      .sort((a, b) => parseInt(a.name.replace('Week ', '')) - parseInt(b.name.replace('Week ', '')));
+      .sort((a, b) => {
+        // Custom sort to ensure "Current Week" is always last
+        if (a.name === "Current Week") return 1;
+        if (b.name === "Current Week") return -1;
+        return parseInt(a.name.replace('Week ', '')) - parseInt(b.name.replace('Week ', ''));
+      });
 
     return result;
 
