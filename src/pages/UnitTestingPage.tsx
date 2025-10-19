@@ -378,203 +378,205 @@ const UnitTestingPage = () => {
   const isCurrentSectionSubmitted = submittedSections[currentSection.id];
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-950">
-      {/* Top Header Bar */}
-      <header className="flex items-center justify-between px-6 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm">
-        <div className="flex items-center gap-4">
-          <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-            {currentSection.title}
-          </h1>
-          <span className="text-sm text-muted-foreground">
-            Module {currentSectionIndex + 1}: {module?.title}
-          </span>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-lg font-mono text-primary">
-            <Clock className="h-5 w-5" />
-            <span>{formatTime(timeLeft)}</span>
+    <> {/* Added React Fragment */}
+      <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-950">
+        {/* Top Header Bar */}
+        <header className="flex items-center justify-between px-6 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm">
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+              {currentSection.title}
+            </h1>
+            <span className="text-sm text-muted-foreground">
+              Module {currentSectionIndex + 1}: {module?.title}
+            </span>
           </div>
-          <Button variant="ghost" size="sm" disabled>Annotate</Button> {/* Placeholder */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm">
-                <MoreHorizontal className="h-5 w-5" /> More
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-lg font-mono text-primary">
+              <Clock className="h-5 w-5" />
+              <span>{formatTime(timeLeft)}</span>
+            </div>
+            <Button variant="ghost" size="sm" disabled>Annotate</Button> {/* Placeholder */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  <MoreHorizontal className="h-5 w-5" /> More
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem disabled>Line Reader</DropdownMenuItem>
+                <DropdownMenuItem disabled>Zoom</DropdownMenuItem>
+                <DropdownMenuItem disabled>Accessibility</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </header>
+
+        {/* Main Content Area */}
+        <div className="flex flex-grow overflow-hidden">
+          {/* Left Panel: Question Content */}
+          <div className="flex-grow p-6 overflow-y-auto bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
+            <div className="prose dark:prose-invert !max-w-full w-full">
+              <p className="text-lg font-medium leading-relaxed text-foreground">{currentQuestion.question}</p>
+              {/* Placeholder for image/data table if needed */}
+            </div>
+          </div>
+
+          {/* Right Panel: Answer Choices & Tools */}
+          <div className="w-full lg:w-[200px] flex-shrink-0 flex flex-col p-6 bg-gray-50 dark:bg-gray-950 overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-1 text-lg font-semibold flex-wrap">
+                <span className="bg-primary text-primary-foreground px-2 py-1 rounded-md">
+                  {currentQuestionIndex + 1}
+                </span>
+                <Button
+                  variant={markedForReview[currentQuestion.id] ? "secondary" : "outline"}
+                  onClick={handleMarkForReview}
+                  disabled={isCurrentSectionSubmitted}
+                  className="flex items-center gap-1 text-xs px-2 py-1"
+                >
+                  <Flag className="h-3 w-3" /> Mark for Review
+                </Button>
+              </div>
+              <Button variant="ghost" size="sm" disabled>
+                <BookOpen className="h-4 w-4" /> {/* Placeholder for reference sheet icon */}
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem disabled>Line Reader</DropdownMenuItem>
-              <DropdownMenuItem disabled>Zoom</DropdownMenuItem>
-              <DropdownMenuItem disabled>Accessibility</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </header>
+            </div>
 
-      {/* Main Content Area */}
-      <div className="flex flex-grow overflow-hidden">
-        {/* Left Panel: Question Content */}
-        <div className="flex-grow p-6 overflow-y-auto bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
-          <div className="prose dark:prose-invert !max-w-full w-full">
-            <p className="text-lg font-medium leading-relaxed text-foreground">{currentQuestion.question}</p>
-            {/* Placeholder for image/data table if needed */}
-          </div>
-        </div>
-
-        {/* Right Panel: Answer Choices & Tools */}
-        <div className="w-full lg:w-[200px] flex-shrink-0 flex flex-col p-6 bg-gray-50 dark:bg-gray-950 overflow-y-auto"> {/* Changed lg:w-[280px] to lg:w-[200px] */}
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-1 text-lg font-semibold flex-wrap">
-              <span className="bg-primary text-primary-foreground px-2 py-1 rounded-md">
-                {currentQuestionIndex + 1}
-              </span>
-              <Button
-                variant={markedForReview[currentQuestion.id] ? "secondary" : "outline"}
-                onClick={handleMarkForReview}
+            {currentQuestion.type === 'multiple-choice' ? (
+              <RadioGroup
+                onValueChange={(value) => setSelectedAnswers(prev => ({ ...prev, [currentQuestion.id]: value }))}
+                value={selectedAnswers[currentQuestion.id] || ''}
+                className="flex flex-col gap-3 mb-6"
                 disabled={isCurrentSectionSubmitted}
-                className="flex items-center gap-1 text-xs px-2 py-1"
               >
-                <Flag className="h-3 w-3" /> Mark for Review
-              </Button>
-            </div>
-            <Button variant="ghost" size="sm" disabled>
-              <BookOpen className="h-4 w-4" /> {/* Placeholder for reference sheet icon */}
-            </Button>
-          </div>
-
-          {currentQuestion.type === 'multiple-choice' ? (
-            <RadioGroup
-              onValueChange={(value) => setSelectedAnswers(prev => ({ ...prev, [currentQuestion.id]: value }))}
-              value={selectedAnswers[currentQuestion.id] || ''}
-              className="flex flex-col gap-3 mb-6" {/* Changed grid to flex flex-col */}
-              disabled={isCurrentSectionSubmitted}
-            >
-              {currentQuestion.options?.map((option, index) => (
-                <div key={index} className="flex items-center space-x-3 p-3 border rounded-md bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors w-full">
-                  <RadioGroupItem value={option} id={`${currentQuestion.id}-${index}`} disabled={isCurrentSectionSubmitted} className="flex-shrink-0" />
-                  <Label
-                    htmlFor={`${currentQuestion.id}-${index}`}
-                    className={cn(
-                      "text-base cursor-pointer flex-1 break-words",
-                      eliminatedOptions[currentQuestion.id]?.includes(option) && "line-through text-muted-foreground"
-                    )}
-                  >
-                    {option}
-                  </Label>
-                  {!isCurrentSectionSubmitted && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleOptionEliminate(option)}
-                      className="ml-auto text-xs text-muted-foreground hover:text-destructive flex-shrink-0"
+                {currentQuestion.options?.map((option, index) => (
+                  <div key={index} className="flex items-center space-x-3 p-3 border rounded-md bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors w-full">
+                    <RadioGroupItem value={option} id={`${currentQuestion.id}-${index}`} disabled={isCurrentSectionSubmitted} className="flex-shrink-0" />
+                    <Label
+                      htmlFor={`${currentQuestion.id}-${index}`}
+                      className={cn(
+                        "text-base cursor-pointer flex-1 break-words",
+                        eliminatedOptions[currentQuestion.id]?.includes(option) && "line-through text-muted-foreground"
+                      )}
                     >
-                      <X className="h-3 w-3 mr-1" /> Eliminate
-                    </Button>
-                  )}
-                </div>
-              ))}
-            </RadioGroup>
-          ) : (
-            <div className="grid gap-2 mb-6">
-              <Label htmlFor={`frq-${currentQuestion.id}`} className="text-lg font-semibold">Your Answer:</Label>
-              <Textarea
-                id={`frq-${currentQuestion.id}`}
-                placeholder="Type your free-response answer here..."
-                value={freeResponseAnswers[currentQuestion.id] || ''}
-                onChange={(e) => setFreeResponseAnswers(prev => ({ ...prev, [currentQuestion.id]: e.target.value }))}
-                rows={10}
-                className="min-h-[150px]"
-                disabled={isCurrentSectionSubmitted}
-              />
-            </div>
-          )}
+                      {option}
+                    </Label>
+                    {!isCurrentSectionSubmitted && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleOptionEliminate(option)}
+                        className="ml-auto text-xs text-muted-foreground hover:text-destructive flex-shrink-0"
+                      >
+                        <X className="h-3 w-3 mr-1" /> Eliminate
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </RadioGroup>
+            ) : (
+              <div className="grid gap-2 mb-6">
+                <Label htmlFor={`frq-${currentQuestion.id}`} className="text-lg font-semibold">Your Answer:</Label>
+                <Textarea
+                  id={`frq-${currentQuestion.id}`}
+                  placeholder="Type your free-response answer here..."
+                  value={freeResponseAnswers[currentQuestion.id] || ''}
+                  onChange={(e) => setFreeResponseAnswers(prev => ({ ...prev, [currentQuestion.id]: e.target.value }))}
+                  rows={10}
+                  className="min-h-[150px]"
+                  disabled={isCurrentSectionSubmitted}
+                />
+              </div>
+            )}
 
-          <div className="grid grid-cols-2 gap-2 mt-auto">
-            <Button variant="outline" disabled>Calculator (N/A)</Button> {/* Placeholder */}
-            <Button variant="outline" disabled>Reference (N/A)</Button> {/* Placeholder */}
+            <div className="grid grid-cols-2 gap-2 mt-auto">
+              <Button variant="outline" disabled>Calculator (N/A)</Button> {/* Placeholder */}
+              <Button variant="outline" disabled>Reference (N/A)</Button> {/* Placeholder */}
+            </div>
           </div>
         </div>
+
+        {/* Bottom Navigation Bar */}
+        <footer className="flex items-center justify-between px-6 py-3 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shadow-sm">
+          <Dialog open={isPaletteOpen} onOpenChange={setIsPaletteOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="flex items-center gap-2">
+                <ListChecks className="h-4 w-4" />
+                Question {globalQuestionIndex + 1} of {allQuestions.length}
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px] max-h-[80vh] flex flex-col">
+              <DialogHeader>
+                <DialogTitle>Question Palette</DialogTitle>
+                <DialogDescription>Jump to any question in the current section.</DialogDescription>
+              </DialogHeader>
+              <ScrollArea className="flex-grow pr-4">
+                <div className="grid grid-cols-5 gap-2">
+                  {currentSection.questions.map((q, index) => (
+                    <Button
+                      key={q.id}
+                      variant={index === currentQuestionIndex ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => {
+                        setCurrentQuestionIndex(index);
+                        setIsPaletteOpen(false);
+                      }}
+                      className={cn(
+                        "relative",
+                        getQuestionStatus(q.id) === 'answered' && "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900 dark:text-green-200",
+                        getQuestionStatus(q.id) === 'flagged' && "bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-200",
+                        getQuestionStatus(q.id) === 'skipped' && "bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200",
+                      )}
+                      disabled={isCurrentSectionSubmitted}
+                    >
+                      {index + 1}
+                      {markedForReview[q.id] && (
+                        <Flag className="absolute top-0 right-0 h-3 w-3 text-yellow-500" />
+                      )}
+                    </Button>
+                  ))}
+                </div>
+              </ScrollArea>
+              <DialogFooter className="flex flex-col sm:flex-row sm:justify-between gap-2 mt-4">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-green-100 dark:bg-green-900 border border-green-500"></span> Answered</span>
+                  <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-yellow-100 dark:bg-yellow-900 border border-yellow-500"></span> Flagged</span>
+                  <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-500"></span> Skipped</span>
+                </div>
+                <Button onClick={() => setIsPaletteOpen(false)}>Close</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
+              disabled={currentQuestionIndex === 0 || isCurrentSectionSubmitted}
+              variant="outline"
+            >
+              <ChevronLeft className="mr-2 h-4 w-4" /> Previous
+            </Button>
+            {currentQuestionIndex === currentSection.questions.length - 1 ? (
+              <Button
+                onClick={() => handleSectionSubmission(false)}
+                disabled={isCurrentSectionSubmitted}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                {currentSectionIndex === unitTest.sections.length - 1 ? "Submit Test" : "Submit Section"}
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </Button>
+            ) : (
+              <Button
+                onClick={() => setCurrentQuestionIndex(prev => Math.min(currentSection.questions.length - 1, prev + 1))}
+                disabled={isCurrentSectionSubmitted}
+              >
+                Next <ChevronRight className="ml-2 h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        </footer>
       </div>
-
-      {/* Bottom Navigation Bar */}
-      <footer className="flex items-center justify-between px-6 py-3 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shadow-sm">
-        <Dialog open={isPaletteOpen} onOpenChange={setIsPaletteOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" className="flex items-center gap-2">
-              <ListChecks className="h-4 w-4" />
-              Question {globalQuestionIndex + 1} of {allQuestions.length}
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] max-h-[80vh] flex flex-col">
-            <DialogHeader>
-              <DialogTitle>Question Palette</DialogTitle>
-              <DialogDescription>Jump to any question in the current section.</DialogDescription>
-            </DialogHeader>
-            <ScrollArea className="flex-grow pr-4">
-              <div className="grid grid-cols-5 gap-2">
-                {currentSection.questions.map((q, index) => (
-                  <Button
-                    key={q.id}
-                    variant={index === currentQuestionIndex ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => {
-                      setCurrentQuestionIndex(index);
-                      setIsPaletteOpen(false);
-                    }}
-                    className={cn(
-                      "relative",
-                      getQuestionStatus(q.id) === 'answered' && "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900 dark:text-green-200",
-                      getQuestionStatus(q.id) === 'flagged' && "bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-200",
-                      getQuestionStatus(q.id) === 'skipped' && "bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200",
-                    )}
-                    disabled={isCurrentSectionSubmitted}
-                  >
-                    {index + 1}
-                    {markedForReview[q.id] && (
-                      <Flag className="absolute top-0 right-0 h-3 w-3 text-yellow-500" />
-                    )}
-                  </Button>
-                ))}
-              </div>
-            </ScrollArea>
-            <DialogFooter className="flex flex-col sm:flex-row sm:justify-between gap-2 mt-4">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-green-100 dark:bg-green-900 border border-green-500"></span> Answered</span>
-                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-yellow-100 dark:bg-yellow-900 border border-yellow-500"></span> Flagged</span>
-                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-500"></span> Skipped</span>
-              </div>
-              <Button onClick={() => setIsPaletteOpen(false)}>Close</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        <div className="flex items-center gap-2">
-          <Button
-            onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
-            disabled={currentQuestionIndex === 0 || isCurrentSectionSubmitted}
-            variant="outline"
-          >
-            <ChevronLeft className="mr-2 h-4 w-4" /> Previous
-          </Button>
-          {currentQuestionIndex === currentSection.questions.length - 1 ? (
-            <Button
-              onClick={() => handleSectionSubmission(false)}
-              disabled={isCurrentSectionSubmitted}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              {currentSectionIndex === unitTest.sections.length - 1 ? "Submit Test" : "Submit Section"}
-              <ChevronRight className="ml-2 h-4 w-4" />
-            </Button>
-          ) : (
-            <Button
-              onClick={() => setCurrentQuestionIndex(prev => Math.min(currentSection.questions.length - 1, prev + 1))}
-              disabled={isCurrentSectionSubmitted}
-            >
-              Next <ChevronRight className="ml-2 h-4 w-4" />
-            </Button>
-          )}
-        </div>
-      </footer>
-    </div>
+    </>
   );
 };
 
