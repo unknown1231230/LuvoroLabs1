@@ -19,6 +19,25 @@ export const markLessonAsCompleted = async (userId: string, courseId: string, le
   }
 };
 
+export const fetchUserLessonProgress = async (userId: string, courseId: string): Promise<string[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('user_lesson_progress')
+      .select('lesson_id')
+      .eq('user_id', userId)
+      .eq('course_id', courseId);
+
+    if (error) {
+      throw error;
+    }
+    return data.map(item => item.lesson_id);
+  } catch (error: any) {
+    console.error("Error fetching user lesson progress:", error.message);
+    showError(`Failed to fetch lesson progress: ${error.message}`);
+    return [];
+  }
+};
+
 export const updateUserStreak = async (userId: string) => {
   try {
     const { data: existingStreak, error: fetchError } = await supabase
