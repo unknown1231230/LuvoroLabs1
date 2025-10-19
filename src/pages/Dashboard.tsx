@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AuthContext } from "@/App";
 import { getTotalLessonsCount, findPersonalizedRecommendations } from "@/utils/courseContent";
-import { fetchUserCompletedLessonsCount, fetchSiteMetric, fetchUserLessonProgress } from "@/utils/supabaseUtils";
+import { fetchUserCompletedLessonsCount, fetchSiteMetric, fetchUserLessonProgress, fetchWeeklyLessonCompletions, fetchWeeklyQuizAttempts } from "@/utils/supabaseUtils";
 
 const fetchUserStreak = async (userId: string) => {
   const { data, error } = await supabase
@@ -81,20 +81,31 @@ const Dashboard = () => { // Renamed from Index to Dashboard
     enabled: !authLoading, // Recommendations can be generated even if user is null (will return login message)
   });
 
-  // Removed the useQuery for studentsHelped as it's no longer needed on the dashboard.
-  // const { data: studentsHelped = 0, isLoading: isLoadingStudentsHelped } = useQuery({
-  //   queryKey: ['studentsHelped'],
-  //   queryFn: () => fetchSiteMetric('students_helped'),
-  // });
+  const { data: studentsHelped = 0, isLoading: isLoadingStudentsHelped } = useQuery({
+    queryKey: ['studentsHelped'],
+    queryFn: () => fetchSiteMetric('students_helped'),
+  });
+
+  const { data: weeklyLessons = [], isLoading: isLoadingWeeklyLessons } = useQuery({
+    queryKey: ['weeklyLessons', userId],
+    queryFn: () => userId ? fetchWeeklyLessonCompletions(userId) : Promise.resolve([]),
+    enabled: !!userId && !authLoading,
+  });
+
+  const { data: weeklyQuizzes = [], isLoading: isLoadingWeeklyQuizzes } = useQuery({
+    queryKey: ['weeklyQuizzes', userId],
+    queryFn: () => userId ? fetchWeeklyQuizAttempts(userId) : Promise.resolve([]),
+    enabled: !!userId && !authLoading,
+  });
 
   const userProgress = totalLessonsCount > 0 ? Math.round((userCompletedLessonsCount / totalLessonsCount) * 100) : 0;
 
-  const progressData = [
-    { name: 'Week 1', lessons: 4, quizzes: 3 },
-    { name: 'Week 2', lessons: 6, quizzes: 5 },
-    { name: 'Week 3', lessons: 5, quizzes: 4 },
-    { name: 'Week 4', lessons: 7, quizzes: 6 },
-  ];
+  // Combine weekly lessons and quizzes for the chart
+  const combinedWeeklyData = weeklyLessons.map((lessonWeek, index) => ({
+    name: lessonWeek.name,
+    lessons: lessonWeek.lessons,
+    quizzes: weeklyQuizzes.find(quizWeek => quizWeek.name === lessonWeek.name)?.quizzes || 0,
+  }));
 
   const streakData = [
     { day: 'Mon', streak: 1 },
@@ -168,9 +179,8 @@ const Dashboard = () => { // Renamed from Index to Dashboard
 
       <Separator />
 
-      {/* Global Metrics Section (Removed Students Helped) */}
-      {/* This section is now empty, consider removing if no other global metrics are added */}
-      {/* <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Global Metrics Section */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><Users className="text-purple-500" />Students Helped</CardTitle>
@@ -186,7 +196,8 @@ const Dashboard = () => { // Renamed from Index to Dashboard
             )}
           </CardContent>
         </Card>
-      </section> */}
+        {/* Placeholder for other global metrics if needed */}
+      </section>
 
       <Separator />
 
@@ -202,7 +213,7 @@ const Dashboard = () => { // Renamed from Index to Dashboard
       <Separator />
 
       {/* Progress & Analytics Section */}
-      <section className="grid grid-cols-1 lg:col-span-2 lg:grid-cols-2 gap-6">
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="shadow-sm">
           <CardHeader>
             <CardTitle>Overall Progress</CardTitle>
@@ -227,20 +238,21 @@ const Dashboard = () => { // Renamed from Index to Dashboard
             <CardTitle>Weekly Activity</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={progressData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="lessons" fill="#8884d8" name="Lessons Completed" />
-                <Bar dataKey="quizzes" fill="#82ca9d" name="Quizzes Taken" />
-              </BarChart>
-            </ResponsiveContainer>
-            <p className="text-muted-foreground mt-2 text-sm">
-              *Weekly activity data is currently illustrative. For dynamic data, a dedicated activity log table in Supabase would be needed.
-            </p>
+            {isLoadingWeeklyLessons || isLoadingWeeklyQuizzes || authLoading ? (
+              <p className="text-center text-muted-foreground">Loading...</p>
+            ) : (
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={combinedWeeklyData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="lessons" fill="#8884d8" name="Lessons Completed" />
+                  <Bar dataKey="quizzes" fill="#82ca9d" name="Quizzes Taken" />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </CardContent>
         </Card>
 
@@ -260,7 +272,7 @@ const Dashboard = () => { // Renamed from Index to Dashboard
               </LineChart>
             </ResponsiveContainer>
             <p className="text-muted-foreground mt-2 text-sm">
-              *Streak history data is currently illustrative. For dynamic data, a dedicated streak log table in Supabase would be needed.
+              *Streak history data is currently illustrative. A dedicated streak log table in Supabase would be needed for dynamic history.
             </p>
           </CardContent>
         </Card>

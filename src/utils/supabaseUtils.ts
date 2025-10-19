@@ -175,3 +175,116 @@ export const incrementSiteMetric = async (metricName: string, incrementBy: numbe
     return null;
   }
 };
+
+// Helper to get the start of the week (Monday) for a given date
+const getStartOfWeek = (date: Date): Date => {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday (0) to be last day of prev week
+  d.setDate(diff);
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
+
+export const fetchWeeklyLessonCompletions = async (userId: string): Promise<{ name: string; lessons: number }[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('user_lesson_progress')
+      .select('completed_at')
+      .eq('user_id', userId)
+      .order('completed_at', { ascending: false });
+
+    if (error) throw error;
+
+    const weeklyData: Record<string, number> = {};
+    const now = new Date();
+
+    // Initialize data for the last 4 weeks
+    for (let i = 0; i < 4; i++) {
+      const weekStart = getStartOfWeek(new Date(now.setDate(now.getDate() - (i * 7))));
+      const weekName = `Week ${4 - i}`; // Label as Week 1, Week 2, etc. from oldest to newest
+      weeklyData[weekName] = 0;
+    }
+
+    // Reset now for iteration
+    now.setDate(now.getDate() + (3 * 7));
+
+    data.forEach(item => {
+      const completedDate = new Date(item.completed_at);
+      const weekStartOfCompletedDate = getStartOfWeek(completedDate);
+
+      for (let i = 0; i < 4; i++) {
+        const weekStart = getStartOfWeek(new Date(now.setDate(now.getDate() - (i * 7))));
+        if (weekStartOfCompletedDate.getTime() === weekStart.getTime()) {
+          const weekName = `Week ${4 - i}`;
+          weeklyData[weekName]++;
+          break;
+        }
+      }
+      now.setDate(now.getDate() + (3 * 7)); // Reset now for next iteration
+    });
+
+    // Convert to array and sort by week number
+    const result = Object.entries(weeklyData)
+      .map(([name, lessons]) => ({ name, lessons }))
+      .sort((a, b) => parseInt(a.name.replace('Week ', '')) - parseInt(b.name.replace('Week ', '')));
+
+    return result;
+
+  } catch (error: any) {
+    console.error("Error fetching weekly lesson completions:", error.message);
+    showError(`Failed to fetch weekly lesson completions: ${error.message}`);
+    return [];
+  }
+};
+
+export const fetchWeeklyQuizAttempts = async (userId: string): Promise<{ name: string; quizzes: number }[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('user_quiz_attempts')
+      .select('attempted_at')
+      .eq('user_id', userId)
+      .order('attempted_at', { ascending: false });
+
+    if (error) throw error;
+
+    const weeklyData: Record<string, number> = {};
+    const now = new Date();
+
+    // Initialize data for the last 4 weeks
+    for (let i = 0; i < 4; i++) {
+      const weekStart = getStartOfWeek(new Date(now.setDate(now.getDate() - (i * 7))));
+      const weekName = `Week ${4 - i}`;
+      weeklyData[weekName] = 0;
+    }
+
+    // Reset now for iteration
+    now.setDate(now.getDate() + (3 * 7));
+
+    data.forEach(item => {
+      const attemptedDate = new Date(item.attempted_at);
+      const weekStartOfAttemptedDate = getStartOfWeek(attemptedDate);
+
+      for (let i = 0; i < 4; i++) {
+        const weekStart = getStartOfWeek(new Date(now.setDate(now.getDate() - (i * 7))));
+        if (weekStartOfAttemptedDate.getTime() === weekStart.getTime()) {
+          const weekName = `Week ${4 - i}`;
+          weeklyData[weekName]++;
+          break;
+        }
+      }
+      now.setDate(now.getDate() + (3 * 7)); // Reset now for next iteration
+    });
+
+    const result = Object.entries(weeklyData)
+      .map(([name, quizzes]) => ({ name, quizzes }))
+      .sort((a, b) => parseInt(a.name.replace('Week ', '')) - parseInt(b.name.replace('Week ', '')));
+
+    return result;
+
+  } catch (error: any) {
+    console.error("Error fetching weekly quiz attempts:", error.message);
+    showError(`Failed to fetch weekly quiz attempts: ${error.message}`);
+    return [];
+  }
+};

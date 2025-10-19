@@ -13,6 +13,7 @@ import { AuthContext } from '@/App';
 import { findLessonById, findNextLessonPath } from '@/utils/courseContent.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 import Kinematics1DSimulation from '@/components/simulations/Kinematics1DSimulation'; // Import the new simulation component
+import { supabase } from '@/lib/supabase'; // Import supabase client
 
 const LessonPage = () => {
   const { lessonId } = useParams<{ lessonId: string }>();
@@ -54,13 +55,34 @@ const LessonPage = () => {
     setSubmittedAnswers((prev) => ({ ...prev, [questionId]: false }));
   };
 
-  const handleSubmitAnswer = (questionId: string, correctAnswer: string) => {
+  const handleSubmitAnswer = async (questionId: string, correctAnswer: string) => {
+    if (!user) {
+      showError("You must be logged in to submit answers.");
+      return;
+    }
     if (selectedAnswers[questionId]) {
+      const isCorrect = selectedAnswers[questionId] === correctAnswer;
       setSubmittedAnswers((prev) => ({ ...prev, [questionId]: true }));
-      if (selectedAnswers[questionId] === correctAnswer) {
-        showSuccess("Correct answer!");
+
+      // Record quiz attempt
+      const { error } = await supabase.from('user_quiz_attempts').insert({
+        user_id: user.id,
+        course_id: courseId,
+        lesson_id: lessonId!,
+        question_id: questionId,
+        is_correct: isCorrect,
+      });
+
+      if (error) {
+        console.error("Error recording quiz attempt:", error.message);
+        showError("Failed to record quiz attempt.");
       } else {
-        showError("Incorrect answer. Try again!");
+        queryClient.invalidateQueries({ queryKey: ['weeklyQuizzes', user.id] }); // Invalidate weekly quizzes data
+        if (isCorrect) {
+          showSuccess("Correct answer!");
+        } else {
+          showError("Incorrect answer. Try again!");
+        }
       }
     } else {
       showError("Please select an answer before submitting.");
@@ -82,6 +104,9 @@ const LessonPage = () => {
     if (success) {
       await updateUserStreak(user.id);
       queryClient.invalidateQueries({ queryKey: ['userStreak', user.id] });
+      queryClient.invalidateQueries({ queryKey: ['userCompletedLessonsCount', user.id] });
+      queryClient.invalidateQueries({ queryKey: ['userCompletedLessonIds', user.id] });
+      queryClient.invalidateQueries({ queryKey: ['weeklyLessons', user.id] }); // Invalidate weekly lessons data
       setIsLessonMarkedComplete(true);
       showSuccess("Lesson completed and streak updated!");
 
