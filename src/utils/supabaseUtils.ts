@@ -19,13 +19,18 @@ export const markLessonAsCompleted = async (userId: string, courseId: string, le
   }
 };
 
-export const fetchUserLessonProgress = async (userId: string, courseId: string): Promise<string[]> => {
+export const fetchUserLessonProgress = async (userId: string, courseId?: string): Promise<string[]> => {
   try {
-    const { data, error } = await supabase
+    let query = supabase
       .from('user_lesson_progress')
       .select('lesson_id')
-      .eq('user_id', userId)
-      .eq('course_id', courseId);
+      .eq('user_id', userId);
+
+    if (courseId) {
+      query = query.eq('course_id', courseId);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       throw error;

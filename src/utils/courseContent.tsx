@@ -360,3 +360,33 @@ export const getTotalLessonsCount = (): number => {
   }
   return count;
 };
+
+// New helper function to find personalized recommendations
+export const findPersonalizedRecommendations = (
+  userId: string | null,
+  completedLessonIds: string[]
+): string[] => {
+  if (!userId) {
+    return ["Log in to get personalized recommendations!"];
+  }
+
+  const recommendations: string[] = [];
+
+  // Find the first uncompleted lesson
+  for (const course of courses) {
+    for (const module of course.modules) {
+      for (const lesson of module.lessons) {
+        if (!completedLessonIds.includes(lesson.id)) {
+          recommendations.push(`Continue your journey in '${course.title}' with: ${lesson.title}`);
+          return recommendations; // Return the first uncompleted lesson as the primary recommendation
+        }
+      }
+    }
+  }
+
+  // If all lessons are completed
+  recommendations.push("Congratulations! You've completed all available lessons.");
+  recommendations.push("Explore new courses or review past lessons to reinforce your knowledge.");
+
+  return recommendations;
+};

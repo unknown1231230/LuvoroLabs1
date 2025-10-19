@@ -11,8 +11,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AuthContext } from "@/App";
-import { getTotalLessonsCount } from "@/utils/courseContent";
-import { fetchUserCompletedLessonsCount, fetchSiteMetric } from "@/utils/supabaseUtils";
+import { getTotalLessonsCount, findPersonalizedRecommendations } from "@/utils/courseContent";
+import { fetchUserCompletedLessonsCount, fetchSiteMetric, fetchUserLessonProgress } from "@/utils/supabaseUtils";
 
 const fetchUserStreak = async (userId: string) => {
   const { data, error } = await supabase
@@ -69,19 +69,24 @@ const Dashboard = () => { // Renamed from Index to Dashboard
     enabled: !!userId && !authLoading,
   });
 
+  const { data: userCompletedLessonIds = [], isLoading: isLoadingUserCompletedLessonIds } = useQuery({
+    queryKey: ['userCompletedLessonIds', userId],
+    queryFn: () => userId ? fetchUserLessonProgress(userId) : Promise.resolve([]), // Fetch all completed lesson IDs
+    enabled: !!userId && !authLoading,
+  });
+
+  const { data: personalizedRecommendations = [], isLoading: isLoadingRecommendations } = useQuery({
+    queryKey: ['personalizedRecommendations', userId, userCompletedLessonIds],
+    queryFn: () => findPersonalizedRecommendations(userId, userCompletedLessonIds),
+    enabled: !authLoading, // Recommendations can be generated even if user is null (will return login message)
+  });
+
   const { data: studentsHelped = 0, isLoading: isLoadingStudentsHelped } = useQuery({
     queryKey: ['studentsHelped'],
     queryFn: () => fetchSiteMetric('students_helped'),
   });
 
   const userProgress = totalLessonsCount > 0 ? Math.round((userCompletedLessonsCount / totalLessonsCount) * 100) : 0;
-
-  // Mock data for demonstration (if not logged in or no data)
-  const personalizedRecommendations = [
-    "Review 'Algebraic Equations' - you missed a few questions on the last quiz.",
-    "Try the 'Introduction to Physics' lab for a new challenge.",
-    "Practice 'Calculus Derivatives' with an AP-style quiz."
-  ];
 
   const progressData = [
     { name: 'Week 1', lessons: 4, quizzes: 3 },
@@ -147,11 +152,15 @@ const Dashboard = () => { // Renamed from Index to Dashboard
             <CardTitle className="flex items-center gap-2"><Lightbulb className="text-blue-500" />Personalized Recommendations</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-              {personalizedRecommendations.map((rec, index) => (
-                <li key={index}>{rec}</li>
-              ))}
-            </ul>
+            {isLoadingRecommendations || authLoading ? (
+              <p className="text-center text-muted-foreground">Loading...</p>
+            ) : (
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                {personalizedRecommendations.map((rec, index) => (
+                  <li key={index}>{rec}</li>
+                ))}
+              </ul>
+            )}
           </CardContent>
         </Card>
       </section>
