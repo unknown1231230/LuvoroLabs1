@@ -376,7 +376,7 @@ const UnitTestingPage = () => {
     <>
       {isCalculatorVisible && <Calculator onClose={() => setIsCalculatorVisible(false)} />}
       {isLineReaderVisible && <LineReader />}
-      <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-950">
+      <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
         <header className="flex items-center justify-between px-6 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm">
           <div className="flex items-center gap-4">
             <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
@@ -414,14 +414,14 @@ const UnitTestingPage = () => {
           </div>
         </header>
 
-        <div className="flex flex-grow overflow-hidden" style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'top left' }}>
-          <div className="flex-1 min-w-0 p-6 overflow-y-auto bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
+        <div className="flex flex-col lg:flex-row flex-grow" style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'top left' }}>
+          <div className="flex-1 min-w-0 p-6 bg-white dark:bg-gray-900 lg:overflow-y-auto lg:border-r border-b lg:border-b-0 border-gray-200 dark:border-gray-800">
             <div className="prose dark:prose-invert !max-w-full w-full">
               <p className="text-lg font-medium leading-relaxed text-foreground">{currentQuestion.question}</p>
             </div>
           </div>
 
-          <div className="w-96 flex-shrink-0 flex flex-col p-6 bg-gray-50 dark:bg-gray-950 overflow-y-auto">
+          <div className="w-full lg:w-96 flex-shrink-0 flex flex-col p-6 bg-gray-50 dark:bg-gray-950 lg:overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-1 text-lg font-semibold flex-wrap">
                 <span className="bg-primary text-primary-foreground px-2 py-1 rounded-md">
