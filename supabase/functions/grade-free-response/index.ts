@@ -22,8 +22,10 @@ serve(async (req) => {
       });
     }
 
+    // Initialize OpenAI client to use OpenRouter's API
     const openai = new OpenAI({
-      apiKey: Deno.env.get("OPENAI_API_KEY"),
+      apiKey: Deno.env.get("OPENROUTER_API_KEY"), // Use the new OpenRouter API key
+      baseURL: "https://openrouter.ai/api/v1", // OpenRouter API endpoint
     });
 
     const prompt = `
@@ -42,7 +44,7 @@ serve(async (req) => {
     `;
 
     const chatCompletion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo", // Or "gpt-4o" for potentially better results
+      model: "gpt-3.5-turbo", // You can specify other models available on OpenRouter here, e.g., "mistralai/mixtral-8x7b-instruct"
       messages: [{ role: "user", content: prompt }],
       response_format: { type: "json_object" },
       temperature: 0.2, // Keep it low for factual grading
