@@ -61,11 +61,11 @@ export const fetchUserCompletedLessonsCount = async (userId: string): Promise<nu
   }
 };
 
-// Helper to get the start of the day in UTC for a given date
-const getStartOfDayUTC = (date: Date): Date => {
+// Helper to get the start of the day in LOCAL timezone for a given date
+const getStartOfDayLocal = (date: Date): Date => {
   const d = new Date(date);
-  d.setUTCHours(0, 0, 0, 0);
-  d.setUTCMilliseconds(0);
+  d.setHours(0, 0, 0, 0); // Sets local hours to midnight
+  d.setMilliseconds(0);
   return d;
 };
 
@@ -82,29 +82,30 @@ export const updateUserStreak = async (userId: string) => {
       throw fetchError;
     }
 
-    const todayUtc = getStartOfDayUTC(new Date());
+    const todayLocal = getStartOfDayLocal(new Date()); // Midnight of client's local day
     let newStreak = 1;
-    let lastActiveDateToSave = todayUtc.toISOString().split('T')[0]; // YYYY-MM-DD format for DB
+    // Format for DB: YYYY-MM-DD
+    const todayFormatted = todayLocal.toISOString().split('T')[0];
 
     if (existingStreak) {
-      const lastActiveDateFromDB = existingStreak.last_active_date;
-      // Ensure lastActiveDateFromDB is treated as UTC date
-      const lastActiveUtc = getStartOfDayUTC(new Date(lastActiveDateFromDB + 'T00:00:00Z'));
+      const lastActiveDateFromDB = existingStreak.last_active_date; // This is 'YYYY-MM-DD' string
+      // Parse DB date string as a local date at midnight for comparison
+      const lastActiveLocal = getStartOfDayLocal(new Date(lastActiveDateFromDB));
 
-      // Check if the last active date is today (UTC)
-      if (lastActiveUtc.getTime() === todayUtc.getTime()) {
+      // Check if the last active date is today (local)
+      if (lastActiveLocal.getTime() === todayLocal.getTime()) {
         newStreak = existingStreak.current_streak;
-        console.log(`[Streak Debug] User ${userId}: Same UTC day (${lastActiveDateToSave}), streak not changed. Current: ${newStreak}`);
+        console.log(`[Streak Debug] User ${userId}: Same local day (${todayFormatted}), streak not changed. Current: ${newStreak}`);
       } else {
-        // Check if the last active date was yesterday (UTC)
-        const yesterdayUtc = getStartOfDayUTC(new Date(todayUtc));
-        yesterdayUtc.setUTCDate(todayUtc.getUTCDate() - 1);
+        // Check if the last active date was yesterday (local)
+        const yesterdayLocal = getStartOfDayLocal(new Date(todayLocal));
+        yesterdayLocal.setDate(todayLocal.getDate() - 1);
 
-        if (lastActiveUtc.getTime() === yesterdayUtc.getTime()) {
+        if (lastActiveLocal.getTime() === yesterdayLocal.getTime()) {
           newStreak = existingStreak.current_streak + 1;
-          console.log(`[Streak Debug] User ${userId}: Consecutive UTC day (${lastActiveDateToSave}), streak incremented. New: ${newStreak}`);
+          console.log(`[Streak Debug] User ${userId}: Consecutive local day (${todayFormatted}), streak incremented. New: ${newStreak}`);
         } else {
-          // Not active yesterday or today (UTC), reset streak
+          // Not active yesterday or today (local), reset streak
           newStreak = 1;
           console.log(`[Streak Debug] User ${userId}: Gap detected (last active: ${lastActiveDateFromDB}), streak reset. New: ${newStreak}`);
         }
@@ -115,7 +116,7 @@ export const updateUserStreak = async (userId: string) => {
 
     const { error: upsertError } = await supabase
       .from('streaks')
-      .upsert({ user_id: userId, current_streak: newStreak, last_active_date: lastActiveDateToSave }, { onConflict: 'user_id' });
+      .upsert({ user_id: userId, current_streak: newStreak, last_active_date: todayFormatted }, { onConflict: 'user_id' });
 
     if (upsertError) {
       console.error(`[Streak Debug] Error upserting streak for user ${userId}:`, upsertError.message);
@@ -183,16 +184,16 @@ export const incrementSiteMetric = async (metricName: string, incrementBy: numbe
 
 export const fetchLessonsCompletedToday = async (userId: string): Promise<number> => {
   try {
-    const todayUtc = getStartOfDayUTC(new Date());
-    const tomorrowUtc = new Date(todayUtc);
-    tomorrowUtc.setUTCDate(todayUtc.getUTCDate() + 1);
+    const todayLocal = getStartOfDayLocal(new Date());
+    const tomorrowLocal = new Date(todayLocal);
+    tomorrowLocal.setDate(todayLocal.getDate() + 1);
 
     const { count, error } = await supabase
       .from('user_lesson_progress')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', userId)
-      .gte('completed_at', todayUtc.toISOString())
-      .lt('completed_at', tomorrowUtc.toISOString());
+      .gte('completed_at', todayLocal.toISOString())
+      .lt('completed_at', tomorrowLocal.toISOString());
 
     if (error) throw error;
     return count || 0;
@@ -221,16 +222,16 @@ export const fetchTotalQuizAttempts = async (userId: string): Promise<number> =>
 
 export const fetchQuizzesTakenToday = async (userId: string): Promise<number> => {
   try {
-    const todayUtc = getStartOfDayUTC(new Date());
-    const tomorrowUtc = new Date(todayUtc);
-    tomorrowUtc.setUTCDate(todayUtc.getUTCDate() + 1);
+    const todayLocal = getStartOfDayLocal(new Date());
+    const tomorrowLocal = new Date(todayLocal);
+    tomorrowLocal.setDate(todayLocal.getDate() + 1);
 
     const { count, error } = await supabase
       .from('user_quiz_attempts')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', userId)
-      .gte('attempted_at', todayUtc.toISOString())
-      .lt('attempted_at', tomorrowUtc.toISOString());
+      .gte('attempted_at', todayLocal.toISOString())
+      .lt('attempted_at', tomorrowLocal.toISOString());
 
     if (error) throw error;
     return count || 0;
