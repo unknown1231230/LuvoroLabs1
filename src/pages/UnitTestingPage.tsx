@@ -421,7 +421,7 @@ const UnitTestingPage = () => {
         </div>
 
         {/* Right Panel: Answer Choices & Tools */}
-        <div className="w-full lg:w-[280px] flex-shrink-0 flex flex-col p-6 bg-gray-50 dark:bg-gray-950 overflow-y-auto"> {/* Changed lg:w-[300px] to lg:w-[280px] */}
+        <div className="w-full lg:w-[200px] flex-shrink-0 flex flex-col p-6 bg-gray-50 dark:bg-gray-950 overflow-y-auto"> {/* Changed lg:w-[280px] to lg:w-[200px] */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-1 text-lg font-semibold flex-wrap">
               <span className="bg-primary text-primary-foreground px-2 py-1 rounded-md">
@@ -445,16 +445,16 @@ const UnitTestingPage = () => {
             <RadioGroup
               onValueChange={(value) => setSelectedAnswers(prev => ({ ...prev, [currentQuestion.id]: value }))}
               value={selectedAnswers[currentQuestion.id] || ''}
-              className="grid gap-3 mb-6"
+              className="flex flex-col gap-3 mb-6" {/* Changed grid to flex flex-col */}
               disabled={isCurrentSectionSubmitted}
             >
               {currentQuestion.options?.map((option, index) => (
                 <div key={index} className="flex items-center space-x-3 p-3 border rounded-md bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors w-full">
-                  <RadioGroupItem value={option} id={`${currentQuestion.id}-${index}`} disabled={isCurrentSectionSubmitted} className="flex-shrink-0" /> {/* Added flex-shrink-0 */}
+                  <RadioGroupItem value={option} id={`${currentQuestion.id}-${index}`} disabled={isCurrentSectionSubmitted} className="flex-shrink-0" />
                   <Label
                     htmlFor={`${currentQuestion.id}-${index}`}
                     className={cn(
-                      "text-base cursor-pointer flex-1 break-words", // Changed max-w-full to flex-1
+                      "text-base cursor-pointer flex-1 break-words",
                       eliminatedOptions[currentQuestion.id]?.includes(option) && "line-through text-muted-foreground"
                     )}
                   >
@@ -465,7 +465,7 @@ const UnitTestingPage = () => {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleOptionEliminate(option)}
-                      className="ml-auto text-xs text-muted-foreground hover:text-destructive flex-shrink-0" // Added flex-shrink-0
+                      className="ml-auto text-xs text-muted-foreground hover:text-destructive flex-shrink-0"
                     >
                       <X className="h-3 w-3 mr-1" /> Eliminate
                     </Button>
