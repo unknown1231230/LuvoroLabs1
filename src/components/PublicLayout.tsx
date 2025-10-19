@@ -47,7 +47,7 @@ const PublicLayout = () => {
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Courses</p>
+                <p className="text-blue-600">Courses</p> {/* Added text-blue-600 class */}
               </TooltipContent>
             </Tooltip>
             {session ? (

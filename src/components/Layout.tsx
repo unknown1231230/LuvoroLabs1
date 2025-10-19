@@ -45,7 +45,7 @@ const Layout = () => {
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Courses</p>
+                <p className="text-blue-600">Courses</p> {/* Added text-blue-600 class */}
               </TooltipContent>
             </Tooltip>
             <Button variant="ghost" asChild>
@@ -54,7 +54,9 @@ const Layout = () => {
             <Button variant="ghost" asChild>
               <Link to="/settings"><Settings className="mr-2 h-4 w-4" />Settings</Link>
             </Button>
-            {/* Logout button removed from header, can be added to Dashboard if requested */}
+            <Button variant="ghost" onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />Logout
+            </Button>
           </nav>
         </div>
       </header>
