@@ -87,10 +87,24 @@ export const updateUserStreak = async (userId: string) => {
     // Format for DB: YYYY-MM-DD
     const todayFormatted = todayLocal.toISOString().split('T')[0];
 
+    console.log(`[Streak Debug] Current time: ${new Date().toISOString()}`);
+    console.log(`[Streak Debug] todayLocal: ${todayLocal.toISOString()}`);
+    console.log(`[Streak Debug] todayFormatted (for DB): ${todayFormatted}`);
+
     if (existingStreak) {
+      console.log(`[Streak Debug] Existing streak: ${existingStreak.current_streak}, last active date (DB): ${existingStreak.last_active_date}`);
       const lastActiveDateFromDB = existingStreak.last_active_date; // This is 'YYYY-MM-DD' string
       // Parse DB date string as a local date at midnight for comparison
       const lastActiveLocal = getStartOfDayLocal(new Date(lastActiveDateFromDB));
+      console.log(`[Streak Debug] lastActiveLocal (from DB): ${lastActiveLocal.toISOString()}`);
+
+      const yesterdayLocal = getStartOfDayLocal(new Date(todayLocal));
+      yesterdayLocal.setDate(todayLocal.getDate() - 1);
+      console.log(`[Streak Debug] yesterdayLocal: ${yesterdayLocal.toISOString()}`);
+
+      console.log(`[Streak Debug] Comparison: lastActiveLocal (${lastActiveLocal.toISOString()}) === todayLocal (${todayLocal.toISOString()}) -> ${lastActiveLocal.getTime() === todayLocal.getTime()}`);
+      console.log(`[Streak Debug] Comparison: lastActiveLocal (${lastActiveLocal.toISOString()}) === yesterdayLocal (${yesterdayLocal.toISOString()}) -> ${lastActiveLocal.getTime() === yesterdayLocal.getTime()}`);
+
 
       // Check if the last active date is today (local)
       if (lastActiveLocal.getTime() === todayLocal.getTime()) {
@@ -98,9 +112,6 @@ export const updateUserStreak = async (userId: string) => {
         console.log(`[Streak Debug] User ${userId}: Same local day (${todayFormatted}), streak not changed. Current: ${newStreak}`);
       } else {
         // Check if the last active date was yesterday (local)
-        const yesterdayLocal = getStartOfDayLocal(new Date(todayLocal));
-        yesterdayLocal.setDate(todayLocal.getDate() - 1);
-
         if (lastActiveLocal.getTime() === yesterdayLocal.getTime()) {
           newStreak = existingStreak.current_streak + 1;
           console.log(`[Streak Debug] User ${userId}: Consecutive local day (${todayFormatted}), streak incremented. New: ${newStreak}`);
