@@ -414,14 +414,14 @@ const UnitTestingPage = () => {
       <div className="flex flex-grow overflow-hidden">
         {/* Left Panel: Question Content */}
         <div className="flex-grow p-6 overflow-y-auto bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
-          <div className="prose dark:prose-invert !max-w-full w-full"> {/* Changed max-w-none to !max-w-full */}
+          <div className="prose dark:prose-invert !max-w-full w-full">
             <p className="text-lg font-medium leading-relaxed text-foreground">{currentQuestion.question}</p>
             {/* Placeholder for image/data table if needed */}
           </div>
         </div>
 
         {/* Right Panel: Answer Choices & Tools */}
-        <div className="w-full lg:w-[350px] flex-shrink-0 flex flex-col p-6 bg-gray-50 dark:bg-gray-950 overflow-y-auto"> {/* Changed lg:w-[400px] to lg:w-[350px] */}
+        <div className="w-full lg:w-[300px] flex-shrink-0 flex flex-col p-6 bg-gray-50 dark:bg-gray-950 overflow-y-auto"> {/* Changed lg:w-[350px] to lg:w-[300px] */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-1 text-lg font-semibold flex-wrap">
               <span className="bg-primary text-primary-foreground px-2 py-1 rounded-md">
@@ -449,12 +449,12 @@ const UnitTestingPage = () => {
               disabled={isCurrentSectionSubmitted}
             >
               {currentQuestion.options?.map((option, index) => (
-                <div key={index} className="flex items-center space-x-3 p-3 border rounded-md bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <div key={index} className="flex items-center space-x-3 p-3 border rounded-md bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors w-full"> {/* Added w-full */}
                   <RadioGroupItem value={option} id={`${currentQuestion.id}-${index}`} disabled={isCurrentSectionSubmitted} />
                   <Label
                     htmlFor={`${currentQuestion.id}-${index}`}
                     className={cn(
-                      "text-base cursor-pointer flex-grow",
+                      "text-base cursor-pointer max-w-full break-words", // Removed flex-grow, added max-w-full and break-words
                       eliminatedOptions[currentQuestion.id]?.includes(option) && "line-through text-muted-foreground"
                     )}
                   >
