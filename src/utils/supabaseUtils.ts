@@ -123,7 +123,7 @@ export const updateUserStreak = async (userId: string) => {
         } else {
           // Not active yesterday or today (local), reset streak
           newStreak = 1;
-          console.log(`[Streak Debug] User ${userId}: Gap detected (last active: ${lastActiveDateFromDB}), streak reset. New: ${newStreak}`);
+          console.log(`[Streak Debug] User ${userId}: Gap detected (last active: ${existingStreak.last_active_date}), streak reset. New: ${newStreak}`);
         }
       }
     } else {
@@ -273,6 +273,26 @@ export const fetchStreakHistory = async (userId: string): Promise<{ recorded_dat
   } catch (error: any) {
     console.error("Error fetching streak history:", error.message);
     showError(`Failed to fetch streak history: ${error.message}`);
+    return [];
+  }
+};
+
+export const fetchUserQuizAttempts = async (userId: string, courseId: string, lessonId: string): Promise<Array<{ question_id: string; is_correct: boolean; selected_answer: string | null }>> => {
+  try {
+    const { data, error } = await supabase
+      .from('user_quiz_attempts')
+      .select('question_id, is_correct, selected_answer')
+      .eq('user_id', userId)
+      .eq('course_id', courseId)
+      .eq('lesson_id', lessonId);
+
+    if (error) {
+      throw error;
+    }
+    return data || [];
+  } catch (error: any) {
+    console.error("Error fetching user quiz attempts:", error.message);
+    showError(`Failed to fetch quiz attempts: ${error.message}`);
     return [];
   }
 };
