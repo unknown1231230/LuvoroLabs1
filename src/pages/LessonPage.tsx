@@ -115,7 +115,7 @@ const LessonPage = () => {
       }
     };
     fetchData();
-  }, [user, lessonId, courseId, queryClient, lesson?.questions, handleCompleteLesson]); // Added handleCompleteLesson to dependencies
+  }, [user, lessonId, courseId, queryClient, lesson?.questions]); // Removed handleCompleteLesson from here
 
   // Effect to trigger auto-completion if all questions become correct
   useEffect(() => {
