@@ -8,13 +8,13 @@ import { AuthContext } from '@/App';
 import { supabase } from '@/lib/supabase';
 import { showSuccess, showError } from '@/utils/toast';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile
-import MobileNav from './MobileNav'; // Import MobileNav
+import { useIsMobile } from '@/hooks/use-mobile';
+import MobileNav from './MobileNav';
 
 const PublicLayout = () => {
   const { session } = useContext(AuthContext);
   const navigate = useNavigate();
-  const isMobile = useIsMobile(); // Use the hook
+  const isMobile = useIsMobile();
 
   const handleLogout = async () => {
     try {
@@ -33,11 +33,11 @@ const PublicLayout = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="sticky top-0 z-40 w-full py-2">
-        <div className="container flex h-16 items-center justify-between px-4 py-4
+        <div className="container flex items-center justify-between px-4 py-2
           bg-white/10 rounded-2xl shadow-lg backdrop-blur-md border border-white/20">
-          <Link to="/" className="flex items-center gap-2 text-2xl font-bold text-primary">
-            <img src="/logo.png" alt="Luvoro Labs Logo" className="h-8 w-8" />
-            <span className="hidden sm:inline">Luvoro Labs</span> {/* Hide text on very small screens */}
+          <Link to="/" className="flex items-center gap-2 text-2xl font-bold text-primary flex-shrink-0">
+            <img src="/logo.png" alt="Luvoro Labs Logo" className="h-7 w-7" />
+            <span className="hidden sm:inline">Luvoro Labs</span>
           </Link>
           {isMobile ? (
             <MobileNav isAuthenticated={!!session} />
