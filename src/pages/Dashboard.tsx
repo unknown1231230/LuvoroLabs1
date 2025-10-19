@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AuthContext } from "@/App";
 import { getTotalLessonsCount, findPersonalizedRecommendations } from "@/utils/courseContent";
-import { fetchUserCompletedLessonsCount, fetchSiteMetric, fetchUserLessonProgress, fetchWeeklyLessonCompletions, fetchWeeklyQuizAttempts } from "@/utils/supabaseUtils";
+import { fetchUserCompletedLessonsCount, fetchSiteMetric, fetchUserLessonProgress, fetchWeeklyLessonCompletions, fetchWeeklyQuizAttempts, fetchStreakHistory } from "@/utils/supabaseUtils";
 
 const fetchUserStreak = async (userId: string) => {
   const { data, error } = await supabase
@@ -98,6 +98,12 @@ const Dashboard = () => { // Renamed from Index to Dashboard
     enabled: !!userId && !authLoading,
   });
 
+  const { data: streakHistory = [], isLoading: isLoadingStreakHistory } = useQuery({
+    queryKey: ['streakHistory', userId],
+    queryFn: () => userId ? fetchStreakHistory(userId) : Promise.resolve([]),
+    enabled: !!userId && !authLoading,
+  });
+
   const userProgress = totalLessonsCount > 0 ? Math.round((userCompletedLessonsCount / totalLessonsCount) * 100) : 0;
 
   // Combine weekly lessons and quizzes for the chart
@@ -107,14 +113,11 @@ const Dashboard = () => { // Renamed from Index to Dashboard
     quizzes: weeklyQuizzes.find(quizWeek => quizWeek.name === lessonWeek.name)?.quizzes || 0,
   }));
 
-  // Streak history remains illustrative for now
-  const streakData = [
-    { day: 'Mon', streak: 1 },
-    { day: 'Tue', streak: 2 },
-    { day: 'Wed', streak: 3 },
-    { day: 'Thu', streak: 4 },
-    { day: 'Fri', streak: 5 },
-  ];
+  // Prepare streak history data for Recharts
+  const formattedStreakHistory = streakHistory.map(entry => ({
+    date: new Date(entry.recorded_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    streak: entry.streak_count,
+  }));
 
   return (
     <div className="space-y-8">
@@ -262,19 +265,22 @@ const Dashboard = () => { // Renamed from Index to Dashboard
             <CardTitle>Streak History</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={streakData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="streak" stroke="#ffc658" activeDot={{ r: 8 }} />
-              </LineChart>
-            </ResponsiveContainer>
-            <p className="text-muted-foreground mt-2 text-sm">
-              *Streak history data is currently illustrative. A dedicated streak log table in Supabase would be needed for dynamic history.
-            </p>
+            {isLoadingStreakHistory || authLoading ? (
+              <p className="text-center text-muted-foreground">Loading...</p>
+            ) : formattedStreakHistory.length > 0 ? (
+              <ResponsiveContainer width="100%" height={200}>
+                <LineChart data={formattedStreakHistory}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="streak" stroke="#ffc658" activeDot={{ r: 8 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-center text-muted-foreground">No streak history available yet. Complete a lesson to start your streak!</p>
+            )}
           </CardContent>
         </Card>
       </section>

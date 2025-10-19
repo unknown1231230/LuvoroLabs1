@@ -199,17 +199,13 @@ export const fetchWeeklyLessonCompletions = async (userId: string): Promise<{ na
 
     const weeklyData: Record<string, number> = {};
     const weekStarts: Date[] = [];
+    const now = new Date();
 
-    // Calculate the start of the current week
-    const today = new Date();
-    const currentWeekStart = getStartOfWeek(today);
-    weekStarts.push(currentWeekStart);
-
-    // Calculate the start of the previous 3 weeks
-    for (let i = 1; i < 4; i++) {
-      const prevWeekStart = new Date(currentWeekStart);
-      prevWeekStart.setDate(currentWeekStart.getDate() - (i * 7));
-      weekStarts.unshift(prevWeekStart); // Add to the beginning to keep them in chronological order
+    // Get the start dates for the last 4 weeks
+    for (let i = 0; i < 4; i++) {
+      const date = new Date(now);
+      date.setDate(now.getDate() - (i * 7));
+      weekStarts.unshift(getStartOfWeek(date)); // Add to the beginning to keep them in chronological order
     }
 
     // Initialize weeklyData with week names and zero counts
@@ -224,8 +220,7 @@ export const fetchWeeklyLessonCompletions = async (userId: string): Promise<{ na
       for (let i = 0; i < weekStarts.length; i++) {
         // Compare timestamps for equality
         if (weekStartOfCompletedDate.getTime() === weekStarts[i].getTime()) {
-          const weekName = `Week ${i + 1}`;
-          weeklyData[weekName]++;
+          weeklyData[`Week ${i + 1}`]++;
           break;
         }
       }
@@ -256,17 +251,13 @@ export const fetchWeeklyQuizAttempts = async (userId: string): Promise<{ name: s
 
     const weeklyData: Record<string, number> = {};
     const weekStarts: Date[] = [];
+    const now = new Date();
 
-    // Calculate the start of the current week
-    const today = new Date();
-    const currentWeekStart = getStartOfWeek(today);
-    weekStarts.push(currentWeekStart);
-
-    // Calculate the start of the previous 3 weeks
-    for (let i = 1; i < 4; i++) {
-      const prevWeekStart = new Date(currentWeekStart);
-      prevWeekStart.setDate(currentWeekStart.getDate() - (i * 7));
-      weekStarts.unshift(prevWeekStart); // Add to the beginning to keep them in chronological order
+    // Get the start dates for the last 4 weeks
+    for (let i = 0; i < 4; i++) {
+      const date = new Date(now);
+      date.setDate(now.getDate() - (i * 7));
+      weekStarts.unshift(getStartOfWeek(date)); // Add to the beginning to keep them in chronological order
     }
 
     // Initialize weeklyData with week names and zero counts
@@ -281,8 +272,7 @@ export const fetchWeeklyQuizAttempts = async (userId: string): Promise<{ name: s
       for (let i = 0; i < weekStarts.length; i++) {
         // Compare timestamps for equality
         if (weekStartOfAttemptedDate.getTime() === weekStarts[i].getTime()) {
-          const weekName = `Week ${i + 1}`;
-          weeklyData[weekName]++;
+          weeklyData[`Week ${i + 1}`]++;
           break;
         }
       }
@@ -297,6 +287,25 @@ export const fetchWeeklyQuizAttempts = async (userId: string): Promise<{ name: s
   } catch (error: any) {
     console.error("Error fetching weekly quiz attempts:", error.message);
     showError(`Failed to fetch weekly quiz attempts: ${error.message}`);
+    return [];
+  }
+};
+
+export const fetchStreakHistory = async (userId: string): Promise<{ recorded_date: string; streak_count: number }[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('streak_history')
+      .select('recorded_date, streak_count')
+      .eq('user_id', userId)
+      .order('recorded_date', { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+    return data || [];
+  } catch (error: any) {
+    console.error("Error fetching streak history:", error.message);
+    showError(`Failed to fetch streak history: ${error.message}`);
     return [];
   }
 };
