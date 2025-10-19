@@ -13,7 +13,7 @@ import PublicLayout from "./components/PublicLayout";
 import CourseCatalog from "./pages/CourseCatalog";
 import APPhysicsCourse from "./pages/APPhysicsCourse";
 import LessonPage from "./pages/LessonPage"; // Import LessonPage
-import { useEffect, useState } => "react";
+import { useEffect, useState } from "react"; // Corrected this line
 import { supabase } from "./lib/supabase";
 import { Session } from "@supabase/supabase-js";
 
