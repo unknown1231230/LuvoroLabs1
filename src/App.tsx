@@ -78,7 +78,7 @@ const App = () => {
                 <Route path="courses/ap-physics" element={<APPhysicsCourse />} />
                 <Route path="courses/ap-physics/lessons/:lessonId" element={<LessonPage />} />
                 <Route path="courses/:courseId/unit-test/:moduleId" element={<UnitTestingPage />} /> {/* New: Unit Test Page */}
-                <Route path="courses/:courseId/unit-test-results/:sessionId" element={<UnitTestResultsPage />} /> {/* New: Unit Test Results Page */}
+                <Route path="courses/:courseId/unit-test/:moduleId/results/:sessionId" element={<UnitTestResultsPage />} /> {/* Updated: Unit Test Results Page with moduleId */}
                 <Route path="auth" element={!session ? <Auth /> : <Navigate to="/dashboard" />} /> {/* Redirect to dashboard */}
               </Route>
 

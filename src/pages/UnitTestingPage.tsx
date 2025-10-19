@@ -172,7 +172,7 @@ const UnitTestingPage = () => {
     queryClient.invalidateQueries({ queryKey: ['userUnitTestAnswers', testSessionId] });
 
     showSuccess(timedOut ? "Time's up! Test submitted." : "Test submitted successfully!");
-    navigate(`/courses/${courseId}/unit-test-results/${testSessionId}`); // Redirect to results page
+    navigate(`/courses/${courseId}/unit-test/${moduleId}/results/${testSessionId}`); // Redirect to results page
   };
 
   const currentQuestion = unitTest?.questions[currentQuestionIndex];
@@ -277,7 +277,7 @@ const UnitTestingPage = () => {
           <CardContent className="space-y-4">
             <p className="text-lg">You can view your results now.</p>
             <Button asChild size="lg" className="w-full">
-              <Link to={`/courses/${courseId}/unit-test-results/${testSessionId}`}>
+              <Link to={`/courses/${courseId}/unit-test/${moduleId}/results/${testSessionId}`}>
                 View Results
               </Link>
             </Button>

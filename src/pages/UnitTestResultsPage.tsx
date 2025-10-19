@@ -16,13 +16,13 @@ const UnitTestResultsPage = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const module = findModuleById(courseId || '', moduleId || '');
-  const unitTest = module?.unitTest;
-
   const [sessionData, setSessionData] = useState<any>(null);
   const [userAnswers, setUserAnswers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const module = findModuleById(courseId || '', moduleId || '');
+  const unitTest = module?.unitTest;
 
   useEffect(() => {
     const loadResults = async () => {
@@ -31,6 +31,7 @@ const UnitTestResultsPage = () => {
         return;
       }
       if (!courseId || !moduleId || !sessionId) {
+        // This condition should now rarely be met if navigation is correct
         navigate('/courses'); // Redirect if URL parameters are missing
         return;
       }
