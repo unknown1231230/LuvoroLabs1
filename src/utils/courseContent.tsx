@@ -85,21 +85,16 @@ export const courses: Course[] = [
               <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
               <div class="aspect-video w-full max-w-2xl mx-auto bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-muted-foreground p-4 rounded-md">
                 <p class="text-center">
-                  <strong>Video Placeholder:</strong> Please replace the 'src' attribute of the iframe below with an actual embed URL from your preferred video hosting service (e.g., Vimeo, Wistia).
-                  <br/>
-                  <code class="block mt-2 text-sm">
-                    &lt;iframe width="100%" height="100%" src="https://example.com/embed/kinematics-1d-video" title="Educational Video on 1D Kinematics" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;
-                  </code>
+                  <strong>Please replace the 'src' attribute below with an actual embed URL from your preferred video hosting service (e.g., Vimeo, Wistia).</strong>
                 </p>
                 <iframe
                   width="100%"
                   height="100%"
-                  src="https://example.com/embed/kinematics-1d-video"
+                  src="YOUR_VIDEO_EMBED_URL_HERE"
                   title="Educational Video on 1D Kinematics"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  style="display: none;"
                 ></iframe>
               </div>
             `,
@@ -151,21 +146,16 @@ export const courses: Course[] = [
               <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
               <div class="aspect-video w-full max-w-2xl mx-auto bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-muted-foreground p-4 rounded-md">
                 <p class="text-center">
-                  <strong>Video Placeholder:</strong> Please replace the 'src' attribute of the iframe below with an actual embed URL from your preferred video hosting service (e.g., Vimeo, Wistia).
-                  <br/>
-                  <code class="block mt-2 text-sm">
-                    &lt;iframe width="100%" height="100%" src="https://example.com/embed/kinematics-2d-video" title="Educational Video on 2D Motion & Projectiles" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;
-                  </code>
+                  <strong>Please replace the 'src' attribute below with an actual embed URL from your preferred video hosting service (e.g., Vimeo, Wistia).</strong>
                 </p>
                 <iframe
                   width="100%"
                   height="100%"
-                  src="https://example.com/embed/kinematics-2d-video"
+                  src="YOUR_VIDEO_EMBED_URL_HERE"
                   title="Educational Video on 2D Motion & Projectiles"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  style="display: none;"
                 ></iframe>
               </div>
             `,
@@ -197,21 +187,16 @@ export const courses: Course[] = [
               <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
               <div class="aspect-video w-full max-w-2xl mx-auto bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-muted-foreground p-4 rounded-md">
                 <p class="text-center">
-                  <strong>Video Placeholder:</strong> Please replace the 'src' attribute of the iframe below with an actual embed URL from your preferred video hosting service (e.g., Vimeo, Wistia).
-                  <br/>
-                  <code class="block mt-2 text-sm">
-                    &lt;iframe width="100%" height="100%" src="https://example.com/embed/relative-velocity-video" title="Educational Video on Relative Velocity" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;
-                  </code>
+                  <strong>Please replace the 'src' attribute below with an actual embed URL from your preferred video hosting service (e.g., Vimeo, Wistia).</strong>
                 </p>
                 <iframe
                   width="100%"
                   height="100%"
-                  src="https://example.com/embed/relative-velocity-video"
+                  src="YOUR_VIDEO_EMBED_URL_HERE"
                   title="Educational Video on Relative Velocity"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  style="display: none;"
                 ></iframe>
               </div>
             `,
@@ -250,21 +235,16 @@ export const courses: Course[] = [
               <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
               <div class="aspect-video w-full max-w-2xl mx-auto bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-muted-foreground p-4 rounded-md">
                 <p class="text-center">
-                  <strong>Video Placeholder:</strong> Please replace the 'src' attribute of the iframe below with an actual embed URL from your preferred video hosting service (e.g., Vimeo, Wistia).
-                  <br/>
-                  <code class="block mt-2 text-sm">
-                    &lt;iframe width="100%" height="100%" src="https://example.com/embed/newtons-laws-video" title="Educational Video on Newton's Laws of Motion" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;
-                  </code>
+                  <strong>Please replace the 'src' attribute below with an actual embed URL from your preferred video hosting service (e.g., Vimeo, Wistia).</strong>
                 </p>
                 <iframe
                   width="100%"
                   height="100%"
-                  src="https://example.com/embed/newtons-laws-video"
+                  src="YOUR_VIDEO_EMBED_URL_HERE"
                   title="Educational Video on Newton's Laws of Motion"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  style="display: none;"
                 ></iframe>
               </div>
             `,
@@ -297,21 +277,16 @@ export const courses: Course[] = [
               <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
               <div class="aspect-video w-full max-w-2xl mx-auto bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-muted-foreground p-4 rounded-md">
                 <p class="text-center">
-                  <strong>Video Placeholder:</strong> Please replace the 'src' attribute of the iframe below with an actual embed URL from your preferred video hosting service (e.g., Vimeo, Wistia).
-                  <br/>
-                  <code class="block mt-2 text-sm">
-                    &lt;iframe width="100%" height="100%" src="https://example.com/embed/friction-video" title="Educational Video on Friction and Forces" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;
-                  </code>
+                  <strong>Please replace the 'src' attribute below with an actual embed URL from your preferred video hosting service (e.g., Vimeo, Wistia).</strong>
                 </p>
                 <iframe
                   width="100%"
                   height="100%"
-                  src="https://example.com/embed/friction-video"
+                  src="YOUR_VIDEO_EMBED_URL_HERE"
                   title="Educational Video on Friction and Forces"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  style="display: none;"
                 ></iframe>
               </div>
             `,
@@ -351,21 +326,16 @@ export const courses: Course[] = [
               <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
               <div class="aspect-video w-full max-w-2xl mx-auto bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-muted-foreground p-4 rounded-md">
                 <p class="text-center">
-                  <strong>Video Placeholder:</strong> Please replace the 'src' attribute of the iframe below with an actual embed URL from your preferred video hosting service (e.g., Vimeo, Wistia).
-                  <br/>
-                  <code class="block mt-2 text-sm">
-                    &lt;iframe width="100%" height="100%" src="https://example.com/embed/work-energy-video" title="Educational Video on Work and the Work-Energy Theorem" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;
-                  </code>
+                  <strong>Please replace the 'src' attribute below with an actual embed URL from your preferred video hosting service (e.g., Vimeo, Wistia).</strong>
                 </p>
                 <iframe
                   width="100%"
                   height="100%"
-                  src="https://example.com/embed/work-energy-video"
+                  src="YOUR_VIDEO_EMBED_URL_HERE"
                   title="Educational Video on Work and the Work-Energy Theorem"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  style="display: none;"
                 ></iframe>
               </div>
             `,
