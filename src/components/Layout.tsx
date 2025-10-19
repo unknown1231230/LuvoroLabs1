@@ -5,7 +5,8 @@ import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
 import { showSuccess, showError } from '@/utils/toast';
-import { Home, BookOpen, Award, Settings, LogOut, LayoutDashboard } from 'lucide-react'; // Import LayoutDashboard
+import { Home, BookOpen, Award, Settings, LogOut, LayoutDashboard } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'; // Import Tooltip components
 
 const Layout = () => {
   const navigate = useNavigate();
@@ -35,20 +36,25 @@ const Layout = () => {
           </Link>
           <nav className="flex items-center space-x-4">
             <Button variant="ghost" asChild>
-              <Link to="/dashboard"><LayoutDashboard className="mr-2 h-4 w-4" />Dashboard</Link> {/* Link to new dashboard path */}
+              <Link to="/dashboard"><LayoutDashboard className="mr-2 h-4 w-4" />Dashboard</Link>
             </Button>
-            <Button variant="ghost" asChild>
-              <Link to="/courses"><BookOpen className="mr-2 h-4 w-4" />Courses</Link>
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" asChild>
+                  <Link to="/courses"><BookOpen className="h-4 w-4" /></Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Courses</p>
+              </TooltipContent>
+            </Tooltip>
             <Button variant="ghost" asChild>
               <Link to="/achievements"><Award className="mr-2 h-4 w-4" />Achievements</Link>
             </Button>
             <Button variant="ghost" asChild>
               <Link to="/settings"><Settings className="mr-2 h-4 w-4" />Settings</Link>
             </Button>
-            <Button variant="ghost" onClick={handleLogout}>
-              <LogOut className="mr-2 h-4 w-4" />Logout
-            </Button>
+            {/* Logout button removed from header, can be added to Dashboard if requested */}
           </nav>
         </div>
       </header>

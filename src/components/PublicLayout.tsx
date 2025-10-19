@@ -3,10 +3,11 @@
 import React, { useContext } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Home, BookOpen, LogOut, LayoutDashboard } from 'lucide-react'; // Import LayoutDashboard
+import { Home, BookOpen, LogOut, LayoutDashboard } from 'lucide-react';
 import { AuthContext } from '@/App';
 import { supabase } from '@/lib/supabase';
 import { showSuccess, showError } from '@/utils/toast';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'; // Import Tooltip components
 
 const PublicLayout = () => {
   const { session } = useContext(AuthContext);
@@ -39,9 +40,16 @@ const PublicLayout = () => {
             <Button variant="ghost" asChild>
               <Link to="/"><Home className="mr-2 h-4 w-4" />Home</Link>
             </Button>
-            <Button variant="ghost" asChild>
-              <Link to="/courses"><BookOpen className="mr-2 h-4 w-4" />Courses</Link>
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" asChild>
+                  <Link to="/courses"><BookOpen className="h-4 w-4" /></Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Courses</p>
+              </TooltipContent>
+            </Tooltip>
             {session ? (
               <>
                 <Button variant="ghost" asChild>
