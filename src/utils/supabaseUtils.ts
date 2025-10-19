@@ -80,8 +80,19 @@ export const updateUserStreak = async (userId: string) => {
     let lastActiveDateToSave = todayUtc.toISOString(); // Save as UTC ISO string
 
     if (existingStreak) {
-      const lastActiveUtc = new Date(existingStreak.last_active_date);
-      lastActiveUtc.setUTCHours(0, 0, 0, 0); // Normalize existing date to start of UTC day
+      const lastActiveDateFromDB = existingStreak.last_active_date;
+      let lastActiveUtc: Date;
+
+      // Ensure lastActiveDateFromDB is a valid date string before parsing
+      if (lastActiveDateFromDB && typeof lastActiveDateFromDB === 'string') {
+        lastActiveUtc = new Date(lastActiveDateFromDB);
+        lastActiveUtc.setUTCHours(0, 0, 0, 0); // Normalize existing date to start of UTC day
+      } else {
+        // If last_active_date is null or invalid, treat it as if no recent activity
+        // This will cause the streak to either start at 1 or reset to 1.
+        lastActiveUtc = new Date(0); // A very old date to ensure it's not today or yesterday
+        lastActiveUtc.setUTCHours(0, 0, 0, 0);
+      }
 
       // Check if the last active date is today (UTC)
       if (
