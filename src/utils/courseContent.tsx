@@ -85,7 +85,7 @@ export const courses: Course[] = [
               <!-- SIMULATION_PLACEHOLDER_KINEMATICS_1D -->
               <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
             `,
-            videoUrl: "ADD_YOUR_VIDEO_EMBED_URL_HERE", // Placeholder for user to add video
+            videoUrl: "https://player.vimeo.com/video/924548799", // Updated with Vimeo URL
             questions: [
               {
                 id: 'q1',
