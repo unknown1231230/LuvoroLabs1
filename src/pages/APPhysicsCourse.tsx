@@ -4,80 +4,35 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, BookOpen, Lightbulb, FlaskConical, Rocket, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, CheckCircle2 } from 'lucide-react';
 import LessonCard from '@/components/LessonCard';
-import { AuthContext } from '@/App'; // Import AuthContext
-import { fetchUserLessonProgress } from '@/utils/supabaseUtils'; // Import utility
+import { AuthContext } from '@/App';
+import { fetchUserLessonProgress } from '@/utils/supabaseUtils';
+import { courses, findCourseById } from '@/utils/courseContent'; // Import courses and findCourseById
 
 const APPhysicsCourse = () => {
   const { user } = useContext(AuthContext);
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const navigate = useNavigate();
 
-  const courseId = 'ap-physics'; // Define courseId for this page
+  const courseId = 'ap-physics';
+  const apPhysicsCourse = findCourseById(courseId);
 
-  const modules = [
-    {
-      id: 'kinematics',
-      title: "Module 1: Kinematics",
-      description: "Study motion in one and two dimensions, including displacement, velocity, acceleration, and projectile motion.",
-      icon: <Rocket className="h-5 w-5" />,
-      lessons: [
-        {
-          id: 'kinematics-1d',
-          title: 'Lesson 1.1: Introduction to 1D Kinematics',
-          description: 'Understand position, displacement, velocity, speed, and acceleration in one dimension.',
-          link: '/courses/ap-physics/lessons/kinematics-1d',
-        },
-        {
-          id: 'kinematics-2d',
-          title: 'Lesson 1.2: 2D Motion & Projectiles',
-          description: 'Analyze motion in two dimensions, focusing on projectile motion.',
-          link: '/courses/ap-physics/lessons/kinematics-2d',
-        },
-        {
-          id: 'relative-velocity',
-          title: 'Lesson 1.3: Relative Velocity',
-          description: 'Explore how velocities are perceived from different frames of reference.',
-          link: '/courses/ap-physics/lessons/relative-velocity', // Placeholder
-        },
-      ],
-    },
-    {
-      id: 'dynamics',
-      title: "Module 2: Dynamics",
-      description: "Explore Newton's Laws of Motion, forces, friction, and applications of dynamics.",
-      icon: <FlaskConical className="h-5 w-5" />,
-      lessons: [
-        {
-          id: 'newtons-laws',
-          title: 'Lesson 2.1: Newton\'s Laws of Motion',
-          description: 'Learn about inertia, F=ma, and action-reaction pairs.',
-          link: '/courses/ap-physics/lessons/newtons-laws', // Placeholder
-        },
-        {
-          id: 'friction',
-          title: 'Lesson 2.2: Friction and Forces',
-          description: 'Understand static and kinetic friction, and apply force concepts.',
-          link: '/courses/ap-physics/lessons/friction', // Placeholder
-        },
-      ],
-    },
-    {
-      id: 'work-energy-power',
-      title: "Module 3: Work, Energy, and Power",
-      description: "Understand concepts of work, kinetic energy, potential energy, conservation of energy, and power.",
-      icon: <Lightbulb className="h-5 w-5" />,
-      lessons: [], // Placeholder for future lessons
-    },
-    {
-      id: 'rotational-motion',
-      title: "Module 4: Rotational Motion",
-      description: "Learn about rotational kinematics, torque, angular momentum, and rotational kinetic energy.",
-      icon: <BookOpen className="h-5 w-5" />,
-      lessons: [], // Placeholder for future lessons
-    },
-  ];
+  if (!apPhysicsCourse) {
+    return (
+      <div className="text-center py-10">
+        <h1 className="text-3xl font-bold text-destructive">Course Not Found</h1>
+        <p className="text-muted-foreground mt-2">The AP Physics 1 course data could not be loaded.</p>
+        <Button asChild className="mt-4">
+          <Link to="/courses">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Course Catalog
+          </Link>
+        </Button>
+      </div>
+    );
+  }
+
+  const modules = apPhysicsCourse.modules; // Use modules from centralized data
 
   useEffect(() => {
     const getProgress = async () => {
@@ -85,7 +40,7 @@ const APPhysicsCourse = () => {
         const progress = await fetchUserLessonProgress(user.id, courseId);
         setCompletedLessons(progress);
       } else {
-        setCompletedLessons([]); // Clear progress if not logged in
+        setCompletedLessons([]);
       }
     };
     getProgress();
@@ -94,18 +49,18 @@ const APPhysicsCourse = () => {
   const isLessonCompleted = (lessonId: string) => completedLessons.includes(lessonId);
 
   const isModuleCompleted = (moduleLessons: typeof modules[0]['lessons']) => {
-    if (!moduleLessons || moduleLessons.length === 0) return false; // A module with no lessons isn't "completed"
+    if (!moduleLessons || moduleLessons.length === 0) return false;
     return moduleLessons.every(lesson => isLessonCompleted(lesson.id));
   };
 
+  // This function is no longer strictly needed for navigation, as LessonPage handles it.
+  // Keeping it for potential future use or if a user wants to manually jump to next module.
   const handleNextModule = (nextModuleId: string) => {
-    // In a real app, you might navigate to the first lesson of the next module
-    // For now, we'll just show a success message or navigate to the course overview
-    showSuccess(`Proceeding to ${nextModuleId}!`);
-    // Example: navigate to the first lesson of the next module if it exists
     const nextModule = modules.find(m => m.id === nextModuleId);
     if (nextModule && nextModule.lessons.length > 0) {
       navigate(nextModule.lessons[0].link);
+    } else {
+      navigate(apPhysicsCourse.link); // Go back to course overview if no lessons in next module
     }
   };
 
@@ -117,9 +72,9 @@ const APPhysicsCourse = () => {
         </Link>
       </Button>
 
-      <h1 className="text-4xl font-bold text-center text-primary">AP Physics 1</h1>
+      <h1 className="text-4xl font-bold text-center text-primary">{apPhysicsCourse.title}</h1>
       <p className="text-center text-muted-foreground max-w-2xl mx-auto">
-        This course covers the foundational principles of physics, preparing you for the AP Physics 1 exam.
+        {apPhysicsCourse.description}
         Dive into interactive lessons, practice problems, and simulated labs.
       </p>
 
@@ -127,10 +82,9 @@ const APPhysicsCourse = () => {
         {modules.map((module, index) => {
           const currentModuleCompleted = isModuleCompleted(module.lessons);
           const previousModule = modules[index - 1];
-          const previousModuleCompleted = previousModule ? isModuleCompleted(previousModule.lessons) : true; // First module is always "unlocked" by default
+          const previousModuleCompleted = previousModule ? isModuleCompleted(previousModule.lessons) : true;
 
-          // Module is unlocked if the previous module is completed
-          const isModuleUnlocked = user ? previousModuleCompleted : false; // Only unlocked if logged in and previous module complete
+          const isModuleUnlocked = user ? previousModuleCompleted : false;
 
           return (
             <Card key={module.id} className={!isModuleUnlocked && user ? "opacity-50" : ""}>
