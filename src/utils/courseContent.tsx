@@ -167,7 +167,7 @@ export const courses: Course[] = [
               <ul class="list-disc list-inside space-y-1">
                 <li><strong>First Law (Inertia):</strong> An object at rest stays at rest and an object in motion stays in motion with the same speed and in the same direction unless acted upon by an unbalanced force.</li>
                 <li><strong>Second Law (F=ma):</strong> The acceleration of an object as produced by a net force is directly proportional to the magnitude of the net force, in the same direction as the net force, and inversely proportional to the mass of the object.</li>
-                <li><strong>Third Law (Action-Reaction):</strong> For every action, there is an equal and opposite reaction.</li>
+                <li><strong>Third Law (Action-Reaction):</b> For every action, there is an equal and opposite reaction.</li>
               </ul>
             `,
             questions: [

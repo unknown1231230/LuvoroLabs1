@@ -10,7 +10,7 @@ import { ArrowLeft, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
 import { markLessonAsCompleted, updateUserStreak } from '@/utils/supabaseUtils';
 import { AuthContext } from '@/App';
-import { findLessonById, findNextLessonPath } from '@/utils/courseContent'; // Import findLessonById and findNextLessonPath
+import { findLessonById, findNextLessonPath } from '@/utils/courseContent.tsx'; // Updated import
 
 const LessonPage = () => {
   const { lessonId } = useParams<{ lessonId: string }>();

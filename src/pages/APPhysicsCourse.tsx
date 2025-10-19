@@ -8,7 +8,7 @@ import { ArrowLeft, CheckCircle2 } from 'lucide-react';
 import LessonCard from '@/components/LessonCard';
 import { AuthContext } from '@/App';
 import { fetchUserLessonProgress } from '@/utils/supabaseUtils';
-import { courses, findCourseById } from '@/utils/courseContent'; // Import courses and findCourseById
+import { courses, findCourseById } from '@/utils/courseContent.tsx'; // Updated import
 
 const APPhysicsCourse = () => {
   const { user } = useContext(AuthContext);
