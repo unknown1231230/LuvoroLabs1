@@ -37,6 +37,7 @@ const App = () => {
       setSession(session);
       setUser(session?.user || null); // Set user
       setLoading(false);
+      console.log("Initial session:", session); // Debug log
     });
 
     const {
@@ -45,6 +46,7 @@ const App = () => {
       setSession(session);
       setUser(session?.user || null); // Set user on auth state change
       setLoading(false);
+      console.log("Auth state changed:", _event, session); // Debug log
     });
 
     return () => subscription.unsubscribe();
