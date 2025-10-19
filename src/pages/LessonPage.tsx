@@ -1,20 +1,20 @@
 "use client";
 
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
 import { markLessonAsCompleted, updateUserStreak, fetchUserQuizAttempts, fetchUserLessonProgress } from '@/utils/supabaseUtils';
 import { AuthContext } from '@/App';
 import { findLessonById, findNextLessonPath } from '@/utils/courseContent.tsx';
 import { useQueryClient } from '@tanstack/react-query';
-import Kinematics1DSimulation from '@/components/simulations/Kinematics1DSimulation'; // Import the new simulation component
-import { supabase } from '@/lib/supabase'; // Import supabase client
-import { cn } from '@/lib/utils'; // Import cn utility for conditional classes
+import Kinematics1DSimulation from '@/components/simulations/Kinematics1DSimulation';
+import { supabase } from '@/lib/supabase';
+import { cn } from '@/lib/utils';
 
 const LessonPage = () => {
   const { lessonId } = useParams<{ lessonId: string }>();
@@ -22,62 +22,59 @@ const LessonPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
-  const [submittedAnswers, setSubmittedAnswers] = useState<Record<string, { isCorrect: boolean }>>({});
-  const [allQuestionsCorrect, setAllQuestionsCorrect] = useState(false);
+  const [submittedAnswers, setSubmittedAnswers] = useState<Record<string, { answer: string; isCorrect: boolean }>>({});
+  const [allQuestionsAttempted, setAllQuestionsAttempted] = useState(false);
   const [isLessonMarkedComplete, setIsLessonMarkedComplete] = useState(false);
   const [isCompletingLesson, setIsCompletingLesson] = useState(false);
-  const [userQuizAttempts, setUserQuizAttempts] = useState<Array<{ question_id: string; is_correct: boolean; selected_answer: string | null; attempted_at?: string }>>([]);
   const [lessonScore, setLessonScore] = useState<{ correct: number; total: number } | null>(null);
-
 
   const courseId = 'ap-physics';
   const lesson = findLessonById(courseId, lessonId || '');
 
   useEffect(() => {
     const fetchData = async () => {
-      if (user && lessonId) {
+      if (user && lessonId && lesson) {
         const progress = await fetchUserLessonProgress(user.id, courseId);
         const lessonIsDone = progress.includes(lessonId);
         setIsLessonMarkedComplete(lessonIsDone);
 
         const attempts = await fetchUserQuizAttempts(user.id, courseId, lessonId);
-        setUserQuizAttempts(attempts);
-
+        
         const initialSelected: Record<string, string> = {};
-        const initialSubmitted: Record<string, { isCorrect: boolean }> = {};
-        lesson?.questions?.forEach(q => {
-          const correctAttempt = attempts.find(a => a.question_id === q.id && a.is_correct);
-          if (correctAttempt) {
-            initialSelected[q.id] = correctAttempt.selected_answer!;
-            initialSubmitted[q.id] = { isCorrect: true };
+        const initialSubmitted: Record<string, { answer: string; isCorrect: boolean }> = {};
+        
+        lesson.questions?.forEach(q => {
+          const firstAttempt = attempts
+            .filter(a => a.question_id === q.id)
+            .sort((a, b) => new Date(a.attempted_at || 0).getTime() - new Date(b.attempted_at || 0).getTime())[0];
+          
+          if (firstAttempt) {
+            initialSelected[q.id] = firstAttempt.selected_answer!;
+            initialSubmitted[q.id] = { answer: firstAttempt.selected_answer!, isCorrect: firstAttempt.is_correct };
           }
         });
+        
         setSelectedAnswers(initialSelected);
         setSubmittedAnswers(initialSubmitted);
 
         if (lessonIsDone) {
-          const correctCount = lesson?.questions?.filter(q =>
-            attempts.some(a => a.question_id === q.id && a.is_correct)
-          ).length || 0;
-          const totalCount = lesson?.questions?.length || 0;
+          const correctCount = Object.values(initialSubmitted).filter(s => s.isCorrect).length;
+          const totalCount = lesson.questions?.length || 0;
           setLessonScore({ correct: correctCount, total: totalCount });
         }
       }
     };
     fetchData();
-  }, [user, lessonId, courseId, lesson?.questions]);
+  }, [user, lessonId, courseId, lesson]);
 
-  // Effect to check if all questions are correct whenever attempts change
   useEffect(() => {
-    if (lesson?.questions && userQuizAttempts.length > 0) {
-      const allCorrect = lesson.questions.every(q =>
-        userQuizAttempts.some(a => a.question_id === q.id && a.is_correct)
-      );
-      setAllQuestionsCorrect(allCorrect);
+    if (lesson?.questions) {
+      const attemptedQuestionIds = Object.keys(submittedAnswers);
+      const allAttempted = lesson.questions.every(q => attemptedQuestionIds.includes(q.id));
+      setAllQuestionsAttempted(allAttempted);
     }
-  }, [userQuizAttempts, lesson?.questions]);
+  }, [submittedAnswers, lesson?.questions]);
 
-  // Effect to trigger auto-completion when all questions become correct
   useEffect(() => {
     const completeLesson = async () => {
       if (!user || isCompletingLesson) return;
@@ -85,9 +82,7 @@ const LessonPage = () => {
       setIsCompletingLesson(true);
       const success = await markLessonAsCompleted(user.id, courseId, lessonId!);
       if (success) {
-        const correctCount = lesson?.questions?.filter(q =>
-          userQuizAttempts.some(a => a.question_id === q.id && a.is_correct)
-        ).length || 0;
+        const correctCount = Object.values(submittedAnswers).filter(s => s.isCorrect).length;
         const totalCount = lesson?.questions?.length || 0;
         setLessonScore({ correct: correctCount, total: totalCount });
 
@@ -95,18 +90,16 @@ const LessonPage = () => {
         queryClient.invalidateQueries({ queryKey: ['userStreak', user.id] });
         queryClient.invalidateQueries({ queryKey: ['userCompletedLessonsCount', user.id] });
         queryClient.invalidateQueries({ queryKey: ['userCompletedLessonIds', user.id] });
-        queryClient.invalidateQueries({ queryKey: ['weeklyLessons', user.id] });
         setIsLessonMarkedComplete(true);
         showSuccess("Lesson completed and streak updated!");
       }
       setIsCompletingLesson(false);
     };
 
-    if (allQuestionsCorrect && !isLessonMarkedComplete) {
+    if (allQuestionsAttempted && !isLessonMarkedComplete) {
       completeLesson();
     }
-  }, [allQuestionsCorrect, isLessonMarkedComplete, isCompletingLesson, user, courseId, lessonId, lesson?.questions, queryClient, userQuizAttempts]);
-
+  }, [allQuestionsAttempted, isLessonMarkedComplete, isCompletingLesson, user, courseId, lessonId, lesson?.questions, queryClient, submittedAnswers]);
 
   if (!lesson) {
     return (
@@ -152,17 +145,14 @@ const LessonPage = () => {
         return;
       }
 
-      setSubmittedAnswers((prev) => ({ ...prev, [questionId]: { isCorrect } }));
-      const newAttemptForState = { ...newAttemptForSupabase, attempted_at: new Date().toISOString() };
-      setUserQuizAttempts((prevAttempts) => [...prevAttempts, newAttemptForState]);
-
+      setSubmittedAnswers((prev) => ({ ...prev, [questionId]: { answer: selectedAnswer, isCorrect } }));
+      
       if (isCorrect) {
         showSuccess("Correct answer!");
       } else {
-        showError("Incorrect answer. Try again!");
+        showError("Incorrect answer.");
       }
 
-      queryClient.invalidateQueries({ queryKey: ['weeklyQuizzes', user.id] });
       queryClient.invalidateQueries({ queryKey: ['userQuizAttempts', user.id, courseId, lessonId] });
     } else {
       showError("Please select an answer before submitting.");
@@ -210,13 +200,9 @@ const LessonPage = () => {
           <h2 className="text-3xl font-bold text-primary mt-10">Practice Questions</h2>
           <div className="space-y-6">
             {lesson.questions.map((q) => {
-              const hasCorrectAttempt = userQuizAttempts.some(a => a.question_id === q.id && a.is_correct);
-              const lastSubmission = submittedAnswers[q.id];
-              const isQuestionDisabled = isLessonMarkedComplete || hasCorrectAttempt;
-              
-              const userSelectedAnswerForDisplay = hasCorrectAttempt 
-                ? userQuizAttempts.find(a => a.question_id === q.id && a.is_correct)?.selected_answer 
-                : selectedAnswers[q.id];
+              const submission = submittedAnswers[q.id];
+              const isQuestionDisabled = isLessonMarkedComplete || !!submission;
+              const selectedValue = submission ? submission.answer : selectedAnswers[q.id];
 
               return (
                 <Card key={q.id} className="shadow-sm">
@@ -224,28 +210,26 @@ const LessonPage = () => {
                     <CardTitle>{q.question}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {q.type === 'multiple-choice' && (
-                      <RadioGroup
-                        onValueChange={(value) => handleAnswerChange(q.id, value)}
-                        value={userSelectedAnswerForDisplay || selectedAnswers[q.id]}
-                        className="grid gap-4"
-                        disabled={isQuestionDisabled}
-                      >
-                        {q.options.map((option, index) => (
-                          <div key={index} className="flex items-center space-x-2">
-                            <RadioGroupItem value={option} id={`${q.id}-${index}`} disabled={isQuestionDisabled} />
-                            <Label htmlFor={`${q.id}-${index}`} className={cn(
-                              isQuestionDisabled && option === q.correctAnswer && "font-bold text-green-600",
-                              isQuestionDisabled && option === userSelectedAnswerForDisplay && option !== q.correctAnswer && "line-through text-red-500"
-                            )}>
-                              {option}
-                              {isQuestionDisabled && option === q.correctAnswer && <CheckCircle className="ml-2 h-4 w-4 inline text-green-500" />}
-                              {isQuestionDisabled && option === userSelectedAnswerForDisplay && option !== q.correctAnswer && <XCircle className="ml-2 h-4 w-4 inline text-red-500" />}
-                            </Label>
-                          </div>
-                        ))}
-                      </RadioGroup>
-                    )}
+                    <RadioGroup
+                      onValueChange={(value) => handleAnswerChange(q.id, value)}
+                      value={selectedValue}
+                      className="grid gap-4"
+                      disabled={isQuestionDisabled}
+                    >
+                      {q.options.map((option, index) => (
+                        <div key={index} className="flex items-center space-x-2">
+                          <RadioGroupItem value={option} id={`${q.id}-${index}`} disabled={isQuestionDisabled} />
+                          <Label htmlFor={`${q.id}-${index}`} className={cn(
+                            isQuestionDisabled && option === q.correctAnswer && "font-bold text-green-600",
+                            isQuestionDisabled && option === selectedValue && option !== q.correctAnswer && "line-through text-red-500"
+                          )}>
+                            {option}
+                            {isQuestionDisabled && option === q.correctAnswer && <CheckCircle className="ml-2 h-4 w-4 inline text-green-500" />}
+                            {isQuestionDisabled && option === selectedValue && option !== q.correctAnswer && <XCircle className="ml-2 h-4 w-4 inline text-red-500" />}
+                          </Label>
+                        </div>
+                      ))}
+                    </RadioGroup>
                     {!isQuestionDisabled && (
                       <Button
                         onClick={() => handleSubmitAnswer(q.id, q.correctAnswer)}
@@ -255,23 +239,21 @@ const LessonPage = () => {
                         Submit Answer
                       </Button>
                     )}
-                    {lastSubmission && (
+                    {submission && (
                       <div className="mt-4 p-3 rounded-md flex flex-col gap-2">
                         <div className="flex items-center gap-2">
-                          {lastSubmission.isCorrect ? (
+                          {submission.isCorrect ? (
                             <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
                           ) : (
                             <XCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
                           )}
-                          <p className={lastSubmission.isCorrect ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}>
-                            {lastSubmission.isCorrect ? "Correct!" : "Incorrect."}
+                          <p className={submission.isCorrect ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}>
+                            {submission.isCorrect ? "Correct!" : "Incorrect."}
                           </p>
                         </div>
-                        {selectedAnswers[q.id] && (
-                          <p className="text-muted-foreground text-sm">
-                            Your answer: <span className={cn("font-bold", !lastSubmission.isCorrect && "line-through text-red-500")}>{selectedAnswers[q.id]}</span>
-                          </p>
-                        )}
+                        <p className="text-muted-foreground text-sm">
+                          Your answer: <span className={cn("font-bold", !submission.isCorrect && "line-through text-red-500")}>{submission.answer}</span>
+                        </p>
                         <p className="text-muted-foreground text-sm">
                           Correct answer: <span className="font-bold text-green-600">{q.correctAnswer}</span>
                         </p>
