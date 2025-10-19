@@ -2,7 +2,10 @@
 
 import * as React from "react";
 
-const MOBILE_BREAKPOINT = 640; // Changed from 768 to 640
+// Define the breakpoint for when the mobile navigation (hamburger menu) should appear.
+// Screens smaller than this breakpoint will show the mobile nav.
+// Screens equal to or larger than this breakpoint will show the desktop nav.
+const MOBILE_BREAKPOINT = 480; // Changed from 640 to 480
 
 export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(
