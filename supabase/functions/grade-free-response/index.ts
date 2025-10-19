@@ -31,7 +31,7 @@ serve(async (req) => {
     const prompt = `
       You are an expert physics tutor. Your task is to evaluate a student's free-response answer to a physics question.
       Compare the student's answer to the provided correct answer and explanation.
-      Determine if the student's answer is fundamentally correct (even if not perfectly worded) and provide concise feedback.
+      Determine if the student's answer is fundamentally correct and scientifically accurate, even if not perfectly worded or phrased differently from the example. Focus on the core concepts being conveyed.
 
       Question: "${questionText}"
       Correct Answer/Key Concepts: "${correctAnswer}"
@@ -39,8 +39,8 @@ serve(async (req) => {
       Student's Answer: "${userAnswer}"
 
       Based on the above, respond with a JSON object containing:
-      1. "isCorrect": boolean (true if the student's answer is substantially correct, false otherwise)
-      2. "feedback": string (a brief, helpful feedback message, e.g., "Correct!", "Partially correct, consider X.", "Incorrect, review Y.")
+      1. "isCorrect": boolean (true if the student's answer is substantially correct and accurate, false otherwise)
+      2. "feedback": string (a brief, helpful feedback message. If correct, say "Correct!". If partially correct, suggest what to consider. If incorrect, guide them to review key concepts.)
     `;
 
     const chatCompletion = await openai.chat.completions.create({
