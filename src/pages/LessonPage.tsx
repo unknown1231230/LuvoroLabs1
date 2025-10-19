@@ -35,19 +35,15 @@ const LessonPage = () => {
 
   // Memoize handleCompleteLesson to prevent unnecessary re-creations
   const handleCompleteLesson = useCallback(async () => {
-    console.log("handleCompleteLesson called.");
     if (!user || isCompletingLesson || isLessonMarkedComplete) {
-      console.log("handleCompleteLesson aborted:", { user: !!user, isCompletingLesson, isLessonMarkedComplete });
       return;
     }
 
-    // Re-calculate allQuestionsCorrect based on current userQuizAttempts state
     const currentAllQuestionsCorrect = lesson?.questions?.every(q =>
       userQuizAttempts.some(a => a.question_id === q.id && a.is_correct)
     );
 
     if (!currentAllQuestionsCorrect) {
-      console.log("handleCompleteLesson aborted: Not all questions correct (re-calculated).");
       showError("Please answer all questions correctly before completing the lesson.");
       return;
     }
@@ -55,8 +51,6 @@ const LessonPage = () => {
     setIsCompletingLesson(true);
     const success = await markLessonAsCompleted(user.id, courseId, lessonId!);
     if (success) {
-      console.log("Lesson marked as completed successfully.");
-      // Calculate score based on current userQuizAttempts state
       const correctCount = lesson?.questions?.filter(q =>
         userQuizAttempts.some(a => a.question_id === q.id && a.is_correct)
       ).length || 0;
@@ -69,11 +63,10 @@ const LessonPage = () => {
       queryClient.invalidateQueries({ queryKey: ['userCompletedLessonIds', user.id] });
       queryClient.invalidateQueries({ queryKey: ['weeklyLessons', user.id] });
       setIsLessonMarkedComplete(true);
-      console.log("setIsLessonMarkedComplete(true) called.");
       showSuccess("Lesson completed and streak updated!");
     }
     setIsCompletingLesson(false);
-  }, [user, isCompletingLesson, isLessonMarkedComplete, lesson?.questions, userQuizAttempts, courseId, lessonId, queryClient]); // Dependencies for useCallback
+  }, [user, isCompletingLesson, isLessonMarkedComplete, lesson?.questions, userQuizAttempts, courseId, lessonId, queryClient]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -115,12 +108,11 @@ const LessonPage = () => {
       }
     };
     fetchData();
-  }, [user, lessonId, courseId, queryClient, lesson?.questions]); // Removed handleCompleteLesson from here
+  }, [user, lessonId, courseId, lesson?.questions]);
 
   // Effect to trigger auto-completion if all questions become correct
   useEffect(() => {
     if (user && allQuestionsCorrect && !isLessonMarkedComplete && !isCompletingLesson) {
-      console.log("Triggering auto-completion from useEffect: allQuestionsCorrect changed.");
       handleCompleteLesson();
     }
   }, [allQuestionsCorrect, isLessonMarkedComplete, isCompletingLesson, user, handleCompleteLesson]);
@@ -152,11 +144,30 @@ const LessonPage = () => {
     const selectedAnswer = selectedAnswers[questionId];
     if (selectedAnswer) {
       const isCorrect = selectedAnswer === correctAnswer;
-      setSubmittedAnswers((prev) => ({ ...prev, [questionId]: true })); // Mark as submitted
+      
+      const newAttemptForSupabase = {
+        user_id: user.id,
+        course_id: courseId,
+        lesson_id: lessonId!,
+        question_id: questionId,
+        is_correct: isCorrect,
+        selected_answer: selectedAnswer,
+      };
 
-      const newAttempt = { question_id: questionId, is_correct: isCorrect, selected_answer: selectedAnswer, attempted_at: new Date().toISOString() };
-      const updatedAttempts = [...userQuizAttempts, newAttempt];
-      setUserQuizAttempts(updatedAttempts); // This is async
+      // Record quiz attempt in Supabase
+      const { error } = await supabase.from('user_quiz_attempts').insert(newAttemptForSupabase);
+
+      if (error) {
+        console.error("Error recording quiz attempt:", error.message);
+        showError("Failed to record quiz attempt.");
+        return; // Stop execution if recording fails
+      }
+
+      // If recording is successful, update local state
+      setSubmittedAnswers((prev) => ({ ...prev, [questionId]: true }));
+      const newAttemptForState = { ...newAttemptForSupabase, attempted_at: new Date().toISOString() };
+      const updatedAttempts = [...userQuizAttempts, newAttemptForState];
+      setUserQuizAttempts(updatedAttempts);
 
       if (isCorrect) {
         showSuccess("Correct answer!");
@@ -164,22 +175,14 @@ const LessonPage = () => {
         showError("Incorrect answer.");
       }
 
-      // Record quiz attempt in Supabase
-      const { error } = await supabase.from('user_quiz_attempts').insert(newAttempt);
-
-      if (error) {
-        console.error("Error recording quiz attempt:", error.message);
-        showError("Failed to record quiz attempt.");
-      } else {
-        queryClient.invalidateQueries({ queryKey: ['weeklyQuizzes', user.id] });
-        queryClient.invalidateQueries({ queryKey: ['userQuizAttempts', user.id, courseId, lessonId] });
-        
-        // Re-evaluate if all questions are now correct based on updated attempts
-        const allCorrectAfterSubmission = lesson.questions?.every(q =>
-          updatedAttempts.some(a => a.question_id === q.id && a.is_correct)
-        );
-        setAllQuestionsCorrect(!!allCorrectAfterSubmission); // This is async, but will trigger the useEffect below
-      }
+      queryClient.invalidateQueries({ queryKey: ['weeklyQuizzes', user.id] });
+      queryClient.invalidateQueries({ queryKey: ['userQuizAttempts', user.id, courseId, lessonId] });
+      
+      // Re-evaluate if all questions are now correct based on updated attempts
+      const allCorrectAfterSubmission = lesson.questions?.every(q =>
+        updatedAttempts.some(a => a.question_id === q.id && a.is_correct)
+      );
+      setAllQuestionsCorrect(!!allCorrectAfterSubmission);
     } else {
       showError("Please select an answer before submitting.");
     }
