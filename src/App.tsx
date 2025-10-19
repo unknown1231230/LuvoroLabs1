@@ -65,7 +65,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Sonner />
+        <Sonner position="top-left" /> {/* Changed position to top-left */}
         <BrowserRouter>
           <AuthContext.Provider value={{ session, user, loading }}>
             <Routes>
