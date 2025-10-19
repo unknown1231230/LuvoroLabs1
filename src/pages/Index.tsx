@@ -5,11 +5,12 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { BarChart, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Bar } from 'recharts';
 import { Flame, Trophy, Lightbulb, BookOpen } from 'lucide-react';
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react"; // Import useContext
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { AuthContext } from "@/App"; // Import AuthContext
 
 // --- Supabase Data Fetching Functions (Conceptual - requires database tables) ---
 // You will need to create 'streaks' and 'achievements' tables in Supabase.
@@ -59,27 +60,20 @@ const fetchUserAchievements = async (userId: string) => {
 };
 
 const Index = () => {
-  const [userId, setUserId] = useState<string | null>(null);
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        setUserId(user.id);
-      }
-    });
-  }, []);
+  const { user, loading: authLoading } = useContext(AuthContext); // Use AuthContext
+  const userId = user?.id || null;
 
   // Fetch dynamic data using react-query
   const { data: currentStreak = 0, isLoading: isLoadingStreak } = useQuery({
     queryKey: ['userStreak', userId],
     queryFn: () => userId ? fetchUserStreak(userId) : Promise.resolve(0),
-    enabled: !!userId,
+    enabled: !!userId && !authLoading, // Only fetch if user is logged in and auth is not loading
   });
 
   const { data: achievementsUnlocked = 0, isLoading: isLoadingAchievements } = useQuery({
     queryKey: ['userAchievements', userId],
     queryFn: () => userId ? fetchUserAchievements(userId) : Promise.resolve(0),
-    enabled: !!userId,
+    enabled: !!userId && !authLoading, // Only fetch if user is logged in and auth is not loading
   });
 
   // Mock data for demonstration (if not logged in or no data)
@@ -120,7 +114,7 @@ const Index = () => {
             <CardTitle className="flex items-center gap-2"><Flame className="text-orange-500" />Current Streak</CardTitle>
           </CardHeader>
           <CardContent>
-            {isLoadingStreak ? (
+            {isLoadingStreak || authLoading ? (
               <p className="text-center text-muted-foreground">Loading...</p>
             ) : (
               <>
@@ -136,7 +130,7 @@ const Index = () => {
             <CardTitle className="flex items-center gap-2"><Trophy className="text-yellow-500" />Achievements</CardTitle>
           </CardHeader>
           <CardContent>
-            {isLoadingAchievements ? (
+            {isLoadingAchievements || authLoading ? (
               <p className="text-center text-muted-foreground">Loading...</p>
             ) : (
               <>

@@ -25,9 +25,13 @@ const AuthForm = () => {
         authResponse = await supabase.auth.signInWithPassword({ email, password });
       }
 
+      console.log("Supabase Auth Response:", authResponse); // Added for debugging
+
       if (authResponse.error) {
         showError(authResponse.error.message);
       } else if (authResponse.data.user) {
+        // For signup, session might be null if email verification is required
+        // For login, session should be present
         showSuccess(isSignUp ? "Sign up successful! Please check your email to verify." : "Logged in successfully!");
         navigate('/'); // Redirect to dashboard after login/signup
       }
