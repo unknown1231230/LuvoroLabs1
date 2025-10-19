@@ -159,13 +159,11 @@ export const fetchLessonsCompletedToday = async (userId: string): Promise<number
 
 export const fetchTotalQuizAttempts = async (userId: string): Promise<number> => {
   try {
-    const { count, error } = await supabase
-      .from('user_quiz_attempts')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId);
-
+    const { data, error } = await supabase.rpc('get_total_quiz_attempts', {
+      p_user_id: userId,
+    });
     if (error) throw error;
-    return count || 0;
+    return data || 0;
   } catch (error: any) {
     console.error("Error fetching total quiz attempts:", error.message);
     showError(`Failed to fetch total quiz attempts: ${error.message}`);
@@ -175,21 +173,11 @@ export const fetchTotalQuizAttempts = async (userId: string): Promise<number> =>
 
 export const fetchQuizzesTakenToday = async (userId: string): Promise<number> => {
   try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Start of today in local time
-
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1); // Start of tomorrow in local time
-
-    const { count, error } = await supabase
-      .from('user_quiz_attempts')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .gte('attempted_at', today.toISOString())
-      .lt('attempted_at', tomorrow.toISOString());
-
+    const { data, error } = await supabase.rpc('get_quizzes_taken_today', {
+      p_user_id: userId,
+    });
     if (error) throw error;
-    return count || 0;
+    return data || 0;
   } catch (error: any) {
     console.error("Error fetching quizzes taken today:", error.message);
     showError(`Failed to fetch quizzes taken today: ${error.message}`);
