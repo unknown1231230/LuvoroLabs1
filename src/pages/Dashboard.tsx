@@ -3,10 +3,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { BarChart, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Bar } from 'recharts';
+import { BarChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Bar } from 'recharts';
 import { Flame, Trophy, Lightbulb, BookOpen, Users } from 'lucide-react';
-import { useContext, useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -106,15 +105,6 @@ const Dashboard = () => { // Renamed from Index to Dashboard
     lessons: lessonWeek.lessons,
     quizzes: weeklyQuizzes.find(quizWeek => quizWeek.name === lessonWeek.name)?.quizzes || 0,
   }));
-
-  // Streak history remains illustrative for now
-  const streakData = [
-    { day: 'Mon', streak: 1 },
-    { day: 'Tue', streak: 2 },
-    { day: 'Wed', streak: 3 },
-    { day: 'Thu', streak: 4 },
-    { day: 'Fri', streak: 5 },
-  ];
 
   return (
     <div className="space-y-8">
@@ -262,19 +252,15 @@ const Dashboard = () => { // Renamed from Index to Dashboard
             <CardTitle>Streak History</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={streakData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="streak" stroke="#ffc658" activeDot={{ r: 8 }} />
-              </LineChart>
-            </ResponsiveContainer>
-            <p className="text-muted-foreground mt-2 text-sm">
-              *Streak history data is currently illustrative. A dedicated streak log table in Supabase would be needed for dynamic history.
-            </p>
+            <div className="flex items-center justify-center h-48">
+              <p className="text-muted-foreground text-center">
+                Your current streak is <span className="font-bold text-orange-600">{currentStreak} days</span>.
+                <br />
+                <span className="text-sm">
+                  * A detailed historical log of your streak would require a dedicated database table to track it daily.
+                </span>
+              </p>
+            </div>
           </CardContent>
         </Card>
       </section>
