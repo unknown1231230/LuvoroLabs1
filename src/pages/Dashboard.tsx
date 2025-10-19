@@ -107,6 +107,7 @@ const Dashboard = () => { // Renamed from Index to Dashboard
     quizzes: weeklyQuizzes.find(quizWeek => quizWeek.name === lessonWeek.name)?.quizzes || 0,
   }));
 
+  // Streak history remains illustrative for now
   const streakData = [
     { day: 'Mon', streak: 1 },
     { day: 'Tue', streak: 2 },

@@ -197,34 +197,33 @@ export const fetchWeeklyLessonCompletions = async (userId: string): Promise<{ na
     if (error) throw error;
 
     const weeklyData: Record<string, number> = {};
+    const weekStarts: Date[] = [];
     const now = new Date();
 
-    // Initialize data for the last 4 weeks
+    // Get the start dates for the last 4 weeks
     for (let i = 0; i < 4; i++) {
-      const weekStart = getStartOfWeek(new Date(now.setDate(now.getDate() - (i * 7))));
-      const weekName = `Week ${4 - i}`; // Label as Week 1, Week 2, etc. from oldest to newest
-      weeklyData[weekName] = 0;
+      const date = new Date(now);
+      date.setDate(now.getDate() - (i * 7));
+      weekStarts.unshift(getStartOfWeek(date)); // Add to the beginning to keep them in chronological order
     }
 
-    // Reset now for iteration
-    now.setDate(now.getDate() + (3 * 7));
+    // Initialize weeklyData with week names and zero counts
+    weekStarts.forEach((_, index) => {
+      weeklyData[`Week ${index + 1}`] = 0;
+    });
 
     data.forEach(item => {
       const completedDate = new Date(item.completed_at);
       const weekStartOfCompletedDate = getStartOfWeek(completedDate);
 
-      for (let i = 0; i < 4; i++) {
-        const weekStart = getStartOfWeek(new Date(now.setDate(now.getDate() - (i * 7))));
-        if (weekStartOfCompletedDate.getTime() === weekStart.getTime()) {
-          const weekName = `Week ${4 - i}`;
-          weeklyData[weekName]++;
+      for (let i = 0; i < weekStarts.length; i++) {
+        if (weekStartOfCompletedDate.getTime() === weekStarts[i].getTime()) {
+          weeklyData[`Week ${i + 1}`]++;
           break;
         }
       }
-      now.setDate(now.getDate() + (3 * 7)); // Reset now for next iteration
     });
 
-    // Convert to array and sort by week number
     const result = Object.entries(weeklyData)
       .map(([name, lessons]) => ({ name, lessons }))
       .sort((a, b) => parseInt(a.name.replace('Week ', '')) - parseInt(b.name.replace('Week ', '')));
@@ -249,31 +248,31 @@ export const fetchWeeklyQuizAttempts = async (userId: string): Promise<{ name: s
     if (error) throw error;
 
     const weeklyData: Record<string, number> = {};
+    const weekStarts: Date[] = [];
     const now = new Date();
 
-    // Initialize data for the last 4 weeks
+    // Get the start dates for the last 4 weeks
     for (let i = 0; i < 4; i++) {
-      const weekStart = getStartOfWeek(new Date(now.setDate(now.getDate() - (i * 7))));
-      const weekName = `Week ${4 - i}`;
-      weeklyData[weekName] = 0;
+      const date = new Date(now);
+      date.setDate(now.getDate() - (i * 7));
+      weekStarts.unshift(getStartOfWeek(date)); // Add to the beginning to keep them in chronological order
     }
 
-    // Reset now for iteration
-    now.setDate(now.getDate() + (3 * 7));
+    // Initialize weeklyData with week names and zero counts
+    weekStarts.forEach((_, index) => {
+      weeklyData[`Week ${index + 1}`] = 0;
+    });
 
     data.forEach(item => {
       const attemptedDate = new Date(item.attempted_at);
       const weekStartOfAttemptedDate = getStartOfWeek(attemptedDate);
 
-      for (let i = 0; i < 4; i++) {
-        const weekStart = getStartOfWeek(new Date(now.setDate(now.getDate() - (i * 7))));
-        if (weekStartOfAttemptedDate.getTime() === weekStart.getTime()) {
-          const weekName = `Week ${4 - i}`;
-          weeklyData[weekName]++;
+      for (let i = 0; i < weekStarts.length; i++) {
+        if (weekStartOfAttemptedDate.getTime() === weekStarts[i].getTime()) {
+          weeklyData[`Week ${i + 1}`]++;
           break;
         }
       }
-      now.setDate(now.getDate() + (3 * 7)); // Reset now for next iteration
     });
 
     const result = Object.entries(weeklyData)
