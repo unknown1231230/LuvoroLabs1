@@ -60,18 +60,30 @@ export const updateUserStreak = async (userId: string) => {
       const lastActiveUtc = new Date(existingStreak.last_active_date);
       lastActiveUtc.setUTCHours(0, 0, 0, 0); // Normalize existing date to start of UTC day
 
-      const yesterdayUtc = new Date(todayUtc);
-      yesterdayUtc.setUTCDate(todayUtc.getUTCDate() - 1); // Subtract one day in UTC
-
-      if (lastActiveUtc.getTime() === todayUtc.getTime()) {
+      // Check if the last active date is today (UTC)
+      if (
+        lastActiveUtc.getUTCFullYear() === todayUtc.getUTCFullYear() &&
+        lastActiveUtc.getUTCMonth() === todayUtc.getUTCMonth() &&
+        lastActiveUtc.getUTCDate() === todayUtc.getUTCDate()
+      ) {
         // Already active today (UTC), no streak change
         newStreak = existingStreak.current_streak;
-      } else if (lastActiveUtc.getTime() === yesterdayUtc.getTime()) {
-        // Active yesterday (UTC), increment streak
-        newStreak = existingStreak.current_streak + 1;
       } else {
-        // Not active yesterday or today (UTC), reset streak
-        newStreak = 1;
+        // Check if the last active date was yesterday (UTC)
+        const yesterdayUtc = new Date(todayUtc);
+        yesterdayUtc.setUTCDate(todayUtc.getUTCDate() - 1); // Subtract one day in UTC
+
+        if (
+          lastActiveUtc.getUTCFullYear() === yesterdayUtc.getUTCFullYear() &&
+          lastActiveUtc.getUTCMonth() === yesterdayUtc.getUTCMonth() &&
+          lastActiveUtc.getUTCDate() === yesterdayUtc.getUTCDate()
+        ) {
+          // Active yesterday (UTC), increment streak
+          newStreak = existingStreak.current_streak + 1;
+        } else {
+          // Not active yesterday or today (UTC), reset streak
+          newStreak = 1;
+        }
       }
     }
 
