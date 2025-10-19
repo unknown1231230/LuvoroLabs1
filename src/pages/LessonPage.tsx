@@ -127,20 +127,25 @@ const LessonPage = () => {
         queryClient.invalidateQueries({ queryKey: ['userQuizAttempts', user.id, courseId, lessonId] });
         
         // Update local state for userQuizAttempts to reflect the new attempt
-        setUserQuizAttempts(prev => [...prev, { question_id: questionId, is_correct: isCorrect, selected_answer: selectedAnswer, attempted_at: new Date().toISOString() }]);
+        const updatedAttempts = [...userQuizAttempts, { question_id: questionId, is_correct: isCorrect, selected_answer: selectedAnswer, attempted_at: new Date().toISOString() }];
+        setUserQuizAttempts(updatedAttempts);
 
         if (isCorrect) {
           showSuccess("Correct answer!");
         } else {
-          showError("Incorrect answer. Try again!");
+          showError("Incorrect answer."); // Removed "Try again!"
         }
 
         // Re-evaluate if all questions are now correct based on updated attempts
-        const updatedAttempts = [...userQuizAttempts, { question_id: questionId, is_correct: isCorrect, selected_answer: selectedAnswer, attempted_at: new Date().toISOString() }];
         const allCorrectNow = lesson.questions?.every(q =>
           updatedAttempts.some(a => a.question_id === q.id && a.is_correct)
         );
         setAllQuestionsCorrect(!!allCorrectNow);
+
+        // Automatically complete lesson if all questions are now correct and not already completed
+        if (allCorrectNow && !isLessonMarkedComplete && !isCompletingLesson) {
+          handleCompleteLesson();
+        }
       }
     } else {
       showError("Please select an answer before submitting.");
@@ -148,8 +153,7 @@ const LessonPage = () => {
   };
 
   const handleCompleteLesson = async () => {
-    if (!user) {
-      showError("You must be logged in to complete lessons.");
+    if (!user || isCompletingLesson || isLessonMarkedComplete) {
       return;
     }
     if (!allQuestionsCorrect) {
@@ -175,12 +179,7 @@ const LessonPage = () => {
       setIsLessonMarkedComplete(true);
       showSuccess("Lesson completed and streak updated!");
 
-      const nextLessonPath = findNextLessonPath(lessonId!, courseId);
-      if (nextLessonPath) {
-        setTimeout(() => navigate(nextLessonPath), 1500);
-      } else {
-        setTimeout(() => navigate(`/courses/${courseId}`), 1500);
-      }
+      // No automatic navigation here, it will be handled by the "Continue" button
     }
     setIsCompletingLesson(false);
   };
@@ -330,6 +329,21 @@ const LessonPage = () => {
           {lessonScore && (
             <span className="text-lg mt-2">Your Score: {lessonScore.correct} / {lessonScore.total}</span>
           )}
+          <div className="mt-4">
+            {findNextLessonPath(lessonId!, courseId) ? (
+              <Button asChild>
+                <Link to={findNextLessonPath(lessonId!, courseId)!}>
+                  Continue to Next Lesson
+                </Link>
+              </Button>
+            ) : (
+              <Button asChild>
+                <Link to={`/courses/${courseId}`}>
+                  Back to Course Overview
+                </Link>
+              </Button>
+            )}
+          </div>
         </div>
       )}
     </div>
