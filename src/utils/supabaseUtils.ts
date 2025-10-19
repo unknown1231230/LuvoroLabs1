@@ -61,9 +61,16 @@ export const fetchUserCompletedLessonsCount = async (userId: string): Promise<nu
   }
 };
 
-// Helper to get the start of the day in LOCAL timezone for a given date
-const getStartOfDayLocal = (date: Date): Date => {
-  const d = new Date(date);
+// Helper to get the start of the day in LOCAL timezone for a given date string (YYYY-MM-DD) or Date object
+const getStartOfDayLocal = (dateInput: Date | string): Date => {
+  let d: Date;
+  if (typeof dateInput === 'string') {
+    // Parse YYYY-MM-DD string as local date
+    const [year, month, day] = dateInput.split('-').map(Number);
+    d = new Date(year, month - 1, day); // Month is 0-indexed
+  } else {
+    d = new Date(dateInput);
+  }
   d.setHours(0, 0, 0, 0); // Sets local hours to midnight
   d.setMilliseconds(0);
   return d;
@@ -93,9 +100,7 @@ export const updateUserStreak = async (userId: string) => {
 
     if (existingStreak) {
       console.log(`[Streak Debug] Existing streak: ${existingStreak.current_streak}, last active date (DB): ${existingStreak.last_active_date}`);
-      const lastActiveDateFromDB = existingStreak.last_active_date; // This is 'YYYY-MM-DD' string
-      // Parse DB date string as a local date at midnight for comparison
-      const lastActiveLocal = getStartOfDayLocal(new Date(lastActiveDateFromDB));
+      const lastActiveLocal = getStartOfDayLocal(existingStreak.last_active_date); // Use the refined helper
       console.log(`[Streak Debug] lastActiveLocal (from DB): ${lastActiveLocal.toISOString()}`);
 
       const yesterdayLocal = getStartOfDayLocal(new Date(todayLocal));
