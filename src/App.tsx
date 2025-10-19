@@ -65,7 +65,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Sonner position="top-left" /> {/* Changed position to top-left */}
+        <Sonner position="top-left" className="sonner-custom-offset" /> {/* Added className */}
         <BrowserRouter>
           <AuthContext.Provider value={{ session, user, loading }}>
             <Routes>

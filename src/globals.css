@@ -99,3 +99,9 @@
     @apply bg-background text-foreground font-sans; /* Apply Inter font */
   }
 }
+
+/* Custom CSS to position Sonner toasts below the header */
+/* This targets the main sonner toaster container when positioned at the top */
+[data-sonner-toaster][data-y-position="top"] {
+  top: 56px !important; /* Adjust this value if your header height changes */
+}
