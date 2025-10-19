@@ -47,7 +47,10 @@ const AuthForm = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: 'https://luvorolabs.vercel.app/dashboard', // Ensure this matches your Vercel URL and Supabase redirect URLs
+          // IMPORTANT: This URL must exactly match one of the "Redirect URLs" configured in your Supabase project
+          // and also one of the "Authorized redirect URIs" in your Google Cloud Console OAuth client.
+          // Supabase typically uses /auth/callback for OAuth.
+          redirectTo: 'https://luvorolabs.vercel.app/auth/callback', 
         },
       });
 
