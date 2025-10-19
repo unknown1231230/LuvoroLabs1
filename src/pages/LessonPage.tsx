@@ -22,11 +22,12 @@ const LessonPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
-  const [submittedAnswers, setSubmittedAnswers] = useState<Record<string, boolean>>({});
+  const [submittedAnswers, setSubmittedAnswers] = useState<Record<string, boolean>>({}); // Tracks if *any* answer was submitted for a question
   const [allQuestionsCorrect, setAllQuestionsCorrect] = useState(false);
   const [isLessonMarkedComplete, setIsLessonMarkedComplete] = useState(false);
   const [isCompletingLesson, setIsCompletingLesson] = useState(false);
   const [userQuizAttempts, setUserQuizAttempts] = useState<Array<{ question_id: string; is_correct: boolean; selected_answer: string | null }>>([]);
+  const [lessonScore, setLessonScore] = useState<{ correct: number; total: number } | null>(null);
 
 
   const courseId = 'ap-physics';
@@ -44,14 +45,17 @@ const LessonPage = () => {
         const attempts = await fetchUserQuizAttempts(user.id, courseId, lessonId);
         setUserQuizAttempts(attempts);
 
-        // Pre-fill selected answers if already correct
+        // Pre-fill selected answers and submitted status based on attempts
         const initialSelected: Record<string, string> = {};
         const initialSubmitted: Record<string, boolean> = {};
         lesson?.questions?.forEach(q => {
-          const correctAttempt = attempts.find(a => a.question_id === q.id && a.is_correct);
-          if (correctAttempt && correctAttempt.selected_answer) {
-            initialSelected[q.id] = correctAttempt.selected_answer;
-            initialSubmitted[q.id] = true; // Mark as submitted and correct
+          const latestAttempt = attempts
+            .filter(a => a.question_id === q.id)
+            .sort((a, b) => new Date(b.attempted_at || '').getTime() - new Date(a.attempted_at || '').getTime())[0]; // Get latest attempt
+          
+          if (latestAttempt && latestAttempt.selected_answer) {
+            initialSelected[q.id] = latestAttempt.selected_answer;
+            initialSubmitted[q.id] = true; // Mark as submitted if there's any attempt
           }
         });
         setSelectedAnswers(initialSelected);
@@ -62,10 +66,19 @@ const LessonPage = () => {
           attempts.some(a => a.question_id === q.id && a.is_correct)
         );
         setAllQuestionsCorrect(!!allCorrectInitially);
+
+        // If lesson is already complete, calculate and set the score for display
+        if (lessonIsDone) {
+          const correctCount = lesson?.questions?.filter(q =>
+            attempts.some(a => a.question_id === q.id && a.is_correct)
+          ).length || 0;
+          const totalCount = lesson?.questions?.length || 0;
+          setLessonScore({ correct: correctCount, total: totalCount });
+        }
       }
     };
     fetchData();
-  }, [user, lessonId, courseId, queryClient, lesson?.questions]); // Added lesson?.questions to dependencies
+  }, [user, lessonId, courseId, queryClient, lesson?.questions]);
 
   if (!lesson) {
     return (
@@ -83,7 +96,7 @@ const LessonPage = () => {
 
   const handleAnswerChange = (questionId: string, value: string) => {
     setSelectedAnswers((prev) => ({ ...prev, [questionId]: value }));
-    setSubmittedAnswers((prev) => ({ ...prev, [questionId]: false }));
+    // Do not reset submittedAnswers here, as it indicates if an attempt was made
   };
 
   const handleSubmitAnswer = async (questionId: string, correctAnswer: string) => {
@@ -94,7 +107,7 @@ const LessonPage = () => {
     const selectedAnswer = selectedAnswers[questionId];
     if (selectedAnswer) {
       const isCorrect = selectedAnswer === correctAnswer;
-      setSubmittedAnswers((prev) => ({ ...prev, [questionId]: true }));
+      setSubmittedAnswers((prev) => ({ ...prev, [questionId]: true })); // Mark as submitted
 
       // Record quiz attempt
       const { error } = await supabase.from('user_quiz_attempts').insert({
@@ -111,19 +124,23 @@ const LessonPage = () => {
         showError("Failed to record quiz attempt.");
       } else {
         queryClient.invalidateQueries({ queryKey: ['weeklyQuizzes', user.id] });
-        queryClient.invalidateQueries({ queryKey: ['userQuizAttempts', user.id, courseId, lessonId] }); // Invalidate new query
+        queryClient.invalidateQueries({ queryKey: ['userQuizAttempts', user.id, courseId, lessonId] });
+        
+        // Update local state for userQuizAttempts to reflect the new attempt
+        setUserQuizAttempts(prev => [...prev, { question_id: questionId, is_correct: isCorrect, selected_answer: selectedAnswer, attempted_at: new Date().toISOString() }]);
+
         if (isCorrect) {
           showSuccess("Correct answer!");
-          // Update local state for userQuizAttempts to reflect the new correct answer
-          setUserQuizAttempts(prev => [...prev, { question_id: questionId, is_correct: true, selected_answer: selectedAnswer }]);
-          // Re-evaluate if all questions are now correct
-          const allCorrectNow = lesson.questions?.every(q =>
-            userQuizAttempts.some(a => a.question_id === q.id && a.is_correct) || (q.id === questionId && isCorrect)
-          );
-          setAllQuestionsCorrect(!!allCorrectNow);
         } else {
           showError("Incorrect answer. Try again!");
         }
+
+        // Re-evaluate if all questions are now correct based on updated attempts
+        const updatedAttempts = [...userQuizAttempts, { question_id: questionId, is_correct: isCorrect, selected_answer: selectedAnswer, attempted_at: new Date().toISOString() }];
+        const allCorrectNow = lesson.questions?.every(q =>
+          updatedAttempts.some(a => a.question_id === q.id && a.is_correct)
+        );
+        setAllQuestionsCorrect(!!allCorrectNow);
       }
     } else {
       showError("Please select an answer before submitting.");
@@ -143,12 +160,19 @@ const LessonPage = () => {
     setIsCompletingLesson(true);
     const success = await markLessonAsCompleted(user.id, courseId, lessonId!);
     if (success) {
+      // Calculate score before navigating
+      const correctCount = lesson.questions?.filter(q =>
+        userQuizAttempts.some(a => a.question_id === q.id && a.is_correct)
+      ).length || 0;
+      const totalCount = lesson.questions?.length || 0;
+      setLessonScore({ correct: correctCount, total: totalCount }); // Set score for display
+
       await updateUserStreak(user.id);
       queryClient.invalidateQueries({ queryKey: ['userStreak', user.id] });
       queryClient.invalidateQueries({ queryKey: ['userCompletedLessonsCount', user.id] });
       queryClient.invalidateQueries({ queryKey: ['userCompletedLessonIds', user.id] });
-      queryClient.invalidateQueries({ queryKey: ['weeklyLessons', user.id] }); // Invalidate weekly lessons data
-      setIsLessonMarkedComplete(true); // Mark lesson as complete in UI
+      queryClient.invalidateQueries({ queryKey: ['weeklyLessons', user.id] });
+      setIsLessonMarkedComplete(true);
       showSuccess("Lesson completed and streak updated!");
 
       const nextLessonPath = findNextLessonPath(lessonId!, courseId);
@@ -205,8 +229,14 @@ const LessonPage = () => {
           <div className="space-y-6">
             {lesson.questions.map((q) => {
               const hasCorrectAttempt = userQuizAttempts.some(a => a.question_id === q.id && a.is_correct);
-              const isQuestionDisabled = isLessonMarkedComplete || hasCorrectAttempt;
-              const userSelectedAnswerForDisplay = hasCorrectAttempt ? userQuizAttempts.find(a => a.question_id === q.id && a.is_correct)?.selected_answer : selectedAnswers[q.id];
+              const hasAnyAttempt = submittedAnswers[q.id]; // True if user has submitted any answer for this question
+              const isQuestionDisabled = isLessonMarkedComplete || hasAnyAttempt; // Disable if lesson complete or any attempt made
+              
+              // Get the user's selected answer for display, prioritizing a correct attempt if available
+              const userSelectedAnswerForDisplay = hasCorrectAttempt 
+                ? userQuizAttempts.find(a => a.question_id === q.id && a.is_correct)?.selected_answer 
+                : selectedAnswers[q.id];
+              
               const isCurrentlyCorrect = userSelectedAnswerForDisplay === q.correctAnswer;
 
               return (
@@ -220,14 +250,14 @@ const LessonPage = () => {
                         onValueChange={(value) => handleAnswerChange(q.id, value)}
                         value={userSelectedAnswerForDisplay || selectedAnswers[q.id]}
                         className="grid gap-4"
-                        disabled={isQuestionDisabled}
+                        disabled={isQuestionDisabled} // Disable if lesson completed or any attempt made
                       >
                         {q.options.map((option, index) => (
                           <div key={index} className="flex items-center space-x-2">
                             <RadioGroupItem value={option} id={`${q.id}-${index}`} disabled={isQuestionDisabled} />
                             <Label htmlFor={`${q.id}-${index}`} className={cn(
-                              isQuestionDisabled && option === q.correctAnswer && "font-bold text-green-600",
-                              isQuestionDisabled && option === userSelectedAnswerForDisplay && option !== q.correctAnswer && "line-through text-red-500"
+                              isQuestionDisabled && option === q.correctAnswer && "font-bold text-green-600", // Correct answer in green
+                              isQuestionDisabled && option === userSelectedAnswerForDisplay && option !== q.correctAnswer && "line-through text-red-500" // Incorrect selected answer with strikethrough
                             )}>
                               {option}
                               {isQuestionDisabled && option === q.correctAnswer && <CheckCircle className="ml-2 h-4 w-4 inline text-green-500" />}
@@ -237,16 +267,16 @@ const LessonPage = () => {
                         ))}
                       </RadioGroup>
                     )}
-                    {!isQuestionDisabled && (
+                    {!isQuestionDisabled && ( // Only show submit button if not disabled
                       <Button
                         onClick={() => handleSubmitAnswer(q.id, q.correctAnswer)}
                         className="mt-4"
-                        disabled={!selectedAnswers[q.id] || submittedAnswers[q.id]}
+                        disabled={!selectedAnswers[q.id]} // Disable if no answer selected
                       >
-                        {submittedAnswers[q.id] ? "Answer Submitted" : "Submit Answer"}
+                        Submit Answer
                       </Button>
                     )}
-                    {(submittedAnswers[q.id] || isQuestionDisabled) && (
+                    {hasAnyAttempt && ( // Show feedback if any attempt was made
                       <div className="mt-4 p-3 rounded-md flex flex-col gap-2">
                         <div className="flex items-center gap-2">
                           {isCurrentlyCorrect ? (
@@ -258,9 +288,9 @@ const LessonPage = () => {
                             {isCurrentlyCorrect ? "Correct!" : "Incorrect."}
                           </p>
                         </div>
-                        {!isCurrentlyCorrect && userSelectedAnswerForDisplay && (
+                        {userSelectedAnswerForDisplay && (
                           <p className="text-muted-foreground text-sm">
-                            Your answer: <span className="font-bold line-through">{userSelectedAnswerForDisplay}</span>
+                            Your answer: <span className={cn("font-bold", !isCurrentlyCorrect && "line-through text-red-500")}>{userSelectedAnswerForDisplay}</span>
                           </p>
                         )}
                         <p className="text-muted-foreground text-sm">
@@ -294,8 +324,12 @@ const LessonPage = () => {
         </div>
       )}
       {isLessonMarkedComplete && (
-        <div className="text-center mt-8 text-green-600 font-semibold flex items-center justify-center gap-2">
-          <CheckCircle className="h-5 w-5" /> Lesson Completed!
+        <div className="text-center mt-8 text-green-600 font-semibold flex flex-col items-center justify-center gap-2">
+          <CheckCircle className="h-5 w-5" />
+          <span>Lesson Completed!</span>
+          {lessonScore && (
+            <span className="text-lg mt-2">Your Score: {lessonScore.correct} / {lessonScore.total}</span>
+          )}
         </div>
       )}
     </div>
