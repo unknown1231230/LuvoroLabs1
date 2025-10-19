@@ -264,7 +264,8 @@ export const submitUnitTestAnswer = async (
   selectedAnswer: string | null,
   isCorrect: boolean,
   markedForReview: boolean,
-  eliminatedOptions: string[]
+  eliminatedOptions: string[],
+  aiFeedback: string | null = null // New parameter for AI feedback
 ) => {
   try {
     const { data, error } = await supabase
@@ -277,6 +278,7 @@ export const submitUnitTestAnswer = async (
         is_correct: isCorrect,
         marked_for_review: markedForReview,
         eliminated_options: eliminatedOptions,
+        ai_feedback: aiFeedback, // Store AI feedback
         attempted_at: new Date().toISOString(),
       }, { onConflict: 'session_id,question_id' })
       .select()
@@ -348,7 +350,7 @@ export const fetchUserUnitTestAnswers = async (sessionId: string) => {
   try {
     const { data, error } = await supabase
       .from('user_unit_test_answers')
-      .select('*')
+      .select('*, ai_feedback') // Select ai_feedback
       .eq('session_id', sessionId);
 
     if (error) throw error;

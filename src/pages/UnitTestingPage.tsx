@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useContext, useRef, useMemo, useCallback } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -17,7 +17,7 @@ import {
   updateUnitTestSessionStatus,
   fetchUnitTestSession,
   fetchUserUnitTestAnswers,
-  gradeFreeResponseAnswer, // New import
+  gradeFreeResponseAnswer,
 } from '@/utils/supabaseUtils';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from '@/components/ui/dialog';
@@ -47,7 +47,7 @@ const UnitTestingPage = () => {
   const [testStatus, setTestStatus] = useState<'not-started' | 'in-progress' | 'completed' | 'timed-out'>('not-started');
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
-  const [isGradingAI, setIsGradingAI] = useState(false); // New state for AI grading loading
+  const [isGradingAI, setIsGradingAI] = useState(false);
 
   const [isCalculatorVisible, setIsCalculatorVisible] = useState(false);
   const [isLineReaderVisible, setIsLineReaderVisible] = useState(false);
@@ -76,12 +76,53 @@ const UnitTestingPage = () => {
     return index;
   }, [unitTest, currentSectionIndex, currentQuestionIndex, currentSection, currentQuestion]);
 
+  const submitCurrentAnswer = useCallback(async (questionToSubmit: UnitQuestion) => {
+    if (!testSessionId || !user) return;
+
+    let isCorrect = false;
+    let aiFeedback: string | null = null;
+    const selectedAnswer = questionToSubmit.type === 'multiple-choice'
+      ? selectedAnswers[questionToSubmit.id]
+      : freeResponseAnswers[questionToSubmit.id];
+
+    if (questionToSubmit.type === 'multiple-choice') {
+      isCorrect = selectedAnswer === questionToSubmit.correctAnswer;
+    } else if (questionToSubmit.type === 'free-response' && selectedAnswer) {
+      setIsGradingAI(true);
+      const aiResult = await gradeFreeResponseAnswer(
+        selectedAnswer,
+        questionToSubmit.question,
+        questionToSubmit.correctAnswer || '',
+        questionToSubmit.explanation || ''
+      );
+      setIsGradingAI(false);
+
+      if (aiResult) {
+        isCorrect = aiResult.isCorrect;
+        aiFeedback = aiResult.feedback;
+      } else {
+        isCorrect = false;
+        aiFeedback = "Could not get AI feedback. Please review manually.";
+      }
+    }
+
+    await submitUnitTestAnswer(
+      testSessionId,
+      user.id,
+      questionToSubmit.id,
+      selectedAnswer || null,
+      isCorrect,
+      markedForReview[questionToSubmit.id] || false,
+      eliminatedOptions[questionToSubmit.id] || [],
+      aiFeedback // Pass AI feedback
+    );
+  }, [testSessionId, user, selectedAnswers, freeResponseAnswers, markedForReview, eliminatedOptions]);
+
   const handleFinishTest = async (timedOut: boolean = false) => {
     if (!testSessionId || !user) return;
     if (timerRef.current) clearInterval(timerRef.current);
     setTimeLeft(null);
 
-    // Ensure the current question's answer is submitted before finishing
     if (currentQuestion) {
       await submitCurrentAnswer(currentQuestion);
     }
@@ -147,7 +188,7 @@ const UnitTestingPage = () => {
     if (timeLeft !== null && timeLeft <= 0 && testStatus === 'in-progress') {
       handleFinishTest(true);
     }
-  }, [timeLeft, testStatus]);
+  }, [timeLeft, testStatus, handleFinishTest]);
 
   useEffect(() => {
     return () => {
@@ -185,60 +226,22 @@ const UnitTestingPage = () => {
     }
   };
 
-  const submitCurrentAnswer = async (question: UnitQuestion) => {
-    if (!testSessionId || !user) return;
-
-    let isCorrect = false;
-    let aiFeedback = '';
-    const selectedAnswer = question.type === 'multiple-choice' ? selectedAnswers[question.id] : freeResponseAnswers[question.id];
-
-    if (question.type === 'multiple-choice') {
-      isCorrect = selectedAnswer === question.correctAnswer;
-    } else if (question.type === 'free-response' && selectedAnswer) {
-      setIsGradingAI(true);
-      const aiResult = await gradeFreeResponseAnswer(
-        selectedAnswer,
-        question.question,
-        question.correctAnswer || '', // Ensure correctAnswer is passed for AI
-        question.explanation || ''
-      );
-      setIsGradingAI(false);
-
-      if (aiResult) {
-        isCorrect = aiResult.isCorrect;
-        aiFeedback = aiResult.feedback;
-      } else {
-        // Fallback if AI grading fails
-        isCorrect = false;
-        aiFeedback = "Could not get AI feedback. Please review manually.";
-      }
-    }
-
-    await submitUnitTestAnswer(
-      testSessionId,
-      user.id,
-      question.id,
-      selectedAnswer || null,
-      isCorrect,
-      markedForReview[question.id] || false,
-      eliminatedOptions[question.id] || []
-    );
+  const handleNextQuestion = async () => {
+    if (!currentQuestion || !currentSection) return;
+    await submitCurrentAnswer(currentQuestion);
+    setCurrentQuestionIndex(prev => Math.min(currentSection.questions.length - 1, prev + 1));
   };
 
-  useEffect(() => {
-    const prevQuestionIndex = currentQuestionIndex > 0 ? currentQuestionIndex - 1 : 0;
-    const prevQuestion = currentSection?.questions[prevQuestionIndex];
-    if (prevQuestion && testStatus === 'in-progress') {
-      submitCurrentAnswer(prevQuestion);
-    }
-  }, [currentQuestionIndex, testStatus]);
+  const handlePreviousQuestion = async () => {
+    if (!currentQuestion) return;
+    await submitCurrentAnswer(currentQuestion);
+    setCurrentQuestionIndex(prev => Math.max(0, prev - 1));
+  };
 
-  const handleNextSection = () => {
-    if (!unitTest) return;
+  const handleNextSection = async () => {
+    if (!unitTest || !currentQuestion) return;
+    await submitCurrentAnswer(currentQuestion);
     if (currentSectionIndex < unitTest.sections.length - 1) {
-      if (currentQuestion) {
-        submitCurrentAnswer(currentQuestion);
-      }
       setCurrentSectionIndex(prev => prev + 1);
       setCurrentQuestionIndex(0);
     }
@@ -507,7 +510,7 @@ const UnitTestingPage = () => {
                   onChange={(e) => setFreeResponseAnswers(prev => ({ ...prev, [currentQuestion.id]: e.target.value }))}
                   rows={10}
                   className="min-h-[150px]"
-                  disabled={isGradingAI} // Disable while AI is grading
+                  disabled={isGradingAI}
                 />
                 {isGradingAI && (
                   <div className="flex items-center justify-center gap-2 text-primary mt-2">
@@ -546,7 +549,10 @@ const UnitTestingPage = () => {
                       key={q.id}
                       variant={index === currentQuestionIndex ? "default" : "outline"}
                       size="sm"
-                      onClick={() => {
+                      onClick={async () => {
+                        if (currentQuestion) {
+                          await submitCurrentAnswer(currentQuestion); // Submit current question before navigating
+                        }
                         setCurrentQuestionIndex(index);
                         setIsPaletteOpen(false);
                       }}
@@ -578,10 +584,10 @@ const UnitTestingPage = () => {
 
           <div className="flex items-center gap-2">
             <Button
-              onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
-              disabled={currentQuestionIndex === 0}
+              onClick={handlePreviousQuestion}
+              disabled={currentQuestionIndex === 0 && currentSectionIndex === 0}
               variant="outline"
-              size="icon" // Make previous button icon-only on small screens
+              size="icon"
               className="sm:w-auto sm:px-4"
             >
               <ChevronLeft className="h-4 w-4 sm:mr-2" />
@@ -607,8 +613,8 @@ const UnitTestingPage = () => {
               )
             ) : (
               <Button
-                onClick={() => setCurrentQuestionIndex(prev => Math.min(currentSection.questions.length - 1, prev + 1))}
-                size="icon" // Make next button icon-only on small screens
+                onClick={handleNextQuestion}
+                size="icon"
                 className="sm:w-auto sm:px-4"
               >
                 <span className="hidden sm:inline">Next</span>
