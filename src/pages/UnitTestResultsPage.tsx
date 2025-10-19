@@ -10,6 +10,7 @@ import { findModuleById } from '@/utils/courseContent';
 import { fetchUnitTestSession, fetchUserUnitTestAnswers } from '@/utils/supabaseUtils';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
 
 const UnitTestResultsPage = () => {
   const { courseId, moduleId, sessionId } = useParams<{ courseId: string; moduleId: string; sessionId: string }>();
@@ -31,7 +32,6 @@ const UnitTestResultsPage = () => {
         return;
       }
       if (!courseId || !moduleId || !sessionId) {
-        // This condition should now rarely be met if navigation is correct
         navigate('/courses'); // Redirect if URL parameters are missing
         return;
       }
@@ -141,61 +141,80 @@ const UnitTestResultsPage = () => {
 
       <h2 className="text-3xl font-bold text-primary mt-10 text-center">Detailed Review</h2>
       <div className="space-y-6">
-        {unitTest.questions.map((question, index) => {
-          const userAnswer = userAnswers.find(ans => ans.question_id === question.id);
-          const isCorrect = userAnswer?.is_correct;
-          const selectedOption = userAnswer?.selected_answer;
-          const markedForReview = userAnswer?.marked_for_review;
-          const eliminatedOptions = userAnswer?.eliminated_options || [];
+        {unitTest.sections.map((section, sectionIndex) => (
+          <div key={section.id} className="space-y-4">
+            <h3 className="text-2xl font-bold text-secondary-foreground mt-8 mb-4">{section.title}</h3>
+            <Separator />
+            {section.questions.map((question, index) => {
+              const userAnswer = userAnswers.find(ans => ans.question_id === question.id);
+              const isCorrect = userAnswer?.is_correct;
+              const selectedOption = userAnswer?.selected_answer;
+              const markedForReview = userAnswer?.marked_for_review;
+              const eliminatedOptions = userAnswer?.eliminated_options || [];
 
-          return (
-            <Card key={question.id} className={cn("shadow-sm", isCorrect ? "border-green-200" : "border-red-200")}>
-              <CardHeader className="flex-row items-center justify-between">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  {isCorrect ? (
-                    <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  ) : (
-                    <XCircle className="h-5 w-5 text-red-500" />
-                  )}
-                  Question {index + 1}
-                  {markedForReview && <Flag className="ml-2 h-4 w-4 text-yellow-500" />}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-lg font-medium">{question.question}</p>
-                <div className="grid gap-2">
-                  {question.options.map((option, optIndex) => (
-                    <div key={optIndex} className="flex items-center space-x-2">
-                      <span
-                        className={cn(
-                          "text-base",
-                          option === question.correctAnswer && "font-bold text-green-600",
-                          option === selectedOption && option !== question.correctAnswer && "line-through text-red-500",
-                          eliminatedOptions.includes(option) && "line-through text-muted-foreground"
+              return (
+                <Card key={question.id} className={cn("shadow-sm", isCorrect ? "border-green-200" : "border-red-200")}>
+                  <CardHeader className="flex-row items-center justify-between">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      {isCorrect ? (
+                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      ) : (
+                        <XCircle className="h-5 w-5 text-red-500" />
+                      )}
+                      Question {index + 1}
+                      {markedForReview && <Flag className="ml-2 h-4 w-4 text-yellow-500" />}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-lg font-medium">{question.question}</p>
+                    {question.type === 'multiple-choice' && question.options && (
+                      <div className="grid gap-2">
+                        {question.options.map((option, optIndex) => (
+                          <div key={optIndex} className="flex items-center space-x-2">
+                            <span
+                              className={cn(
+                                "text-base",
+                                option === question.correctAnswer && "font-bold text-green-600",
+                                option === selectedOption && option !== question.correctAnswer && "line-through text-red-500",
+                                eliminatedOptions.includes(option) && "line-through text-muted-foreground"
+                              )}
+                            >
+                              {option}
+                            </span>
+                            {option === question.correctAnswer && <CheckCircle2 className="h-4 w-4 text-green-500" />}
+                            {option === selectedOption && option !== question.correctAnswer && <XCircle className="h-4 w-4 text-red-500" />}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {selectedOption && (
+                      <p className="text-muted-foreground text-sm">
+                        Your answer: <span className={cn("font-bold", !isCorrect && "line-through text-red-500")}>{selectedOption}</span>
+                      </p>
+                    )}
+                    {question.type === 'free-response' && (
+                      <div className="mt-2">
+                        <p className="text-muted-foreground text-sm">
+                          Your Free Response: <span className="font-bold">{selectedOption || "No answer provided."}</span>
+                        </p>
+                        {question.correctAnswer && (
+                          <p className="text-muted-foreground text-sm mt-1">
+                            Expected Answer: <span className="font-bold text-green-600">{question.correctAnswer}</span>
+                          </p>
                         )}
-                      >
-                        {option}
-                      </span>
-                      {option === question.correctAnswer && <CheckCircle2 className="h-4 w-4 text-green-500" />}
-                      {option === selectedOption && option !== question.correctAnswer && <XCircle className="h-4 w-4 text-red-500" />}
-                    </div>
-                  ))}
-                </div>
-                {selectedOption && (
-                  <p className="text-muted-foreground text-sm">
-                    Your answer: <span className={cn("font-bold", !isCorrect && "line-through text-red-500")}>{selectedOption}</span>
-                  </p>
-                )}
-                <p className="text-muted-foreground text-sm">
-                  Correct answer: <span className="font-bold text-green-600">{question.correctAnswer}</span>
-                </p>
-                <p className="text-muted-foreground text-sm mt-1">
-                  Explanation: {question.explanation}
-                </p>
-              </CardContent>
-            </Card>
-          );
-        })}
+                      </div>
+                    )}
+                    {question.explanation && (
+                      <p className="text-muted-foreground text-sm mt-1">
+                        Explanation: {question.explanation}
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        ))}
       </div>
     </div>
   );

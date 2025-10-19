@@ -24,11 +24,20 @@ export interface Lesson {
 // Define the structure for a unit test question
 export interface UnitQuestion {
   id: string;
-  type: 'multiple-choice';
+  type: 'multiple-choice' | 'free-response'; // Added free-response type
   question: string;
-  options: string[];
-  correctAnswer: string;
-  explanation: string;
+  options?: string[]; // Optional for free-response
+  correctAnswer?: string; // Optional for free-response (AI will grade)
+  explanation?: string; // Optional for free-response
+}
+
+// Define the structure for a unit test section
+export interface UnitTestSection {
+  id: string;
+  title: string;
+  type: 'multiple-choice' | 'free-response';
+  durationMinutes: number;
+  questions: UnitQuestion[];
 }
 
 // Define the structure for a unit test
@@ -36,8 +45,7 @@ export interface UnitTest {
   id: string;
   title: string;
   description: string;
-  durationMinutes: number;
-  questions: UnitQuestion[];
+  sections: UnitTestSection[]; // Unit tests now have sections
 }
 
 // Define the structure for a module
@@ -198,57 +206,109 @@ export const courses: Course[] = [
           id: 'kinematics-unit-test',
           title: 'Kinematics Unit Test',
           description: 'Test your understanding of 1D and 2D kinematics, including projectile motion and relative velocity.',
-          durationMinutes: 15,
-          questions: [
+          sections: [
             {
-              id: 'ut-q1',
+              id: 'mcq-section',
+              title: 'Section I: Multiple Choice',
               type: 'multiple-choice',
-              question: 'A car accelerates from rest at 2 m/s² for 5 seconds. What is its final velocity?',
-              options: ['2 m/s', '5 m/s', '10 m/s', '20 m/s'],
-              correctAnswer: '10 m/s',
-              explanation: 'Using v = v₀ + at, where v₀=0, a=2, t=5. So, v = 0 + 2*5 = 10 m/s.',
-            },
-            {
-              id: 'ut-q2',
-              type: 'multiple-choice',
-              question: 'A ball is thrown horizontally from a cliff. Which of the following statements is true about its motion?',
-              options: [
-                'Its horizontal velocity decreases.',
-                'Its vertical velocity is constant.',
-                'Its horizontal acceleration is zero.',
-                'It hits the ground at the same time as a ball dropped vertically from the same height.'
+              durationMinutes: 80, // 40 questions, 80 minutes
+              questions: [
+                {
+                  id: 'ut-q1',
+                  type: 'multiple-choice',
+                  question: 'A car accelerates from rest at 2 m/s² for 5 seconds. What is its final velocity?',
+                  options: ['2 m/s', '5 m/s', '10 m/s', '20 m/s'],
+                  correctAnswer: '10 m/s',
+                  explanation: 'Using v = v₀ + at, where v₀=0, a=2, t=5. So, v = 0 + 2*5 = 10 m/s.',
+                },
+                {
+                  id: 'ut-q2',
+                  type: 'multiple-choice',
+                  question: 'A ball is thrown horizontally from a cliff. Which of the following statements is true about its motion?',
+                  options: [
+                    'Its horizontal velocity decreases.',
+                    'Its vertical velocity is constant.',
+                    'Its horizontal acceleration is zero.',
+                    'It hits the ground at the same time as a ball dropped vertically from the same height.'
+                  ],
+                  correctAnswer: 'Its horizontal acceleration is zero.',
+                  explanation: 'Neglecting air resistance, there are no horizontal forces, so horizontal acceleration is zero. Its horizontal velocity is constant, vertical velocity increases due to gravity, and it does hit the ground at the same time as a dropped ball because vertical motion is independent of horizontal motion.',
+                },
+                {
+                  id: 'ut-q3',
+                  type: 'multiple-choice',
+                  question: 'An airplane flies at 200 km/h relative to the air. A headwind blows at 50 km/h. What is the airplane\'s speed relative to the ground?',
+                  options: ['150 km/h', '200 km/h', '250 km/h', '50 km/h'],
+                  correctAnswer: '150 km/h',
+                  explanation: 'With a headwind, the speeds subtract: 200 km/h - 50 km/h = 150 km/h.',
+                },
+                {
+                  id: 'ut-q4',
+                  type: 'multiple-choice',
+                  question: 'An object is dropped from a height. What is its acceleration just before it hits the ground (neglecting air resistance)?',
+                  options: ['0 m/s²', '9.8 m/s² upwards', '9.8 m/s² downwards', 'It depends on the mass of the object'],
+                  correctAnswer: '9.8 m/s² downwards',
+                  explanation: 'The acceleration due to gravity is constant at 9.8 m/s² downwards for all objects, regardless of mass, neglecting air resistance.',
+                },
+                {
+                  id: 'ut-q5',
+                  type: 'multiple-choice',
+                  question: 'Which of the following graphs represents an object moving with constant positive velocity?',
+                  options: [
+                    'Position vs. time: horizontal line',
+                    'Position vs. time: straight line with positive slope',
+                    'Velocity vs. time: straight line with positive slope',
+                    'Velocity vs. time: horizontal line above zero'
+                  ],
+                  correctAnswer: 'Position vs. time: straight line with positive slope',
+                  explanation: 'Constant positive velocity means position changes linearly with time in the positive direction. A horizontal line on a position-time graph means zero velocity. A straight line with positive slope on a velocity-time graph means constant positive acceleration. A horizontal line above zero on a velocity-time graph means constant positive velocity.',
+                },
+                // Add 35 more placeholder MCQs to reach 40 questions
+                ...Array.from({ length: 35 }, (_, i) => ({
+                  id: `ut-mcq-${i + 6}`,
+                  type: 'multiple-choice' as const,
+                  question: `Placeholder Multiple Choice Question ${i + 6} for Kinematics.`,
+                  options: ['Option A', 'Option B', 'Option C', 'Option D'],
+                  correctAnswer: 'Option A',
+                  explanation: 'This is a placeholder explanation.',
+                })),
               ],
-              correctAnswer: 'Its horizontal acceleration is zero.',
-              explanation: 'Neglecting air resistance, there are no horizontal forces, so horizontal acceleration is zero. Its horizontal velocity is constant, vertical velocity increases due to gravity, and it does hit the ground at the same time as a dropped ball because vertical motion is independent of horizontal motion.',
             },
             {
-              id: 'ut-q3',
-              type: 'multiple-choice',
-              question: 'An airplane flies at 200 km/h relative to the air. A headwind blows at 50 km/h. What is the airplane\'s speed relative to the ground?',
-              options: ['150 km/h', '200 km/h', '250 km/h', '50 km/h'],
-              correctAnswer: '150 km/h',
-              explanation: 'With a headwind, the speeds subtract: 200 km/h - 50 km/h = 150 km/h.',
-            },
-            {
-              id: 'ut-q4',
-              type: 'multiple-choice',
-              question: 'An object is dropped from a height. What is its acceleration just before it hits the ground (neglecting air resistance)?',
-              options: ['0 m/s²', '9.8 m/s² upwards', '9.8 m/s² downwards', 'It depends on the mass of the object'],
-              correctAnswer: '9.8 m/s² downwards',
-              explanation: 'The acceleration due to gravity is constant at 9.8 m/s² downwards for all objects, regardless of mass, neglecting air resistance.',
-            },
-            {
-              id: 'ut-q5',
-              type: 'multiple-choice',
-              question: 'Which of the following graphs represents an object moving with constant positive velocity?',
-              options: [
-                'Position vs. time: horizontal line',
-                'Position vs. time: straight line with positive slope',
-                'Velocity vs. time: straight line with positive slope',
-                'Velocity vs. time: horizontal line above zero'
+              id: 'frq-section',
+              title: 'Section II: Free Response',
+              type: 'free-response',
+              durationMinutes: 100, // 4 questions, 100 minutes
+              questions: [
+                {
+                  id: 'ut-frq-1',
+                  type: 'free-response',
+                  question: 'A block of mass M is pulled across a frictionless surface by a string with tension T at an angle θ above the horizontal. Derive an expression for the acceleration of the block in terms of M, T, and θ.',
+                  correctAnswer: 'a = (T cos θ) / M', // This would be for AI grading
+                  explanation: 'Resolve tension T into horizontal (T cos θ) and vertical (T sin θ) components. The normal force and gravity balance vertically. Horizontally, T cos θ = Ma, so a = (T cos θ) / M.',
+                },
+                {
+                  id: 'ut-frq-2',
+                  type: 'free-response',
+                  question: 'Describe the difference between speed and velocity, providing an example where an object has a constant speed but changing velocity.',
+                  correctAnswer: 'Speed is scalar, velocity is vector. Example: object in uniform circular motion.',
+                  explanation: 'Speed is the magnitude of velocity. Velocity includes both magnitude and direction. An object moving in a circle at a constant speed has changing velocity because its direction of motion is continuously changing.',
+                },
+                {
+                  id: 'ut-frq-3',
+                  type: 'free-response',
+                  question: 'A projectile is launched from the ground with an initial velocity v₀ at an angle θ above the horizontal. Derive an expression for the maximum height reached by the projectile.',
+                  correctAnswer: 'H_max = (v₀² sin²θ) / (2g)',
+                  explanation: 'At maximum height, the vertical velocity (v_y) is 0. Using v_y² = v₀y² + 2a_yΔy, where v₀y = v₀ sin θ and a_y = -g, we get 0 = (v₀ sin θ)² - 2gH_max. Solving for H_max gives H_max = (v₀² sin²θ) / (2g).',
+                },
+                {
+                  id: 'ut-frq-4',
+                  type: 'free-response',
+                  question: 'Explain Newton\'s Third Law of Motion and provide a real-world example, clearly identifying the action-reaction pair.',
+                  correctAnswer: 'For every action, there is an equal and opposite reaction. Example: pushing a wall.',
+                  explanation: 'Newton\'s Third Law states that for every action, there is an equal and opposite reaction. This means forces always come in pairs acting on different objects. Example: When you push a wall (action force on wall by hand), the wall pushes back on you with an equal and opposite force (reaction force on hand by wall).',
+                },
               ],
-              correctAnswer: 'Position vs. time: straight line with positive slope',
-              explanation: 'Constant positive velocity means position changes linearly with time in the positive direction. A horizontal line on a position-time graph means zero velocity. A straight line with positive slope on a velocity-time graph means constant positive acceleration. A horizontal line above zero on a velocity-time graph means constant positive velocity.',
             },
           ],
         },
