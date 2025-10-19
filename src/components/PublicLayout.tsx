@@ -4,7 +4,7 @@ import React, { useContext } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Home, BookOpen, LogOut, LayoutDashboard } from 'lucide-react';
-import { AuthContext } from '@/App';
+import { AuthContext } from '@/context/AuthContext'; // Updated import
 import { supabase } from '@/lib/supabase';
 import { showSuccess, showError } from '@/utils/toast';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';

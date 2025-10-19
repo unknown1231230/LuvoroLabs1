@@ -9,7 +9,7 @@ import { Home, BookOpen, Award, Settings, LogOut, LayoutDashboard } from 'lucide
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MobileNav from './MobileNav';
-import { AuthContext } from '@/App';
+import { AuthContext } from '@/context/AuthContext'; // Updated import
 
 const Layout = () => {
   const navigate = useNavigate();

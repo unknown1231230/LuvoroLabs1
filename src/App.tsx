@@ -16,17 +16,9 @@ import APPhysicsCourse from "./pages/APPhysicsCourse";
 import LessonPage from "./pages/LessonPage";
 import UnitTestingPage from "./pages/UnitTestingPage"; // New: Import UnitTestingPage
 import UnitTestResultsPage from "./pages/UnitTestResultsPage"; // New: Import UnitTestResultsPage
-import { useEffect, useState, createContext } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "./lib/supabase";
-import { Session, User } from "@supabase/supabase-js";
-
-// Create AuthContext
-interface AuthContextType {
-  session: Session | null;
-  user: User | null;
-  loading: boolean;
-}
-export const AuthContext = createContext<AuthContextType>({ session: null, user: null, loading: true });
+import { AuthContext } from "./context/AuthContext"; // Updated import
 
 const queryClient = new QueryClient();
 

@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { ArrowLeft, CheckCircle, XCircle } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
 import { markLessonAsCompleted, updateUserStreak, fetchUserQuizAttempts, fetchUserLessonProgress } from '@/utils/supabaseUtils';
-import { AuthContext } from '@/App';
+import { AuthContext } from '@/context/AuthContext'; // Updated import
 import { findLessonById, findNextLessonPath } from '@/utils/courseContent.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 import Kinematics1DSimulation from '@/components/simulations/Kinematics1DSimulation';

@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Flag, X, CheckCircle, Clock, ChevronLeft, ChevronRight, ListChecks, MoreHorizontal, BookOpen } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
-import { AuthContext } from '@/App';
+import { AuthContext } from '@/context/AuthContext'; // Updated import
 import { findModuleById, UnitQuestion, UnitTestSection } from '@/utils/courseContent';
 import { useQueryClient } from '@tanstack/react-query';
 import {

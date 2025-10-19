@@ -5,7 +5,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ArrowLeft, CheckCircle2, XCircle, Flag } from 'lucide-react';
-import { AuthContext } from '@/App';
+import { AuthContext } from '@/context/AuthContext'; // Updated import
 import { findModuleById } from '@/utils/courseContent';
 import { fetchUnitTestSession, fetchUserUnitTestAnswers } from '@/utils/supabaseUtils';
 import { cn } from '@/lib/utils';

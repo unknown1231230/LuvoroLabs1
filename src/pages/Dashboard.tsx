@@ -10,7 +10,7 @@ import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { AuthContext } from "@/App";
+import { AuthContext } from "@/context/AuthContext"; // Updated import
 import { getTotalLessonsCount, findPersonalizedRecommendations } from "@/utils/courseContent";
 import { 
   fetchUserCompletedLessonsCount, 
