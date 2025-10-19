@@ -176,18 +176,15 @@ export const incrementSiteMetric = async (metricName: string, incrementBy: numbe
   }
 };
 
-// Helper to get the start of the week (Monday) in UTC for a given date
-const getStartOfWeekUTC = (date: Date): Date => {
+// Helper to get the start of the day in UTC for a given date
+const getStartOfDayUTC = (date: Date): Date => {
   const d = new Date(date);
-  const day = d.getUTCDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday in UTC
-  const diff = d.getUTCDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday to be the end of the previous week in UTC
-  d.setUTCDate(diff);
   d.setUTCHours(0, 0, 0, 0);
   d.setUTCMilliseconds(0);
   return d;
 };
 
-export const fetchWeeklyLessonCompletions = async (userId: string): Promise<{ name: string; lessons: number }[]> => {
+export const fetchDailyLessonCompletions = async (userId: string): Promise<{ name: string; lessons: number }[]> => {
   try {
     const { data, error } = await supabase
       .from('user_lesson_progress')
@@ -197,60 +194,60 @@ export const fetchWeeklyLessonCompletions = async (userId: string): Promise<{ na
 
     if (error) throw error;
 
-    const weeklyData: Record<string, number> = {};
-    const weekStarts: Date[] = [];
+    const dailyData: Record<string, number> = {};
+    const dayStarts: Date[] = [];
     const now = new Date(); // Get current date/time (local)
-    const startOfCurrentWeekUTC = getStartOfWeekUTC(now); // Calculate start of current week in UTC
+    const startOfTodayUTC = getStartOfDayUTC(now); // Calculate start of current day in UTC
 
-    // Generate the start dates for the last 4 weeks (including current) in UTC
-    for (let i = 0; i < 4; i++) {
-      const weekStartDate = new Date(startOfCurrentWeekUTC);
-      weekStartDate.setUTCDate(startOfCurrentWeekUTC.getUTCDate() - (3 - i) * 7); // Go back 3, 2, 1, 0 weeks
-      weekStarts.push(weekStartDate);
+    // Generate the start dates for the last 7 days (including today) in UTC
+    for (let i = 0; i < 7; i++) {
+      const dayStartDate = new Date(startOfTodayUTC);
+      dayStartDate.setUTCDate(startOfTodayUTC.getUTCDate() - (6 - i)); // Go back 6, 5, ..., 0 days
+      dayStarts.push(dayStartDate);
     }
 
-    const weekLabels = ["Week 1", "Week 2", "Week 3", "Current Week"];
-    weekStarts.forEach((_, index) => {
-      weeklyData[weekLabels[index]] = 0;
+    const dayLabels = ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Today"];
+    dayStarts.forEach((_, index) => {
+      dailyData[dayLabels[index]] = 0;
     });
 
     data.forEach(item => {
       const completedDate = new Date(item.completed_at); // This is already UTC from Supabase
-      const weekStartOfCompletedDate = getStartOfWeekUTC(completedDate);
+      const startOfCompletedDate = getStartOfDayUTC(completedDate);
 
-      for (let i = 0; i < weekStarts.length; i++) {
-        if (weekStartOfCompletedDate.getTime() === weekStarts[i].getTime()) {
-          weeklyData[weekLabels[i]]++;
+      for (let i = 0; i < dayStarts.length; i++) {
+        if (startOfCompletedDate.getTime() === dayStarts[i].getTime()) {
+          dailyData[dayLabels[i]]++;
           break;
         }
       }
     });
 
-    const result = Object.entries(weeklyData)
+    const result = Object.entries(dailyData)
       .map(([name, lessons]) => ({ name, lessons }))
       .sort((a, b) => {
-        // Custom sort to ensure "Current Week" is always last
-        if (a.name === "Current Week") return 1;
-        if (b.name === "Current Week") return -1;
-        // For "Week X" labels, sort numerically
-        const numA = parseInt(a.name.replace('Week ', ''));
-        const numB = parseInt(b.name.replace('Week ', ''));
+        // Custom sort to ensure "Today" is always last
+        if (a.name === "Today") return 1;
+        if (b.name === "Today") return -1;
+        // For "Day X" labels, sort numerically
+        const numA = parseInt(a.name.replace('Day ', ''));
+        const numB = parseInt(b.name.replace('Day ', ''));
         if (!isNaN(numA) && !isNaN(numB)) {
           return numA - numB;
         }
-        return 0; // Fallback if names are not "Week X"
+        return 0; // Fallback if names are not "Day X"
       });
 
     return result;
 
   } catch (error: any) {
-    console.error("Error fetching weekly lesson completions:", error.message);
-    showError(`Failed to fetch weekly lesson completions: ${error.message}`);
+    console.error("Error fetching daily lesson completions:", error.message);
+    showError(`Failed to fetch daily lesson completions: ${error.message}`);
     return [];
   }
 };
 
-export const fetchWeeklyQuizAttempts = async (userId: string): Promise<{ name: string; quizzes: number }[]> => {
+export const fetchDailyQuizAttempts = async (userId: string): Promise<{ name: string; quizzes: number }[]> => {
   try {
     const { data, error } = await supabase
       .from('user_quiz_attempts')
@@ -260,55 +257,55 @@ export const fetchWeeklyQuizAttempts = async (userId: string): Promise<{ name: s
 
     if (error) throw error;
 
-    const weeklyData: Record<string, number> = {};
-    const weekStarts: Date[] = [];
+    const dailyData: Record<string, number> = {};
+    const dayStarts: Date[] = [];
     const now = new Date(); // Get current date/time (local)
-    const startOfCurrentWeekUTC = getStartOfWeekUTC(now); // Calculate start of current week in UTC
+    const startOfTodayUTC = getStartOfDayUTC(now); // Calculate start of current day in UTC
 
-    // Generate the start dates for the last 4 weeks (including current) in UTC
-    for (let i = 0; i < 4; i++) {
-      const weekStartDate = new Date(startOfCurrentWeekUTC);
-      weekStartDate.setUTCDate(startOfCurrentWeekUTC.getUTCDate() - (3 - i) * 7); // Go back 3, 2, 1, 0 weeks
-      weekStarts.push(weekStartDate);
+    // Generate the start dates for the last 7 days (including today) in UTC
+    for (let i = 0; i < 7; i++) {
+      const dayStartDate = new Date(startOfTodayUTC);
+      dayStartDate.setUTCDate(startOfTodayUTC.getUTCDate() - (6 - i)); // Go back 6, 5, ..., 0 days
+      dayStarts.push(dayStartDate);
     }
 
-    const weekLabels = ["Week 1", "Week 2", "Week 3", "Current Week"];
-    weekStarts.forEach((_, index) => {
-      weeklyData[weekLabels[index]] = 0;
+    const dayLabels = ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Today"];
+    dayStarts.forEach((_, index) => {
+      dailyData[dayLabels[index]] = 0;
     });
 
     data.forEach(item => {
       const attemptedDate = new Date(item.attempted_at); // This is already UTC from Supabase
-      const weekStartOfAttemptedDate = getStartOfWeekUTC(attemptedDate);
+      const startOfAttemptedDate = getStartOfDayUTC(attemptedDate);
 
-      for (let i = 0; i < weekStarts.length; i++) {
-        if (weekStartOfAttemptedDate.getTime() === weekStarts[i].getTime()) {
-          weeklyData[weekLabels[i]]++;
+      for (let i = 0; i < dayStarts.length; i++) {
+        if (startOfAttemptedDate.getTime() === dayStarts[i].getTime()) {
+          dailyData[dayLabels[i]]++;
           break;
         }
       }
     });
 
-    const result = Object.entries(weeklyData)
+    const result = Object.entries(dailyData)
       .map(([name, quizzes]) => ({ name, quizzes }))
       .sort((a, b) => {
-        // Custom sort to ensure "Current Week" is always last
-        if (a.name === "Current Week") return 1;
-        if (b.name === "Current Week") return -1;
-        // For "Week X" labels, sort numerically
-        const numA = parseInt(a.name.replace('Week ', ''));
-        const numB = parseInt(b.name.replace('Week ', ''));
+        // Custom sort to ensure "Today" is always last
+        if (a.name === "Today") return 1;
+        if (b.name === "Today") return -1;
+        // For "Day X" labels, sort numerically
+        const numA = parseInt(a.name.replace('Day ', ''));
+        const numB = parseInt(b.name.replace('Day ', ''));
         if (!isNaN(numA) && !isNaN(numB)) {
           return numA - numB;
         }
-        return 0; // Fallback if names are not "Week X"
+        return 0; // Fallback if names are not "Day X"
       });
 
     return result;
 
   } catch (error: any) {
-    console.error("Error fetching weekly quiz attempts:", error.message);
-    showError(`Failed to fetch weekly quiz attempts: ${error.message}`);
+    console.error("Error fetching daily quiz attempts:", error.message);
+    showError(`Failed to fetch daily quiz attempts: ${error.message}`);
     return [];
   }
 };

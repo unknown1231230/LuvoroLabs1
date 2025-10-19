@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AuthContext } from "@/App";
 import { getTotalLessonsCount, findPersonalizedRecommendations } from "@/utils/courseContent";
-import { fetchUserCompletedLessonsCount, fetchSiteMetric, fetchUserLessonProgress, fetchWeeklyLessonCompletions, fetchWeeklyQuizAttempts, fetchStreakHistory } from "@/utils/supabaseUtils";
+import { fetchUserCompletedLessonsCount, fetchSiteMetric, fetchUserLessonProgress, fetchDailyLessonCompletions, fetchDailyQuizAttempts, fetchStreakHistory } from "@/utils/supabaseUtils"; // Updated imports
 
 const fetchUserStreak = async (userId: string) => {
   const { data, error } = await supabase
@@ -41,7 +41,7 @@ const fetchUserAchievements = async (userId: string) => {
   return count || 0;
 };
 
-const Dashboard = () => { // Renamed from Index to Dashboard
+const Dashboard = () => {
   const { user, loading: authLoading } = useContext(AuthContext);
   const userId = user?.id || null;
 
@@ -86,15 +86,15 @@ const Dashboard = () => { // Renamed from Index to Dashboard
     queryFn: () => fetchSiteMetric('students_helped'),
   });
 
-  const { data: weeklyLessons = [], isLoading: isLoadingWeeklyLessons } = useQuery({
-    queryKey: ['weeklyLessons', userId],
-    queryFn: () => userId ? fetchWeeklyLessonCompletions(userId) : Promise.resolve([]),
+  const { data: dailyLessons = [], isLoading: isLoadingDailyLessons } = useQuery({ // Changed to dailyLessons
+    queryKey: ['dailyLessons', userId],
+    queryFn: () => userId ? fetchDailyLessonCompletions(userId) : Promise.resolve([]), // Changed function
     enabled: !!userId && !authLoading,
   });
 
-  const { data: weeklyQuizzes = [], isLoading: isLoadingWeeklyQuizzes } = useQuery({
-    queryKey: ['weeklyQuizzes', userId],
-    queryFn: () => userId ? fetchWeeklyQuizAttempts(userId) : Promise.resolve([]),
+  const { data: dailyQuizzes = [], isLoading: isLoadingDailyQuizzes } = useQuery({ // Changed to dailyQuizzes
+    queryKey: ['dailyQuizzes', userId],
+    queryFn: () => userId ? fetchDailyQuizAttempts(userId) : Promise.resolve([]), // Changed function
     enabled: !!userId && !authLoading,
   });
 
@@ -106,11 +106,11 @@ const Dashboard = () => { // Renamed from Index to Dashboard
 
   const userProgress = totalLessonsCount > 0 ? Math.round((userCompletedLessonsCount / totalLessonsCount) * 100) : 0;
 
-  // Combine weekly lessons and quizzes for the chart
-  const combinedWeeklyData = weeklyLessons.map((lessonWeek, index) => ({
-    name: lessonWeek.name,
-    lessons: lessonWeek.lessons,
-    quizzes: weeklyQuizzes.find(quizWeek => quizWeek.name === lessonWeek.name)?.quizzes || 0,
+  // Combine daily lessons and quizzes for the chart
+  const combinedDailyData = dailyLessons.map((lessonDay, index) => ({
+    name: lessonDay.name,
+    lessons: lessonDay.lessons,
+    quizzes: dailyQuizzes.find(quizDay => quizDay.name === lessonDay.name)?.quizzes || 0,
   }));
 
   // Prepare streak history data for Recharts
@@ -239,14 +239,14 @@ const Dashboard = () => { // Renamed from Index to Dashboard
 
         <Card className="shadow-sm">
           <CardHeader>
-            <CardTitle>Weekly Activity</CardTitle>
+            <CardTitle>Daily Activity</CardTitle> {/* Changed title */}
           </CardHeader>
           <CardContent>
-            {isLoadingWeeklyLessons || isLoadingWeeklyQuizzes || authLoading ? (
+            {isLoadingDailyLessons || isLoadingDailyQuizzes || authLoading ? (
               <p className="text-center text-muted-foreground">Loading...</p>
             ) : (
               <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={combinedWeeklyData}>
+                <BarChart data={combinedDailyData}> {/* Changed data source */}
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
