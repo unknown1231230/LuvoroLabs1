@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Users, Atom, FlaskConical, Brain } from 'lucide-react';
-import { AuthContext } from '@/App';
+import { AuthContext } from '@/context/AuthContext'; // Corrected import path
 import { useQuery } from '@tanstack/react-query';
 import { fetchSiteMetric } from '@/utils/supabaseUtils';
 import { courses as allCourses } from '@/utils/courseContent'; // Import all courses
