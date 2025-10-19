@@ -22,9 +22,9 @@ const PublicLayout = () => {
         showSuccess("Logged out successfully!");
         navigate('/auth');
       }
-    } catch (error: any) {
-      showError(error.message);
-    }
+    } catch (error: any)      {
+        showError(error.message);
+      }
   };
 
   return (
@@ -46,8 +46,8 @@ const PublicLayout = () => {
                   <Link to="/courses"><BookOpen className="h-4 w-4" /></Link>
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>
-                <p className="text-blue-600">Courses</p> {/* Added text-blue-600 class */}
+              <TooltipContent className="text-blue-600">
+                <p>Courses</p>
               </TooltipContent>
             </Tooltip>
             {session ? (
