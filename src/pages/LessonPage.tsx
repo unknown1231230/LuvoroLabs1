@@ -10,12 +10,14 @@ import { ArrowLeft, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
 import { markLessonAsCompleted, updateUserStreak } from '@/utils/supabaseUtils';
 import { AuthContext } from '@/App';
-import { findLessonById, findNextLessonPath } from '@/utils/courseContent.tsx'; // Updated import
+import { findLessonById, findNextLessonPath } from '@/utils/courseContent.tsx';
+import { useQueryClient } from '@tanstack/react-query'; // Import useQueryClient
 
 const LessonPage = () => {
   const { lessonId } = useParams<{ lessonId: string }>();
   const { user } = useContext(AuthContext);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
+  const queryClient = useQueryClient(); // Initialize useQueryClient
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
   const [submittedAnswers, setSubmittedAnswers] = useState<Record<string, boolean>>({});
   const [allQuestionsCorrect, setAllQuestionsCorrect] = useState(false);
@@ -24,12 +26,12 @@ const LessonPage = () => {
 
   // Assuming courseId is 'ap-physics' for now, as per the routing structure
   const courseId = 'ap-physics';
-  const lesson = findLessonById(courseId, lessonId || ''); // Use helper to get lesson data
+  const lesson = findLessonById(courseId, lessonId || '');
 
   useEffect(() => {
     if (lesson && user) {
       const allCorrect = lesson.questions?.every(q => submittedAnswers[q.id] && selectedAnswers[q.id] === q.correctAnswer);
-      setAllQuestionsCorrect(!!allCorrect); // Ensure boolean
+      setAllQuestionsCorrect(!!allCorrect);
     }
   }, [selectedAnswers, submittedAnswers, lesson, user]);
 
@@ -79,15 +81,14 @@ const LessonPage = () => {
     const success = await markLessonAsCompleted(user.id, courseId, lessonId!);
     if (success) {
       await updateUserStreak(user.id);
+      queryClient.invalidateQueries({ queryKey: ['userStreak', user.id] }); // Invalidate streak query
       setIsLessonMarkedComplete(true);
       showSuccess("Lesson completed and streak updated!");
 
-      // Navigate to the next lesson or course overview
       const nextLessonPath = findNextLessonPath(lessonId!, courseId);
       if (nextLessonPath) {
-        setTimeout(() => navigate(nextLessonPath), 1500); // Navigate after a short delay
+        setTimeout(() => navigate(nextLessonPath), 1500);
       } else {
-        // If no next lesson, go back to the course overview
         setTimeout(() => navigate(`/courses/${courseId}`), 1500);
       }
     }

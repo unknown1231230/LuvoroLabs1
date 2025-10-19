@@ -31,34 +31,34 @@ export const updateUserStreak = async (userId: string) => {
       throw fetchError;
     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Normalize to start of day
+    const todayUtc = new Date();
+    todayUtc.setUTCHours(0, 0, 0, 0); // Normalize to start of UTC day
 
     let newStreak = 1;
-    let lastActiveDate = today.toISOString();
+    let lastActiveDateToSave = todayUtc.toISOString(); // Save as UTC ISO string
 
     if (existingStreak) {
-      const lastActive = new Date(existingStreak.last_active_date);
-      lastActive.setHours(0, 0, 0, 0);
+      const lastActiveUtc = new Date(existingStreak.last_active_date);
+      lastActiveUtc.setUTCHours(0, 0, 0, 0); // Normalize existing date to start of UTC day
 
-      const yesterday = new Date(today);
-      yesterday.setDate(today.getDate() - 1);
+      const yesterdayUtc = new Date(todayUtc);
+      yesterdayUtc.setUTCDate(todayUtc.getUTCDate() - 1); // Subtract one day in UTC
 
-      if (lastActive.getTime() === today.getTime()) {
-        // Already active today, no streak change
+      if (lastActiveUtc.getTime() === todayUtc.getTime()) {
+        // Already active today (UTC), no streak change
         newStreak = existingStreak.current_streak;
-      } else if (lastActive.getTime() === yesterday.getTime()) {
-        // Active yesterday, increment streak
+      } else if (lastActiveUtc.getTime() === yesterdayUtc.getTime()) {
+        // Active yesterday (UTC), increment streak
         newStreak = existingStreak.current_streak + 1;
       } else {
-        // Not active yesterday or today, reset streak
+        // Not active yesterday or today (UTC), reset streak
         newStreak = 1;
       }
     }
 
     const { error: upsertError } = await supabase
       .from('streaks')
-      .upsert({ user_id: userId, current_streak: newStreak, last_active_date: lastActiveDate }, { onConflict: 'user_id' });
+      .upsert({ user_id: userId, current_streak: newStreak, last_active_date: lastActiveDateToSave }, { onConflict: 'user_id' });
 
     if (upsertError) {
       throw upsertError;
@@ -71,18 +71,4 @@ export const updateUserStreak = async (userId: string) => {
     showError(`Failed to update streak: ${error.message}`);
     return null;
   }
-};
-
-export const fetchUserLessonProgress = async (userId: string, courseId: string) => {
-  const { data, error } = await supabase
-    .from('user_lesson_progress')
-    .select('lesson_id')
-    .eq('user_id', userId)
-    .eq('course_id', courseId);
-
-  if (error) {
-    console.error("Error fetching user lesson progress:", error.message);
-    return [];
-  }
-  return data.map(item => item.lesson_id);
 };
