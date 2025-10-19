@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, FlaskConical } from 'lucide-react';
 import LessonCard from '@/components/LessonCard';
 import { AuthContext } from '@/App';
 import { fetchUserLessonProgress } from '@/utils/supabaseUtils';
@@ -97,22 +97,41 @@ const APPhysicsCourse = () => {
                 <p className="text-muted-foreground mb-4">{module.description}</p>
                 {user ? (
                   isModuleUnlocked ? (
-                    module.lessons && module.lessons.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                        {module.lessons.map((lesson) => (
-                          <LessonCard
-                            key={lesson.id}
-                            lessonId={lesson.id}
-                            title={lesson.title}
-                            description={lesson.description}
-                            link={lesson.link}
-                            isCompleted={isLessonCompleted(lesson.id)}
-                          />
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-muted-foreground mt-4">Lessons for this module are coming soon!</p>
-                    )
+                    <>
+                      {module.lessons && module.lessons.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                          {module.lessons.map((lesson) => (
+                            <LessonCard
+                              key={lesson.id}
+                              lessonId={lesson.id}
+                              title={lesson.title}
+                              description={lesson.description}
+                              link={lesson.link}
+                              isCompleted={isLessonCompleted(lesson.id)}
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-muted-foreground mt-4">Lessons for this module are coming soon!</p>
+                      )}
+
+                      {module.unitTest && (
+                        <div className="mt-6 text-center">
+                          <Button
+                            asChild
+                            disabled={!currentModuleCompleted}
+                            variant={currentModuleCompleted ? "default" : "secondary"}
+                          >
+                            <Link to={`/courses/${courseId}/unit-test/${module.id}`}>
+                              <FlaskConical className="mr-2 h-4 w-4" /> Start Unit Test
+                            </Link>
+                          </Button>
+                          {!currentModuleCompleted && (
+                            <p className="text-sm text-muted-foreground mt-2">Complete all lessons to unlock the unit test.</p>
+                          )}
+                        </div>
+                      )}
+                    </>
                   ) : (
                     <p className="text-muted-foreground mt-4">Complete the previous module to unlock this one.</p>
                   )

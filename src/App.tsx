@@ -14,6 +14,8 @@ import PublicLayout from "./components/PublicLayout";
 import CourseCatalog from "./pages/CourseCatalog";
 import APPhysicsCourse from "./pages/APPhysicsCourse";
 import LessonPage from "./pages/LessonPage";
+import UnitTestingPage from "./pages/UnitTestingPage"; // New: Import UnitTestingPage
+import UnitTestResultsPage from "./pages/UnitTestResultsPage"; // New: Import UnitTestResultsPage
 import { useEffect, useState, createContext } from "react";
 import { supabase } from "./lib/supabase";
 import { Session, User } from "@supabase/supabase-js";
@@ -75,6 +77,8 @@ const App = () => {
                 <Route path="courses" element={<CourseCatalog />} />
                 <Route path="courses/ap-physics" element={<APPhysicsCourse />} />
                 <Route path="courses/ap-physics/lessons/:lessonId" element={<LessonPage />} />
+                <Route path="courses/:courseId/unit-test/:moduleId" element={<UnitTestingPage />} /> {/* New: Unit Test Page */}
+                <Route path="courses/:courseId/unit-test-results/:sessionId" element={<UnitTestResultsPage />} /> {/* New: Unit Test Results Page */}
                 <Route path="auth" element={!session ? <Auth /> : <Navigate to="/dashboard" />} /> {/* Redirect to dashboard */}
               </Route>
 

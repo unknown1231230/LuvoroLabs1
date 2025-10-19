@@ -21,6 +21,25 @@ export interface Lesson {
   }[];
 }
 
+// Define the structure for a unit test question
+export interface UnitQuestion {
+  id: string;
+  type: 'multiple-choice';
+  question: string;
+  options: string[];
+  correctAnswer: string;
+  explanation: string;
+}
+
+// Define the structure for a unit test
+export interface UnitTest {
+  id: string;
+  title: string;
+  description: string;
+  durationMinutes: number;
+  questions: UnitQuestion[];
+}
+
 // Define the structure for a module
 export interface Module {
   id: string;
@@ -28,6 +47,7 @@ export interface Module {
   description: string;
   icon: React.ReactNode;
   lessons: Lesson[];
+  unitTest?: UnitTest; // New: Optional unit test for the module
 }
 
 // Define the structure for a course
@@ -174,6 +194,64 @@ export const courses: Course[] = [
             ],
           },
         ],
+        unitTest: {
+          id: 'kinematics-unit-test',
+          title: 'Kinematics Unit Test',
+          description: 'Test your understanding of 1D and 2D kinematics, including projectile motion and relative velocity.',
+          durationMinutes: 15,
+          questions: [
+            {
+              id: 'ut-q1',
+              type: 'multiple-choice',
+              question: 'A car accelerates from rest at 2 m/s² for 5 seconds. What is its final velocity?',
+              options: ['2 m/s', '5 m/s', '10 m/s', '20 m/s'],
+              correctAnswer: '10 m/s',
+              explanation: 'Using v = v₀ + at, where v₀=0, a=2, t=5. So, v = 0 + 2*5 = 10 m/s.',
+            },
+            {
+              id: 'ut-q2',
+              type: 'multiple-choice',
+              question: 'A ball is thrown horizontally from a cliff. Which of the following statements is true about its motion?',
+              options: [
+                'Its horizontal velocity decreases.',
+                'Its vertical velocity is constant.',
+                'Its horizontal acceleration is zero.',
+                'It hits the ground at the same time as a ball dropped vertically from the same height.'
+              ],
+              correctAnswer: 'Its horizontal acceleration is zero.',
+              explanation: 'Neglecting air resistance, there are no horizontal forces, so horizontal acceleration is zero. Its horizontal velocity is constant, vertical velocity increases due to gravity, and it does hit the ground at the same time as a dropped ball because vertical motion is independent of horizontal motion.',
+            },
+            {
+              id: 'ut-q3',
+              type: 'multiple-choice',
+              question: 'An airplane flies at 200 km/h relative to the air. A headwind blows at 50 km/h. What is the airplane\'s speed relative to the ground?',
+              options: ['150 km/h', '200 km/h', '250 km/h', '50 km/h'],
+              correctAnswer: '150 km/h',
+              explanation: 'With a headwind, the speeds subtract: 200 km/h - 50 km/h = 150 km/h.',
+            },
+            {
+              id: 'ut-q4',
+              type: 'multiple-choice',
+              question: 'An object is dropped from a height. What is its acceleration just before it hits the ground (neglecting air resistance)?',
+              options: ['0 m/s²', '9.8 m/s² upwards', '9.8 m/s² downwards', 'It depends on the mass of the object'],
+              correctAnswer: '9.8 m/s² downwards',
+              explanation: 'The acceleration due to gravity is constant at 9.8 m/s² downwards for all objects, regardless of mass, neglecting air resistance.',
+            },
+            {
+              id: 'ut-q5',
+              type: 'multiple-choice',
+              question: 'Which of the following graphs represents an object moving with constant positive velocity?',
+              options: [
+                'Position vs. time: horizontal line',
+                'Position vs. time: straight line with positive slope',
+                'Velocity vs. time: straight line with positive slope',
+                'Velocity vs. time: horizontal line above zero'
+              ],
+              correctAnswer: 'Position vs. time: straight line with positive slope',
+              explanation: 'Constant positive velocity means position changes linearly with time in the positive direction. A horizontal line on a position-time graph means zero velocity. A straight line with positive slope on a velocity-time graph means constant positive acceleration. A horizontal line above zero on a velocity-time graph means constant positive velocity.',
+            },
+          ],
+        },
       },
       {
         id: 'dynamics',
@@ -433,4 +511,11 @@ export const findPersonalizedRecommendations = (
   recommendations.push("Explore new courses or review past lessons to reinforce your knowledge.");
 
   return recommendations;
+};
+
+// Helper function to find a module by course ID and module ID
+export const findModuleById = (courseId: string, moduleId: string): Module | undefined => {
+  const course = findCourseById(courseId);
+  if (!course) return undefined;
+  return course.modules.find(module => module.id === moduleId);
 };

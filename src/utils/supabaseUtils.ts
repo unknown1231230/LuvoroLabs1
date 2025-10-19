@@ -223,3 +223,139 @@ export const fetchUserQuizAttempts = async (userId: string, courseId: string, le
     return [];
   }
 };
+
+// --- Unit Test Functions ---
+
+export const startUnitTestSession = async (
+  userId: string,
+  courseId: string,
+  moduleId: string,
+  durationMinutes: number,
+  totalQuestions: number
+) => {
+  try {
+    const endTime = new Date(Date.now() + durationMinutes * 60 * 1000).toISOString();
+    const { data, error } = await supabase
+      .from('unit_test_sessions')
+      .insert({
+        user_id: userId,
+        course_id: courseId,
+        module_id: moduleId,
+        end_time: endTime,
+        total_questions: totalQuestions,
+        status: 'in-progress',
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  } catch (error: any) {
+    console.error("Error starting unit test session:", error.message);
+    showError(`Failed to start test session: ${error.message}`);
+    return null;
+  }
+};
+
+export const submitUnitTestAnswer = async (
+  sessionId: string,
+  userId: string,
+  questionId: string,
+  selectedAnswer: string | null,
+  isCorrect: boolean,
+  markedForReview: boolean,
+  eliminatedOptions: string[]
+) => {
+  try {
+    const { data, error } = await supabase
+      .from('user_unit_test_answers')
+      .upsert({
+        session_id: sessionId,
+        user_id: userId,
+        question_id: questionId,
+        selected_answer: selectedAnswer,
+        is_correct: isCorrect,
+        marked_for_review: markedForReview,
+        eliminated_options: eliminatedOptions,
+        attempted_at: new Date().toISOString(),
+      }, { onConflict: 'session_id,question_id' })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  } catch (error: any) {
+    console.error("Error submitting unit test answer:", error.message);
+    // Don't show error toast here, as it might spam during rapid answer changes
+    return null;
+  }
+};
+
+export const updateUnitTestSessionStatus = async (
+  sessionId: string,
+  status: 'completed' | 'timed-out',
+  score: number
+) => {
+  try {
+    const { data, error } = await supabase
+      .from('unit_test_sessions')
+      .update({ status: status, score: score, end_time: new Date().toISOString() })
+      .eq('id', sessionId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  } catch (error: any) {
+    console.error("Error updating unit test session status:", error.message);
+    showError(`Failed to update test session status: ${error.message}`);
+    return null;
+  }
+};
+
+export const fetchUnitTestSession = async (
+  userId: string,
+  courseId: string,
+  moduleId: string,
+  sessionId?: string
+) => {
+  try {
+    let query = supabase
+      .from('unit_test_sessions')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('course_id', courseId)
+      .eq('module_id', moduleId)
+      .order('created_at', { ascending: false })
+      .limit(1); // Get the most recent session
+
+    if (sessionId) {
+      query = query.eq('id', sessionId);
+    }
+
+    const { data, error } = await query.single();
+
+    if (error && error.code !== 'PGRST116') throw error; // PGRST116 means no rows found
+    return data;
+  } catch (error: any) {
+    console.error("Error fetching unit test session:", error.message);
+    showError(`Failed to fetch test session: ${error.message}`);
+    return null;
+  }
+};
+
+export const fetchUserUnitTestAnswers = async (sessionId: string) => {
+  try {
+    const { data, error } = await supabase
+      .from('user_unit_test_answers')
+      .select('*')
+      .eq('session_id', sessionId);
+
+    if (error) throw error;
+    return data;
+  } catch (error: any) {
+    console.error("Error fetching user unit test answers:", error.message);
+    showError(`Failed to fetch test answers: ${error.message}`);
+    return [];
+  }
+};
