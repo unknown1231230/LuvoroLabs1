@@ -9,10 +9,11 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Layout from "./components/Layout";
-import PublicLayout from "./components/PublicLayout"; // Import PublicLayout
-import CourseCatalog from "./pages/CourseCatalog"; // Import CourseCatalog
-import APPhysicsCourse from "./pages/APPhysicsCourse"; // Import APPhysicsCourse
-import { useEffect, useState } from "react";
+import PublicLayout from "./components/PublicLayout";
+import CourseCatalog from "./pages/CourseCatalog";
+import APPhysicsCourse from "./pages/APPhysicsCourse";
+import LessonPage from "./pages/LessonPage"; // Import LessonPage
+import { useEffect, useState } => "react";
 import { supabase } from "./lib/supabase";
 import { Session } from "@supabase/supabase-js";
 
@@ -58,6 +59,7 @@ const App = () => {
               <Route index element={<Index />} />
               <Route path="courses" element={<CourseCatalog />} />
               <Route path="courses/ap-physics" element={<APPhysicsCourse />} />
+              <Route path="courses/ap-physics/lessons/:lessonId" element={<LessonPage />} /> {/* New Lesson Route */}
               <Route path="auth" element={!session ? <Auth /> : <Navigate to="/" />} />
             </Route>
 
