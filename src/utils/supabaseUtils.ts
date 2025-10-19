@@ -61,88 +61,65 @@ export const fetchUserCompletedLessonsCount = async (userId: string): Promise<nu
   }
 };
 
-// Helper to get the start of the day in LOCAL timezone for a given date string (YYYY-MM-DD) or Date object
-const getStartOfDayLocal = (dateInput: Date | string): Date => {
-  let d: Date;
-  if (typeof dateInput === 'string') {
-    // Parse YYYY-MM-DD string as local date
-    const [year, month, day] = dateInput.split('-').map(Number);
-    d = new Date(year, month - 1, day); // Month is 0-indexed
-  } else {
-    d = new Date(dateInput);
-  }
-  d.setHours(0, 0, 0, 0); // Sets local hours to midnight
-  d.setMilliseconds(0);
-  return d;
+// Helper to get a date string in YYYY-MM-DD format for a given Date object
+const toYYYYMMDD = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
 
 export const updateUserStreak = async (userId: string) => {
   try {
     const { data: existingStreak, error: fetchError } = await supabase
       .from('streaks')
-      .select('current_streak, last_active_date') // Only select necessary columns
+      .select('current_streak, last_active_date')
       .eq('user_id', userId)
       .single();
 
     if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 means no rows found
-      console.error("[Streak Debug] Error fetching existing streak:", fetchError.message);
       throw fetchError;
     }
 
-    const todayLocal = getStartOfDayLocal(new Date()); // Midnight of client's local day
-    let newStreak = 1;
-    // Format for DB: YYYY-MM-DD
-    const todayFormatted = todayLocal.toISOString().split('T')[0];
+    const today = new Date();
+    const todayString = toYYYYMMDD(today);
 
-    console.log(`[Streak Debug] Current time: ${new Date().toISOString()}`);
-    console.log(`[Streak Debug] todayLocal: ${todayLocal.toISOString()}`);
-    console.log(`[Streak Debug] todayFormatted (for DB): ${todayFormatted}`);
+    let newStreak = 1;
 
     if (existingStreak) {
-      console.log(`[Streak Debug] Existing streak: ${existingStreak.current_streak}, last active date (DB): ${existingStreak.last_active_date}`);
-      const lastActiveLocal = getStartOfDayLocal(existingStreak.last_active_date); // Use the refined helper
-      console.log(`[Streak Debug] lastActiveLocal (from DB): ${lastActiveLocal.toISOString()}`);
+      const lastActiveDateString = existingStreak.last_active_date; // This is already YYYY-MM-DD
 
-      const yesterdayLocal = getStartOfDayLocal(new Date(todayLocal));
-      yesterdayLocal.setDate(todayLocal.getDate() - 1);
-      console.log(`[Streak Debug] yesterdayLocal: ${yesterdayLocal.toISOString()}`);
-
-      console.log(`[Streak Debug] Comparison: lastActiveLocal (${lastActiveLocal.toISOString()}) === todayLocal (${todayLocal.toISOString()}) -> ${lastActiveLocal.getTime() === todayLocal.getTime()}`);
-      console.log(`[Streak Debug] Comparison: lastActiveLocal (${lastActiveLocal.toISOString()}) === yesterdayLocal (${yesterdayLocal.toISOString()}) -> ${lastActiveLocal.getTime() === yesterdayLocal.getTime()}`);
-
-
-      // Check if the last active date is today (local)
-      if (lastActiveLocal.getTime() === todayLocal.getTime()) {
+      if (lastActiveDateString === todayString) {
+        // Already active today, streak doesn't change
         newStreak = existingStreak.current_streak;
-        console.log(`[Streak Debug] User ${userId}: Same local day (${todayFormatted}), streak not changed. Current: ${newStreak}`);
       } else {
-        // Check if the last active date was yesterday (local)
-        if (lastActiveLocal.getTime() === yesterdayLocal.getTime()) {
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+        const yesterdayString = toYYYYMMDD(yesterday);
+
+        if (lastActiveDateString === yesterdayString) {
+          // Consecutive day
           newStreak = existingStreak.current_streak + 1;
-          console.log(`[Streak Debug] User ${userId}: Consecutive local day (${todayFormatted}), streak incremented. New: ${newStreak}`);
         } else {
-          // Not active yesterday or today (local), reset streak
+          // Gap detected, reset streak
           newStreak = 1;
-          console.log(`[Streak Debug] User ${userId}: Gap detected (last active: ${existingStreak.last_active_date}), streak reset. New: ${newStreak}`);
         }
       }
-    } else {
-      console.log(`[Streak Debug] User ${userId}: First activity, starting streak at 1.`);
     }
+    // If no existing streak, newStreak is already 1.
 
     const { error: upsertError } = await supabase
       .from('streaks')
-      .upsert({ user_id: userId, current_streak: newStreak, last_active_date: todayFormatted }, { onConflict: 'user_id' });
+      .upsert({ user_id: userId, current_streak: newStreak, last_active_date: todayString }, { onConflict: 'user_id' });
 
     if (upsertError) {
-      console.error(`[Streak Debug] Error upserting streak for user ${userId}:`, upsertError.message);
       throw upsertError;
     }
 
     showSuccess(`Streak updated to ${newStreak} days!`);
     return newStreak;
   } catch (error: any) {
-    console.error(`[Streak Debug] Unhandled error in updateUserStreak for user ${userId}:`, error.message);
+    console.error(`Error in updateUserStreak for user ${userId}:`, error.message);
     showError(`Failed to update streak: ${error.message}`);
     return null;
   }
@@ -200,16 +177,18 @@ export const incrementSiteMetric = async (metricName: string, incrementBy: numbe
 
 export const fetchLessonsCompletedToday = async (userId: string): Promise<number> => {
   try {
-    const todayLocal = getStartOfDayLocal(new Date());
-    const tomorrowLocal = new Date(todayLocal);
-    tomorrowLocal.setDate(todayLocal.getDate() + 1);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Start of today in local time
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1); // Start of tomorrow in local time
 
     const { count, error } = await supabase
       .from('user_lesson_progress')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', userId)
-      .gte('completed_at', todayLocal.toISOString())
-      .lt('completed_at', tomorrowLocal.toISOString());
+      .gte('completed_at', today.toISOString())
+      .lt('completed_at', tomorrow.toISOString());
 
     if (error) throw error;
     return count || 0;
@@ -238,16 +217,18 @@ export const fetchTotalQuizAttempts = async (userId: string): Promise<number> =>
 
 export const fetchQuizzesTakenToday = async (userId: string): Promise<number> => {
   try {
-    const todayLocal = getStartOfDayLocal(new Date());
-    const tomorrowLocal = new Date(todayLocal);
-    tomorrowLocal.setDate(todayLocal.getDate() + 1);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Start of today in local time
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1); // Start of tomorrow in local time
 
     const { count, error } = await supabase
       .from('user_quiz_attempts')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', userId)
-      .gte('attempted_at', todayLocal.toISOString())
-      .lt('attempted_at', tomorrowLocal.toISOString());
+      .gte('attempted_at', today.toISOString())
+      .lt('attempted_at', tomorrow.toISOString());
 
     if (error) throw error;
     return count || 0;
