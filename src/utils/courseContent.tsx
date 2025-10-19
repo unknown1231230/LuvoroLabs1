@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { BookOpen, FlaskConical, Brain, Atom, Rocket, Lightbulb } from 'lucide-react';
+import { BookOpen, FlaskConical, Brain, Atom, Rocket, Lightbulb, Scale } from 'lucide-react'; // Added Scale icon
 
 // Define the structure for a lesson
 export interface Lesson {
@@ -280,6 +280,50 @@ export const courses: Course[] = [
         title: "Module 4: Rotational Motion",
         description: "Learn about rotational kinematics, torque, angular momentum, and rotational kinetic energy.",
         icon: <BookOpen className="h-5 w-5" />,
+        lessons: [
+          {
+            id: 'rotational-kinematics',
+            title: 'Lesson 4.1: Introduction to Rotational Kinematics',
+            description: 'Understand angular displacement, velocity, and acceleration.',
+            link: '/courses/ap-physics/lessons/rotational-kinematics',
+            content: `
+              <p>Rotational kinematics is the study of rotational motion without considering the forces that cause it. It's analogous to linear kinematics but deals with angular quantities.</p>
+              <h3 class="text-xl font-semibold mt-4 mb-2">Key Concepts:</h3>
+              <ul class="list-disc list-inside space-y-1">
+                <li><strong>Angular Position (θ):</strong> The angle of an object relative to a reference direction. Measured in radians.</li>
+                <li><strong>Angular Displacement (Δθ):</strong> The change in angular position.</li>
+                <li><strong>Angular Velocity (ω):</strong> The rate of change of angular position (ω = Δθ/Δt). Measured in rad/s.</li>
+                <li><strong>Angular Acceleration (α):</strong> The rate of change of angular velocity (α = Δω/Δt). Measured in rad/s².</li>
+              </ul>
+              <h3 class="text-xl font-semibold mt-4 mb-2">Equations of Rotational Motion (Constant Angular Acceleration):</h3>
+              <ul class="list-disc list-inside space-y-1">
+                <li>ω = ω₀ + αt</li>
+                <li>Δθ = ω₀t + ½αt²</li>
+                <li>ω² = ω₀² + 2αΔθ</li>
+                <li>Δθ = (ω₀ + ω)/2 * t</li>
+              </ul>
+              <p class="mt-4">These equations are identical in form to their linear counterparts, making it easier to apply what you already know!</p>
+              <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
+            `,
+            videoUrl: "https://streamable.com/e/21b3js", // Placeholder video
+            questions: [
+              {
+                id: 'q1',
+                type: 'multiple-choice',
+                question: 'What is the SI unit for angular velocity?',
+                options: ['meters/second', 'radians/second', 'degrees/second', 'revolutions/minute'],
+                correctAnswer: 'radians/second',
+                explanation: 'Angular velocity is measured in radians per second (rad/s) in the SI system.',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'gravitation',
+        title: "Module 5: Universal Gravitation",
+        description: "Explore Newton's Law of Universal Gravitation, gravitational fields, and orbital mechanics.",
+        icon: <Scale className="h-5 w-5" />,
         lessons: [], // Placeholder for future lessons
       },
     ],
