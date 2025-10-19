@@ -22,7 +22,7 @@ const LessonPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
-  const [submittedAnswers, setSubmittedAnswers] = useState<Record<string, boolean>>({}); // Tracks if *any* answer was submitted for a question
+  const [submittedAnswers, setSubmittedAnswers] = useState<Record<string, { isCorrect: boolean }>>({});
   const [allQuestionsCorrect, setAllQuestionsCorrect] = useState(false);
   const [isLessonMarkedComplete, setIsLessonMarkedComplete] = useState(false);
   const [isCompletingLesson, setIsCompletingLesson] = useState(false);
@@ -44,15 +44,12 @@ const LessonPage = () => {
         setUserQuizAttempts(attempts);
 
         const initialSelected: Record<string, string> = {};
-        const initialSubmitted: Record<string, boolean> = {};
+        const initialSubmitted: Record<string, { isCorrect: boolean }> = {};
         lesson?.questions?.forEach(q => {
-          const latestAttempt = attempts
-            .filter(a => a.question_id === q.id)
-            .sort((a, b) => new Date(b.attempted_at || '').getTime() - new Date(a.attempted_at || '').getTime())[0];
-          
-          if (latestAttempt && latestAttempt.selected_answer) {
-            initialSelected[q.id] = latestAttempt.selected_answer;
-            initialSubmitted[q.id] = true;
+          const correctAttempt = attempts.find(a => a.question_id === q.id && a.is_correct);
+          if (correctAttempt) {
+            initialSelected[q.id] = correctAttempt.selected_answer!;
+            initialSubmitted[q.id] = { isCorrect: true };
           }
         });
         setSelectedAnswers(initialSelected);
@@ -155,14 +152,14 @@ const LessonPage = () => {
         return;
       }
 
-      setSubmittedAnswers((prev) => ({ ...prev, [questionId]: true }));
+      setSubmittedAnswers((prev) => ({ ...prev, [questionId]: { isCorrect } }));
       const newAttemptForState = { ...newAttemptForSupabase, attempted_at: new Date().toISOString() };
       setUserQuizAttempts((prevAttempts) => [...prevAttempts, newAttemptForState]);
 
       if (isCorrect) {
         showSuccess("Correct answer!");
       } else {
-        showError("Incorrect answer.");
+        showError("Incorrect answer. Try again!");
       }
 
       queryClient.invalidateQueries({ queryKey: ['weeklyQuizzes', user.id] });
@@ -214,14 +211,12 @@ const LessonPage = () => {
           <div className="space-y-6">
             {lesson.questions.map((q) => {
               const hasCorrectAttempt = userQuizAttempts.some(a => a.question_id === q.id && a.is_correct);
-              const hasAnyAttempt = submittedAnswers[q.id];
-              const isQuestionDisabled = isLessonMarkedComplete || hasAnyAttempt;
+              const lastSubmission = submittedAnswers[q.id];
+              const isQuestionDisabled = isLessonMarkedComplete || hasCorrectAttempt;
               
               const userSelectedAnswerForDisplay = hasCorrectAttempt 
                 ? userQuizAttempts.find(a => a.question_id === q.id && a.is_correct)?.selected_answer 
                 : selectedAnswers[q.id];
-              
-              const isCurrentlyCorrect = userSelectedAnswerForDisplay === q.correctAnswer;
 
               return (
                 <Card key={q.id} className="shadow-sm">
@@ -260,21 +255,21 @@ const LessonPage = () => {
                         Submit Answer
                       </Button>
                     )}
-                    {hasAnyAttempt && (
+                    {lastSubmission && (
                       <div className="mt-4 p-3 rounded-md flex flex-col gap-2">
                         <div className="flex items-center gap-2">
-                          {isCurrentlyCorrect ? (
+                          {lastSubmission.isCorrect ? (
                             <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
                           ) : (
                             <XCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
                           )}
-                          <p className={isCurrentlyCorrect ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}>
-                            {isCurrentlyCorrect ? "Correct!" : "Incorrect."}
+                          <p className={lastSubmission.isCorrect ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}>
+                            {lastSubmission.isCorrect ? "Correct!" : "Incorrect."}
                           </p>
                         </div>
-                        {userSelectedAnswerForDisplay && (
+                        {selectedAnswers[q.id] && (
                           <p className="text-muted-foreground text-sm">
-                            Your answer: <span className={cn("font-bold", !isCurrentlyCorrect && "line-through text-red-500")}>{userSelectedAnswerForDisplay}</span>
+                            Your answer: <span className={cn("font-bold", !lastSubmission.isCorrect && "line-through text-red-500")}>{selectedAnswers[q.id]}</span>
                           </p>
                         )}
                         <p className="text-muted-foreground text-sm">
