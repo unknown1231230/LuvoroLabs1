@@ -16,24 +16,33 @@ const UnitTestResultsPage = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const module = findModuleById(courseId || '', moduleId || '');
+  const unitTest = module?.unitTest;
+
   const [sessionData, setSessionData] = useState<any>(null);
   const [userAnswers, setUserAnswers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const module = findModuleById(courseId || '', moduleId || '');
-  const unitTest = module?.unitTest;
-
   useEffect(() => {
     const loadResults = async () => {
-      if (!user || !sessionId || !unitTest) {
-        setError("User not logged in or test data missing.");
+      if (!user) {
+        navigate('/auth'); // Redirect if not logged in
+        return;
+      }
+      if (!courseId || !moduleId || !sessionId) {
+        navigate('/courses'); // Redirect if URL parameters are missing
+        return;
+      }
+      if (!unitTest) {
+        setError("Unit test definition not found for this module.");
         setLoading(false);
+        navigate(`/courses/${courseId}`); // Redirect to module overview
         return;
       }
 
       try {
-        const session = await fetchUnitTestSession(user.id, courseId!, moduleId!, sessionId);
+        const session = await fetchUnitTestSession(user.id, courseId, moduleId, sessionId);
         if (!session) {
           setError("Test session not found or you don't have permission to view it.");
           setLoading(false);
@@ -52,7 +61,7 @@ const UnitTestResultsPage = () => {
     };
 
     loadResults();
-  }, [user, sessionId, courseId, moduleId, unitTest]);
+  }, [user, sessionId, courseId, moduleId, unitTest, navigate]);
 
   if (loading) {
     return (
