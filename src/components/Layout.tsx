@@ -26,8 +26,9 @@ const Layout = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-md border-border/60 shadow-sm">
-        <div className="container flex h-16 items-center justify-between py-4">
+      <header className="sticky top-0 z-40 w-full py-2">
+        <div className="container flex h-16 items-center justify-between px-4 py-4
+          bg-white/10 rounded-2xl shadow-lg backdrop-blur-md border border-white/20">
           <Link to="/" className="text-2xl font-bold text-primary">Luvoro Labs</Link>
           <nav className="flex items-center space-x-4">
             <Button variant="ghost" asChild>
