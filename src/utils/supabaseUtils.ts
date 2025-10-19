@@ -179,10 +179,11 @@ export const incrementSiteMetric = async (metricName: string, incrementBy: numbe
 // Helper to get the start of the week (Monday) for a given date
 const getStartOfWeek = (date: Date): Date => {
   const d = new Date(date);
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday (0) to be last day of prev week
+  const day = d.getDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday to be the end of the previous week
   d.setDate(diff);
   d.setHours(0, 0, 0, 0);
+  d.setMilliseconds(0); // Ensure milliseconds are zeroed out for consistent comparison
   return d;
 };
 
@@ -198,13 +199,17 @@ export const fetchWeeklyLessonCompletions = async (userId: string): Promise<{ na
 
     const weeklyData: Record<string, number> = {};
     const weekStarts: Date[] = [];
-    const now = new Date();
 
-    // Get the start dates for the last 4 weeks
-    for (let i = 0; i < 4; i++) {
-      const date = new Date(now);
-      date.setDate(now.getDate() - (i * 7));
-      weekStarts.unshift(getStartOfWeek(date)); // Add to the beginning to keep them in chronological order
+    // Calculate the start of the current week
+    const today = new Date();
+    const currentWeekStart = getStartOfWeek(today);
+    weekStarts.push(currentWeekStart);
+
+    // Calculate the start of the previous 3 weeks
+    for (let i = 1; i < 4; i++) {
+      const prevWeekStart = new Date(currentWeekStart);
+      prevWeekStart.setDate(currentWeekStart.getDate() - (i * 7));
+      weekStarts.unshift(prevWeekStart); // Add to the beginning to keep them in chronological order
     }
 
     // Initialize weeklyData with week names and zero counts
@@ -217,8 +222,10 @@ export const fetchWeeklyLessonCompletions = async (userId: string): Promise<{ na
       const weekStartOfCompletedDate = getStartOfWeek(completedDate);
 
       for (let i = 0; i < weekStarts.length; i++) {
+        // Compare timestamps for equality
         if (weekStartOfCompletedDate.getTime() === weekStarts[i].getTime()) {
-          weeklyData[`Week ${i + 1}`]++;
+          const weekName = `Week ${i + 1}`;
+          weeklyData[weekName]++;
           break;
         }
       }
@@ -249,13 +256,17 @@ export const fetchWeeklyQuizAttempts = async (userId: string): Promise<{ name: s
 
     const weeklyData: Record<string, number> = {};
     const weekStarts: Date[] = [];
-    const now = new Date();
 
-    // Get the start dates for the last 4 weeks
-    for (let i = 0; i < 4; i++) {
-      const date = new Date(now);
-      date.setDate(now.getDate() - (i * 7));
-      weekStarts.unshift(getStartOfWeek(date)); // Add to the beginning to keep them in chronological order
+    // Calculate the start of the current week
+    const today = new Date();
+    const currentWeekStart = getStartOfWeek(today);
+    weekStarts.push(currentWeekStart);
+
+    // Calculate the start of the previous 3 weeks
+    for (let i = 1; i < 4; i++) {
+      const prevWeekStart = new Date(currentWeekStart);
+      prevWeekStart.setDate(currentWeekStart.getDate() - (i * 7));
+      weekStarts.unshift(prevWeekStart); // Add to the beginning to keep them in chronological order
     }
 
     // Initialize weeklyData with week names and zero counts
@@ -268,8 +279,10 @@ export const fetchWeeklyQuizAttempts = async (userId: string): Promise<{ name: s
       const weekStartOfAttemptedDate = getStartOfWeek(attemptedDate);
 
       for (let i = 0; i < weekStarts.length; i++) {
+        // Compare timestamps for equality
         if (weekStartOfAttemptedDate.getTime() === weekStarts[i].getTime()) {
-          weeklyData[`Week ${i + 1}`]++;
+          const weekName = `Week ${i + 1}`;
+          weeklyData[weekName]++;
           break;
         }
       }
