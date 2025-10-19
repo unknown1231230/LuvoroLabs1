@@ -87,7 +87,7 @@ const APPhysicsCourse = () => {
           const isModuleUnlocked = user ? previousModuleCompleted : false;
 
           return (
-            <Card key={module.id} className={!isModuleUnlocked && user ? "opacity-50" : ""}>
+            <Card key={module.id} className={!isModuleUnlocked && user ? "opacity-50 shadow-sm" : "shadow-sm"}>
               <CardHeader className="flex-row items-center space-x-3">
                 {module.icon}
                 <CardTitle>{module.title}</CardTitle>

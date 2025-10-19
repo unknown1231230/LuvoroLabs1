@@ -17,7 +17,7 @@ interface LessonCardProps {
 
 const LessonCard: React.FC<LessonCardProps> = ({ lessonId, title, description, link, isCompleted = false }) => {
   return (
-    <Card className={cn("flex flex-col", isCompleted && "border-green-500 ring-2 ring-green-500")}>
+    <Card className={cn("flex flex-col shadow-sm", isCompleted && "border-green-500 ring-2 ring-green-500")}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           {isCompleted ? (

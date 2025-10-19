@@ -109,7 +109,7 @@ const Index = () => {
 
       {/* Features Section */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card>
+        <Card className="shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><Flame className="text-orange-500" />Current Streak</CardTitle>
           </CardHeader>
@@ -125,7 +125,7 @@ const Index = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><Trophy className="text-yellow-500" />Achievements</CardTitle>
           </CardHeader>
@@ -141,7 +141,7 @@ const Index = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><Lightbulb className="text-blue-500" />Personalized Recommendations</CardTitle>
           </CardHeader>
@@ -170,7 +170,7 @@ const Index = () => {
 
       {/* Progress & Analytics Section */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
+        <Card className="shadow-sm">
           <CardHeader>
             <CardTitle>Overall Progress</CardTitle>
           </CardHeader>
@@ -183,7 +183,7 @@ const Index = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="shadow-sm">
           <CardHeader>
             <CardTitle>Weekly Activity</CardTitle>
           </CardHeader>
@@ -202,7 +202,7 @@ const Index = () => {
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 shadow-sm">
           <CardHeader>
             <CardTitle>Streak History</CardTitle>
           </CardHeader>

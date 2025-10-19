@@ -40,7 +40,7 @@ const CourseCatalog = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {courses.map((course) => (
-          <Card key={course.id} className="flex flex-col">
+          <Card key={course.id} className="flex flex-col shadow-sm">
             <CardHeader className="flex-row items-center space-x-4 pb-2">
               {course.icon}
               <CardTitle>{course.title}</CardTitle>

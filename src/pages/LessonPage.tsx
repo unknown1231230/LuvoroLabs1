@@ -112,7 +112,7 @@ const LessonPage = () => {
       {/* Conditionally render the video embed or placeholder */}
       <h3 className="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
       {lesson.videoUrl && lesson.videoUrl !== "ADD_YOUR_VIDEO_EMBED_URL_HERE" ? (
-        <div className="aspect-video w-full max-w-2xl mx-auto">
+        <div className="aspect-video w-full max-w-2xl mx-auto shadow-md rounded-lg overflow-hidden">
           <iframe
             width="100%"
             height="100%"
@@ -124,7 +124,7 @@ const LessonPage = () => {
           ></iframe>
         </div>
       ) : (
-        <div className="aspect-video w-full max-w-2xl mx-auto bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-muted-foreground p-4 rounded-md">
+        <div className="aspect-video w-full max-w-2xl mx-auto bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-muted-foreground p-4 rounded-md shadow-md">
           <p className="text-center">
             <strong>Video Placeholder:</strong> Please add an embed URL for this lesson.
             <br/>
@@ -138,7 +138,7 @@ const LessonPage = () => {
           <h2 className="text-3xl font-bold text-primary mt-10">Practice Questions</h2>
           <div className="space-y-6">
             {lesson.questions.map((q) => (
-              <Card key={q.id}>
+              <Card key={q.id} className="shadow-sm">
                 <CardHeader>
                   <CardTitle>{q.question}</CardTitle>
                 </CardHeader>

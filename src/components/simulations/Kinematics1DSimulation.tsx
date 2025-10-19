@@ -26,7 +26,7 @@ const Kinematics1DSimulation: React.FC = () => {
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto mt-8">
+    <Card className="w-full max-w-2xl mx-auto mt-8 shadow-md">
       <CardHeader>
         <CardTitle>1D Kinematics Simulator</CardTitle>
       </CardHeader>
