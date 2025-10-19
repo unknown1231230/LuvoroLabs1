@@ -415,7 +415,7 @@ const UnitTestingPage = () => {
         {/* Left Panel: Question Content */}
         <div className="flex-grow p-6 overflow-y-auto bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
           <div className="prose dark:prose-invert max-w-none">
-            <p className="text-lg font-medium leading-relaxed">{currentQuestion.question}</p>
+            <p className="text-lg font-medium leading-relaxed text-foreground">{currentQuestion.question}</p>
             {/* Placeholder for image/data table if needed */}
           </div>
         </div>
