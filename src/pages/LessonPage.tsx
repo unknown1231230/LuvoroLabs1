@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,48 +26,85 @@ const LessonPage = () => {
   const [allQuestionsCorrect, setAllQuestionsCorrect] = useState(false);
   const [isLessonMarkedComplete, setIsLessonMarkedComplete] = useState(false);
   const [isCompletingLesson, setIsCompletingLesson] = useState(false);
-  const [userQuizAttempts, setUserQuizAttempts] = useState<Array<{ question_id: string; is_correct: boolean; selected_answer: string | null }>>([]);
+  const [userQuizAttempts, setUserQuizAttempts] = useState<Array<{ question_id: string; is_correct: boolean; selected_answer: string | null; attempted_at?: string }>>([]);
   const [lessonScore, setLessonScore] = useState<{ correct: number; total: number } | null>(null);
 
 
   const courseId = 'ap-physics';
   const lesson = findLessonById(courseId, lessonId || '');
 
+  // Memoize handleCompleteLesson to prevent unnecessary re-creations
+  const handleCompleteLesson = useCallback(async () => {
+    console.log("handleCompleteLesson called.");
+    if (!user || isCompletingLesson || isLessonMarkedComplete) {
+      console.log("handleCompleteLesson aborted:", { user: !!user, isCompletingLesson, isLessonMarkedComplete });
+      return;
+    }
+
+    // Re-calculate allQuestionsCorrect based on current userQuizAttempts state
+    const currentAllQuestionsCorrect = lesson?.questions?.every(q =>
+      userQuizAttempts.some(a => a.question_id === q.id && a.is_correct)
+    );
+
+    if (!currentAllQuestionsCorrect) {
+      console.log("handleCompleteLesson aborted: Not all questions correct (re-calculated).");
+      showError("Please answer all questions correctly before completing the lesson.");
+      return;
+    }
+
+    setIsCompletingLesson(true);
+    const success = await markLessonAsCompleted(user.id, courseId, lessonId!);
+    if (success) {
+      console.log("Lesson marked as completed successfully.");
+      // Calculate score based on current userQuizAttempts state
+      const correctCount = lesson?.questions?.filter(q =>
+        userQuizAttempts.some(a => a.question_id === q.id && a.is_correct)
+      ).length || 0;
+      const totalCount = lesson?.questions?.length || 0;
+      setLessonScore({ correct: correctCount, total: totalCount });
+
+      await updateUserStreak(user.id);
+      queryClient.invalidateQueries({ queryKey: ['userStreak', user.id] });
+      queryClient.invalidateQueries({ queryKey: ['userCompletedLessonsCount', user.id] });
+      queryClient.invalidateQueries({ queryKey: ['userCompletedLessonIds', user.id] });
+      queryClient.invalidateQueries({ queryKey: ['weeklyLessons', user.id] });
+      setIsLessonMarkedComplete(true);
+      console.log("setIsLessonMarkedComplete(true) called.");
+      showSuccess("Lesson completed and streak updated!");
+    }
+    setIsCompletingLesson(false);
+  }, [user, isCompletingLesson, isLessonMarkedComplete, lesson?.questions, userQuizAttempts, courseId, lessonId, queryClient]); // Dependencies for useCallback
+
   useEffect(() => {
     const fetchData = async () => {
       if (user && lessonId) {
-        // Check if lesson is completed
         const progress = await fetchUserLessonProgress(user.id, courseId);
         const lessonIsDone = progress.includes(lessonId);
         setIsLessonMarkedComplete(lessonIsDone);
 
-        // Fetch quiz attempts
         const attempts = await fetchUserQuizAttempts(user.id, courseId, lessonId);
         setUserQuizAttempts(attempts);
 
-        // Pre-fill selected answers and submitted status based on attempts
         const initialSelected: Record<string, string> = {};
         const initialSubmitted: Record<string, boolean> = {};
         lesson?.questions?.forEach(q => {
           const latestAttempt = attempts
             .filter(a => a.question_id === q.id)
-            .sort((a, b) => new Date(b.attempted_at || '').getTime() - new Date(a.attempted_at || '').getTime())[0]; // Get latest attempt
+            .sort((a, b) => new Date(b.attempted_at || '').getTime() - new Date(a.attempted_at || '').getTime())[0];
           
           if (latestAttempt && latestAttempt.selected_answer) {
             initialSelected[q.id] = latestAttempt.selected_answer;
-            initialSubmitted[q.id] = true; // Mark as submitted if there's any attempt
+            initialSubmitted[q.id] = true;
           }
         });
         setSelectedAnswers(initialSelected);
         setSubmittedAnswers(initialSubmitted);
 
-        // Check if all questions are already correct
         const allCorrectInitially = lesson?.questions?.every(q =>
           attempts.some(a => a.question_id === q.id && a.is_correct)
         );
         setAllQuestionsCorrect(!!allCorrectInitially);
 
-        // If lesson is already complete, calculate and set the score for display
         if (lessonIsDone) {
           const correctCount = lesson?.questions?.filter(q =>
             attempts.some(a => a.question_id === q.id && a.is_correct)
@@ -78,7 +115,16 @@ const LessonPage = () => {
       }
     };
     fetchData();
-  }, [user, lessonId, courseId, queryClient, lesson?.questions]);
+  }, [user, lessonId, courseId, queryClient, lesson?.questions, handleCompleteLesson]); // Added handleCompleteLesson to dependencies
+
+  // Effect to trigger auto-completion if all questions become correct
+  useEffect(() => {
+    if (user && allQuestionsCorrect && !isLessonMarkedComplete && !isCompletingLesson) {
+      console.log("Triggering auto-completion from useEffect: allQuestionsCorrect changed.");
+      handleCompleteLesson();
+    }
+  }, [allQuestionsCorrect, isLessonMarkedComplete, isCompletingLesson, user, handleCompleteLesson]);
+
 
   if (!lesson) {
     return (
@@ -96,7 +142,6 @@ const LessonPage = () => {
 
   const handleAnswerChange = (questionId: string, value: string) => {
     setSelectedAnswers((prev) => ({ ...prev, [questionId]: value }));
-    // Do not reset submittedAnswers here, as it indicates if an attempt was made
   };
 
   const handleSubmitAnswer = async (questionId: string, correctAnswer: string) => {
@@ -109,15 +154,18 @@ const LessonPage = () => {
       const isCorrect = selectedAnswer === correctAnswer;
       setSubmittedAnswers((prev) => ({ ...prev, [questionId]: true })); // Mark as submitted
 
-      // Record quiz attempt
-      const { error } = await supabase.from('user_quiz_attempts').insert({
-        user_id: user.id,
-        course_id: courseId,
-        lesson_id: lessonId!,
-        question_id: questionId,
-        is_correct: isCorrect,
-        selected_answer: selectedAnswer, // Store the selected answer
-      });
+      const newAttempt = { question_id: questionId, is_correct: isCorrect, selected_answer: selectedAnswer, attempted_at: new Date().toISOString() };
+      const updatedAttempts = [...userQuizAttempts, newAttempt];
+      setUserQuizAttempts(updatedAttempts); // This is async
+
+      if (isCorrect) {
+        showSuccess("Correct answer!");
+      } else {
+        showError("Incorrect answer.");
+      }
+
+      // Record quiz attempt in Supabase
+      const { error } = await supabase.from('user_quiz_attempts').insert(newAttempt);
 
       if (error) {
         console.error("Error recording quiz attempt:", error.message);
@@ -126,62 +174,15 @@ const LessonPage = () => {
         queryClient.invalidateQueries({ queryKey: ['weeklyQuizzes', user.id] });
         queryClient.invalidateQueries({ queryKey: ['userQuizAttempts', user.id, courseId, lessonId] });
         
-        // Update local state for userQuizAttempts to reflect the new attempt
-        const updatedAttempts = [...userQuizAttempts, { question_id: questionId, is_correct: isCorrect, selected_answer: selectedAnswer, attempted_at: new Date().toISOString() }];
-        setUserQuizAttempts(updatedAttempts);
-
-        if (isCorrect) {
-          showSuccess("Correct answer!");
-        } else {
-          showError("Incorrect answer."); // Removed "Try again!"
-        }
-
         // Re-evaluate if all questions are now correct based on updated attempts
-        const allCorrectNow = lesson.questions?.every(q =>
+        const allCorrectAfterSubmission = lesson.questions?.every(q =>
           updatedAttempts.some(a => a.question_id === q.id && a.is_correct)
         );
-        setAllQuestionsCorrect(!!allCorrectNow);
-
-        // Automatically complete lesson if all questions are now correct and not already completed
-        if (allCorrectNow && !isLessonMarkedComplete && !isCompletingLesson) {
-          handleCompleteLesson();
-        }
+        setAllQuestionsCorrect(!!allCorrectAfterSubmission); // This is async, but will trigger the useEffect below
       }
     } else {
       showError("Please select an answer before submitting.");
     }
-  };
-
-  const handleCompleteLesson = async () => {
-    if (!user || isCompletingLesson || isLessonMarkedComplete) {
-      return;
-    }
-    if (!allQuestionsCorrect) {
-      showError("Please answer all questions correctly before completing the lesson.");
-      return;
-    }
-
-    setIsCompletingLesson(true);
-    const success = await markLessonAsCompleted(user.id, courseId, lessonId!);
-    if (success) {
-      // Calculate score before navigating
-      const correctCount = lesson.questions?.filter(q =>
-        userQuizAttempts.some(a => a.question_id === q.id && a.is_correct)
-      ).length || 0;
-      const totalCount = lesson.questions?.length || 0;
-      setLessonScore({ correct: correctCount, total: totalCount }); // Set score for display
-
-      await updateUserStreak(user.id);
-      queryClient.invalidateQueries({ queryKey: ['userStreak', user.id] });
-      queryClient.invalidateQueries({ queryKey: ['userCompletedLessonsCount', user.id] });
-      queryClient.invalidateQueries({ queryKey: ['userCompletedLessonIds', user.id] });
-      queryClient.invalidateQueries({ queryKey: ['weeklyLessons', user.id] });
-      setIsLessonMarkedComplete(true);
-      showSuccess("Lesson completed and streak updated!");
-
-      // No automatic navigation here, it will be handled by the "Continue" button
-    }
-    setIsCompletingLesson(false);
   };
 
   return (
@@ -311,7 +312,7 @@ const LessonPage = () => {
 
       {user && allQuestionsCorrect && !isLessonMarkedComplete && (
         <div className="text-center mt-8">
-          <Button onClick={handleCompleteLesson} disabled={isCompletingLesson}>
+          <Button onClick={() => handleCompleteLesson()} disabled={isCompletingLesson}> {/* Call without args, it will use current state */}
             {isCompletingLesson ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Completing...
