@@ -49,8 +49,8 @@ const AuthForm = () => {
         options: {
           // IMPORTANT: This URL must exactly match one of the "Redirect URLs" configured in your Supabase project
           // and also one of the "Authorized redirect URIs" in your Google Cloud Console OAuth client.
-          // Supabase typically uses /auth/callback for OAuth.
-          redirectTo: 'https://luvorolabs.vercel.app/auth/callback', 
+          // Supabase will redirect to this URL after Google authenticates the user.
+          redirectTo: 'https://luvorolabs.vercel.app/dashboard', 
         },
       });
 

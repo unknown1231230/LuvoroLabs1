@@ -7,11 +7,14 @@ import { Home, BookOpen, LogOut, LayoutDashboard } from 'lucide-react';
 import { AuthContext } from '@/App';
 import { supabase } from '@/lib/supabase';
 import { showSuccess, showError } from '@/utils/toast';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'; // Import Tooltip components
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile
+import MobileNav from './MobileNav'; // Import MobileNav
 
 const PublicLayout = () => {
   const { session } = useContext(AuthContext);
   const navigate = useNavigate();
+  const isMobile = useIsMobile(); // Use the hook
 
   const handleLogout = async () => {
     try {
@@ -34,37 +37,41 @@ const PublicLayout = () => {
           bg-white/10 rounded-2xl shadow-lg backdrop-blur-md border border-white/20">
           <Link to="/" className="flex items-center gap-2 text-2xl font-bold text-primary">
             <img src="/logo.png" alt="Luvoro Labs Logo" className="h-8 w-8" />
-            Luvoro Labs
+            <span className="hidden sm:inline">Luvoro Labs</span> {/* Hide text on very small screens */}
           </Link>
-          <nav className="flex items-center space-x-4">
-            <Button variant="ghost" asChild>
-              <Link to="/"><Home className="mr-2 h-4 w-4" />Home</Link>
-            </Button>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" asChild>
-                  <Link to="/courses"><BookOpen className="h-4 w-4" /></Link>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Courses</p>
-              </TooltipContent>
-            </Tooltip>
-            {session ? (
-              <>
-                <Button variant="ghost" asChild>
-                  <Link to="/dashboard"><LayoutDashboard className="mr-2 h-4 w-4" />Dashboard</Link>
-                </Button>
-                <Button variant="ghost" onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />Logout
-                </Button>
-              </>
-            ) : (
-              <Button asChild>
-                <Link to="/auth">Login / Sign Up</Link>
+          {isMobile ? (
+            <MobileNav isAuthenticated={!!session} />
+          ) : (
+            <nav className="flex items-center space-x-4">
+              <Button variant="ghost" asChild>
+                <Link to="/"><Home className="mr-2 h-4 w-4" />Home</Link>
               </Button>
-            )}
-          </nav>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" asChild>
+                    <Link to="/courses"><BookOpen className="h-4 w-4" /></Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Courses</p>
+                </TooltipContent>
+              </Tooltip>
+              {session ? (
+                <>
+                  <Button variant="ghost" asChild>
+                    <Link to="/dashboard"><LayoutDashboard className="mr-2 h-4 w-4" />Dashboard</Link>
+                  </Button>
+                  <Button variant="ghost" onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />Logout
+                  </Button>
+                </>
+              ) : (
+                <Button asChild>
+                  <Link to="/auth">Login / Sign Up</Link>
+                </Button>
+              )}
+            </nav>
+          )}
         </div>
       </header>
       <main className="flex-grow container py-8">
