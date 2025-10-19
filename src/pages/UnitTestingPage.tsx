@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Flag, X, Clock, ChevronLeft, ChevronRight, ListChecks, MoreHorizontal, BookOpen, ZoomIn, ZoomOut, MessageSquareQuote, Ear } from 'lucide-react';
+import { ArrowLeft, Flag, X, Clock, ChevronLeft, ChevronRight, ListChecks, MoreHorizontal, BookOpen, ZoomIn, ZoomOut, MessageSquareQuote, Ear, Loader2 } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
 import { AuthContext } from '@/context/AuthContext';
 import { findModuleById, UnitQuestion } from '@/utils/courseContent';
@@ -17,6 +17,7 @@ import {
   updateUnitTestSessionStatus,
   fetchUnitTestSession,
   fetchUserUnitTestAnswers,
+  gradeFreeResponseAnswer, // New import
 } from '@/utils/supabaseUtils';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from '@/components/ui/dialog';
@@ -46,6 +47,7 @@ const UnitTestingPage = () => {
   const [testStatus, setTestStatus] = useState<'not-started' | 'in-progress' | 'completed' | 'timed-out'>('not-started');
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
+  const [isGradingAI, setIsGradingAI] = useState(false); // New state for AI grading loading
 
   const [isCalculatorVisible, setIsCalculatorVisible] = useState(false);
   const [isLineReaderVisible, setIsLineReaderVisible] = useState(false);
@@ -79,6 +81,7 @@ const UnitTestingPage = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     setTimeLeft(null);
 
+    // Ensure the current question's answer is submitted before finishing
     if (currentQuestion) {
       await submitCurrentAnswer(currentQuestion);
     }
@@ -185,8 +188,31 @@ const UnitTestingPage = () => {
   const submitCurrentAnswer = async (question: UnitQuestion) => {
     if (!testSessionId || !user) return;
 
+    let isCorrect = false;
+    let aiFeedback = '';
     const selectedAnswer = question.type === 'multiple-choice' ? selectedAnswers[question.id] : freeResponseAnswers[question.id];
-    const isCorrect = selectedAnswer === question.correctAnswer;
+
+    if (question.type === 'multiple-choice') {
+      isCorrect = selectedAnswer === question.correctAnswer;
+    } else if (question.type === 'free-response' && selectedAnswer) {
+      setIsGradingAI(true);
+      const aiResult = await gradeFreeResponseAnswer(
+        selectedAnswer,
+        question.question,
+        question.correctAnswer || '', // Ensure correctAnswer is passed for AI
+        question.explanation || ''
+      );
+      setIsGradingAI(false);
+
+      if (aiResult) {
+        isCorrect = aiResult.isCorrect;
+        aiFeedback = aiResult.feedback;
+      } else {
+        // Fallback if AI grading fails
+        isCorrect = false;
+        aiFeedback = "Could not get AI feedback. Please review manually.";
+      }
+    }
 
     await submitUnitTestAnswer(
       testSessionId,
@@ -481,7 +507,14 @@ const UnitTestingPage = () => {
                   onChange={(e) => setFreeResponseAnswers(prev => ({ ...prev, [currentQuestion.id]: e.target.value }))}
                   rows={10}
                   className="min-h-[150px]"
+                  disabled={isGradingAI} // Disable while AI is grading
                 />
+                {isGradingAI && (
+                  <div className="flex items-center justify-center gap-2 text-primary mt-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Grading with AI...</span>
+                  </div>
+                )}
               </div>
             )}
 

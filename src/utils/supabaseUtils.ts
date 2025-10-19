@@ -359,3 +359,26 @@ export const fetchUserUnitTestAnswers = async (sessionId: string) => {
     return [];
   }
 };
+
+export const gradeFreeResponseAnswer = async (
+  userAnswer: string,
+  questionText: string,
+  correctAnswer: string,
+  explanation?: string
+): Promise<{ isCorrect: boolean; feedback: string } | null> => {
+  try {
+    const { data, error } = await supabase.functions.invoke('grade-free-response', {
+      body: { userAnswer, questionText, correctAnswer, explanation },
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    return data as { isCorrect: boolean; feedback: string };
+  } catch (error: any) {
+    console.error("Error invoking grade-free-response function:", error.message);
+    showError(`Failed to grade answer: ${error.message}`);
+    return null;
+  }
+};

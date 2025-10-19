@@ -202,6 +202,12 @@ const UnitTestResultsPage = () => {
                             Expected Answer: <span className="font-bold text-green-600">{question.correctAnswer}</span>
                           </p>
                         )}
+                        {/* Display AI feedback if available */}
+                        {userAnswer?.ai_feedback && (
+                          <p className="text-muted-foreground text-sm mt-1">
+                            AI Feedback: <span className="font-bold">{userAnswer.ai_feedback}</span>
+                          </p>
+                        )}
                       </div>
                     )}
                     {question.explanation && (
