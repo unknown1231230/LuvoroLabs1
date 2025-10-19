@@ -176,14 +176,14 @@ export const incrementSiteMetric = async (metricName: string, incrementBy: numbe
   }
 };
 
-// Helper to get the start of the week (Monday) for a given date
-const getStartOfWeek = (date: Date): Date => {
+// Helper to get the start of the week (Monday) in UTC for a given date
+const getStartOfWeekUTC = (date: Date): Date => {
   const d = new Date(date);
-  const day = d.getDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday to be the end of the previous week
-  d.setDate(diff);
-  d.setHours(0, 0, 0, 0);
-  d.setMilliseconds(0); // Ensure milliseconds are zeroed out for consistent comparison
+  const day = d.getUTCDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday in UTC
+  const diff = d.getUTCDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday to be the end of the previous week in UTC
+  d.setUTCDate(diff);
+  d.setUTCHours(0, 0, 0, 0);
+  d.setUTCMilliseconds(0);
   return d;
 };
 
@@ -199,27 +199,26 @@ export const fetchWeeklyLessonCompletions = async (userId: string): Promise<{ na
 
     const weeklyData: Record<string, number> = {};
     const weekStarts: Date[] = [];
-    const now = new Date();
+    const now = new Date(); // Get current date/time (local)
+    const startOfCurrentWeekUTC = getStartOfWeekUTC(now); // Calculate start of current week in UTC
 
-    // Get the start dates for the last 4 weeks
+    // Generate the start dates for the last 4 weeks (including current) in UTC
     for (let i = 0; i < 4; i++) {
-      const date = new Date(now);
-      date.setDate(now.getDate() - (i * 7));
-      weekStarts.unshift(getStartOfWeek(date)); // Add to the beginning to keep them in chronological order
+      const weekStartDate = new Date(startOfCurrentWeekUTC);
+      weekStartDate.setUTCDate(startOfCurrentWeekUTC.getUTCDate() - (3 - i) * 7); // Go back 3, 2, 1, 0 weeks
+      weekStarts.push(weekStartDate);
     }
 
-    // Initialize weeklyData with more descriptive week names and zero counts
     const weekLabels = ["Week 1", "Week 2", "Week 3", "Current Week"];
     weekStarts.forEach((_, index) => {
       weeklyData[weekLabels[index]] = 0;
     });
 
     data.forEach(item => {
-      const completedDate = new Date(item.completed_at);
-      const weekStartOfCompletedDate = getStartOfWeek(completedDate);
+      const completedDate = new Date(item.completed_at); // This is already UTC from Supabase
+      const weekStartOfCompletedDate = getStartOfWeekUTC(completedDate);
 
       for (let i = 0; i < weekStarts.length; i++) {
-        // Compare timestamps for equality
         if (weekStartOfCompletedDate.getTime() === weekStarts[i].getTime()) {
           weeklyData[weekLabels[i]]++;
           break;
@@ -233,7 +232,13 @@ export const fetchWeeklyLessonCompletions = async (userId: string): Promise<{ na
         // Custom sort to ensure "Current Week" is always last
         if (a.name === "Current Week") return 1;
         if (b.name === "Current Week") return -1;
-        return parseInt(a.name.replace('Week ', '')) - parseInt(b.name.replace('Week ', ''));
+        // For "Week X" labels, sort numerically
+        const numA = parseInt(a.name.replace('Week ', ''));
+        const numB = parseInt(b.name.replace('Week ', ''));
+        if (!isNaN(numA) && !isNaN(numB)) {
+          return numA - numB;
+        }
+        return 0; // Fallback if names are not "Week X"
       });
 
     return result;
@@ -257,27 +262,26 @@ export const fetchWeeklyQuizAttempts = async (userId: string): Promise<{ name: s
 
     const weeklyData: Record<string, number> = {};
     const weekStarts: Date[] = [];
-    const now = new Date();
+    const now = new Date(); // Get current date/time (local)
+    const startOfCurrentWeekUTC = getStartOfWeekUTC(now); // Calculate start of current week in UTC
 
-    // Get the start dates for the last 4 weeks
+    // Generate the start dates for the last 4 weeks (including current) in UTC
     for (let i = 0; i < 4; i++) {
-      const date = new Date(now);
-      date.setDate(now.getDate() - (i * 7));
-      weekStarts.unshift(getStartOfWeek(date)); // Add to the beginning to keep them in chronological order
+      const weekStartDate = new Date(startOfCurrentWeekUTC);
+      weekStartDate.setUTCDate(startOfCurrentWeekUTC.getUTCDate() - (3 - i) * 7); // Go back 3, 2, 1, 0 weeks
+      weekStarts.push(weekStartDate);
     }
 
-    // Initialize weeklyData with more descriptive week names and zero counts
     const weekLabels = ["Week 1", "Week 2", "Week 3", "Current Week"];
     weekStarts.forEach((_, index) => {
       weeklyData[weekLabels[index]] = 0;
     });
 
     data.forEach(item => {
-      const attemptedDate = new Date(item.attempted_at);
-      const weekStartOfAttemptedDate = getStartOfWeek(attemptedDate);
+      const attemptedDate = new Date(item.attempted_at); // This is already UTC from Supabase
+      const weekStartOfAttemptedDate = getStartOfWeekUTC(attemptedDate);
 
       for (let i = 0; i < weekStarts.length; i++) {
-        // Compare timestamps for equality
         if (weekStartOfAttemptedDate.getTime() === weekStarts[i].getTime()) {
           weeklyData[weekLabels[i]]++;
           break;
@@ -291,7 +295,13 @@ export const fetchWeeklyQuizAttempts = async (userId: string): Promise<{ name: s
         // Custom sort to ensure "Current Week" is always last
         if (a.name === "Current Week") return 1;
         if (b.name === "Current Week") return -1;
-        return parseInt(a.name.replace('Week ', '')) - parseInt(b.name.replace('Week ', ''));
+        // For "Week X" labels, sort numerically
+        const numA = parseInt(a.name.replace('Week ', ''));
+        const numB = parseInt(b.name.replace('Week ', ''));
+        if (!isNaN(numA) && !isNaN(numB)) {
+          return numA - numB;
+        }
+        return 0; // Fallback if names are not "Week X"
       });
 
     return result;
