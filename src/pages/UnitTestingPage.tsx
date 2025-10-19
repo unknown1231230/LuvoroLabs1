@@ -414,16 +414,16 @@ const UnitTestingPage = () => {
       <div className="flex flex-grow overflow-hidden">
         {/* Left Panel: Question Content */}
         <div className="flex-grow p-6 overflow-y-auto bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
-          <div className="prose dark:prose-invert max-w-none">
+          <div className="prose dark:prose-invert max-w-none w-full"> {/* Added w-full here */}
             <p className="text-lg font-medium leading-relaxed text-foreground">{currentQuestion.question}</p>
             {/* Placeholder for image/data table if needed */}
           </div>
         </div>
 
         {/* Right Panel: Answer Choices & Tools */}
-        <div className="w-full lg:w-[400px] flex-shrink-0 flex flex-col p-6 bg-gray-50 dark:bg-gray-950 overflow-y-auto">
+        <div className="w-full lg:w-[400px] flex-shrink-0 flex flex-col p-6 bg-gray-50 dark:bg-gray-950"> {/* Removed overflow-y-auto from here */}
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2 text-lg font-semibold">
+            <div className="flex items-center gap-1 text-lg font-semibold flex-wrap"> {/* Adjusted gap and added flex-wrap */}
               <span className="bg-primary text-primary-foreground px-2 py-1 rounded-md">
                 {currentQuestionIndex + 1}
               </span>
@@ -431,9 +431,9 @@ const UnitTestingPage = () => {
                 variant={markedForReview[currentQuestion.id] ? "secondary" : "outline"}
                 onClick={handleMarkForReview}
                 disabled={isCurrentSectionSubmitted}
-                className="flex items-center gap-1 text-sm"
+                className="flex items-center gap-1 text-xs px-2 py-1" // Changed text-sm to text-xs and adjusted padding
               >
-                <Flag className="h-4 w-4" /> Mark for Review
+                <Flag className="h-3 w-3" /> Mark for Review
               </Button>
             </div>
             <Button variant="ghost" size="sm" disabled>
@@ -441,54 +441,57 @@ const UnitTestingPage = () => {
             </Button>
           </div>
 
-          {currentQuestion.type === 'multiple-choice' ? (
-            <RadioGroup
-              onValueChange={(value) => setSelectedAnswers(prev => ({ ...prev, [currentQuestion.id]: value }))}
-              value={selectedAnswers[currentQuestion.id] || ''}
-              className="grid gap-3 mb-6"
-              disabled={isCurrentSectionSubmitted}
-            >
-              {currentQuestion.options?.map((option, index) => (
-                <div key={index} className="flex items-center space-x-3 p-3 border rounded-md bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                  <RadioGroupItem value={option} id={`${currentQuestion.id}-${index}`} disabled={isCurrentSectionSubmitted} />
-                  <Label
-                    htmlFor={`${currentQuestion.id}-${index}`}
-                    className={cn(
-                      "text-base cursor-pointer flex-grow",
-                      eliminatedOptions[currentQuestion.id]?.includes(option) && "line-through text-muted-foreground"
-                    )}
-                  >
-                    {option}
-                  </Label>
-                  {!isCurrentSectionSubmitted && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleOptionEliminate(option)}
-                      className="ml-auto text-xs text-muted-foreground hover:text-destructive"
-                    >
-                      <X className="h-3 w-3 mr-1" /> Eliminate
-                    </Button>
-                  )}
-                </div>
-              ))}
-            </RadioGroup>
-          ) : (
-            <div className="grid gap-2 mb-6">
-              <Label htmlFor={`frq-${currentQuestion.id}`} className="text-lg font-semibold">Your Answer:</Label>
-              <Textarea
-                id={`frq-${currentQuestion.id}`}
-                placeholder="Type your free-response answer here..."
-                value={freeResponseAnswers[currentQuestion.id] || ''}
-                onChange={(e) => setFreeResponseAnswers(prev => ({ ...prev, [currentQuestion.id]: e.target.value }))}
-                rows={10}
-                className="min-h-[150px]"
+          {/* Scrollable content area for answers */}
+          <div className="flex-grow overflow-y-auto pr-2"> {/* Added flex-grow and overflow-y-auto here */}
+            {currentQuestion.type === 'multiple-choice' ? (
+              <RadioGroup
+                onValueChange={(value) => setSelectedAnswers(prev => ({ ...prev, [currentQuestion.id]: value }))}
+                value={selectedAnswers[currentQuestion.id] || ''}
+                className="grid gap-3" // Removed mb-6
                 disabled={isCurrentSectionSubmitted}
-              />
-            </div>
-          )}
+              >
+                {currentQuestion.options?.map((option, index) => (
+                  <div key={index} className="flex items-center space-x-3 p-3 border rounded-md bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <RadioGroupItem value={option} id={`${currentQuestion.id}-${index}`} disabled={isCurrentSectionSubmitted} />
+                    <Label
+                      htmlFor={`${currentQuestion.id}-${index}`}
+                      className={cn(
+                        "text-base cursor-pointer flex-grow",
+                        eliminatedOptions[currentQuestion.id]?.includes(option) && "line-through text-muted-foreground"
+                      )}
+                    >
+                      {option}
+                    </Label>
+                    {!isCurrentSectionSubmitted && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleOptionEliminate(option)}
+                        className="ml-auto text-xs text-muted-foreground hover:text-destructive"
+                      >
+                        <X className="h-3 w-3 mr-1" /> Eliminate
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </RadioGroup>
+            ) : (
+              <div className="grid gap-2"> {/* Removed mb-6 */}
+                <Label htmlFor={`frq-${currentQuestion.id}`} className="text-lg font-semibold">Your Answer:</Label>
+                <Textarea
+                  id={`frq-${currentQuestion.id}`}
+                  placeholder="Type your free-response answer here..."
+                  value={freeResponseAnswers[currentQuestion.id] || ''}
+                  onChange={(e) => setFreeResponseAnswers(prev => ({ ...prev, [currentQuestion.id]: e.target.value }))}
+                  rows={10}
+                  className="min-h-[150px]"
+                  disabled={isCurrentSectionSubmitted}
+                />
+              </div>
+            )}
+          </div>
 
-          <div className="grid grid-cols-2 gap-2 mt-auto">
+          <div className="grid grid-cols-2 gap-2 mt-4"> {/* Changed mt-auto to mt-4 */}
             <Button variant="outline" disabled>Calculator (N/A)</Button> {/* Placeholder */}
             <Button variant="outline" disabled>Reference (N/A)</Button> {/* Placeholder */}
           </div>
