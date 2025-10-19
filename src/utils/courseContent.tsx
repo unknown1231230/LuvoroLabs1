@@ -349,3 +349,14 @@ export const findNextLessonPath = (currentLessonId: string, currentCourseId: str
   }
   return null; // Should not happen if currentLessonId is valid
 };
+
+// New helper function to get the total count of all lessons
+export const getTotalLessonsCount = (): number => {
+  let count = 0;
+  for (const course of courses) {
+    for (const module of course.modules) {
+      count += module.lessons.length;
+    }
+  }
+  return count;
+};

@@ -38,6 +38,24 @@ export const fetchUserLessonProgress = async (userId: string, courseId: string):
   }
 };
 
+export const fetchUserCompletedLessonsCount = async (userId: string): Promise<number> => {
+  try {
+    const { count, error } = await supabase
+      .from('user_lesson_progress')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId);
+
+    if (error) {
+      throw error;
+    }
+    return count || 0;
+  } catch (error: any) {
+    console.error("Error fetching user completed lessons count:", error.message);
+    showError(`Failed to fetch completed lessons count: ${error.message}`);
+    return 0;
+  }
+};
+
 export const updateUserStreak = async (userId: string) => {
   try {
     const { data: existingStreak, error: fetchError } = await supabase

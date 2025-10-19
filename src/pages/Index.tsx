@@ -5,12 +5,14 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { BarChart, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Bar } from 'recharts';
 import { Flame, Trophy, Lightbulb, BookOpen } from 'lucide-react';
-import { useContext, useEffect, useState } from "react"; // Import useContext
+import { useContext, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { AuthContext } from "@/App"; // Import AuthContext
+import { AuthContext } from "@/App";
+import { getTotalLessonsCount } from "@/utils/courseContent"; // Import new function
+import { fetchUserCompletedLessonsCount } from "@/utils/supabaseUtils"; // Import new function
 
 // --- Supabase Data Fetching Functions (Conceptual - requires database tables) ---
 // You will need to create 'streaks' and 'achievements' tables in Supabase.
@@ -60,25 +62,36 @@ const fetchUserAchievements = async (userId: string) => {
 };
 
 const Index = () => {
-  const { user, loading: authLoading } = useContext(AuthContext); // Use AuthContext
+  const { user, loading: authLoading } = useContext(AuthContext);
   const userId = user?.id || null;
 
   // Fetch dynamic data using react-query
   const { data: currentStreak = 0, isLoading: isLoadingStreak } = useQuery({
     queryKey: ['userStreak', userId],
     queryFn: () => userId ? fetchUserStreak(userId) : Promise.resolve(0),
-    enabled: !!userId && !authLoading, // Only fetch if user is logged in and auth is not loading
+    enabled: !!userId && !authLoading,
   });
 
   const { data: achievementsUnlocked = 0, isLoading: isLoadingAchievements } = useQuery({
     queryKey: ['userAchievements', userId],
     queryFn: () => userId ? fetchUserAchievements(userId) : Promise.resolve(0),
-    enabled: !!userId && !authLoading, // Only fetch if user is logged in and auth is not loading
+    enabled: !!userId && !authLoading,
   });
 
+  const { data: totalLessonsCount = 0, isLoading: isLoadingTotalLessons } = useQuery({
+    queryKey: ['totalLessonsCount'],
+    queryFn: getTotalLessonsCount,
+  });
+
+  const { data: userCompletedLessonsCount = 0, isLoading: isLoadingUserCompletedLessons } = useQuery({
+    queryKey: ['userCompletedLessonsCount', userId],
+    queryFn: () => userId ? fetchUserCompletedLessonsCount(userId) : Promise.resolve(0),
+    enabled: !!userId && !authLoading,
+  });
+
+  const userProgress = totalLessonsCount > 0 ? Math.round((userCompletedLessonsCount / totalLessonsCount) * 100) : 0;
+
   // Mock data for demonstration (if not logged in or no data)
-  const userProgress = 75; // This would also be dynamic
-  const completedLessons = 12; // This would also be dynamic
   const personalizedRecommendations = [
     "Review 'Algebraic Equations' - you missed a few questions on the last quiz.",
     "Try the 'Introduction to Physics' lab for a new challenge.",
@@ -178,11 +191,17 @@ const Index = () => {
             <CardTitle>Overall Progress</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-4">
-              <Progress value={userProgress} className="w-full" />
-              <span className="text-lg font-semibold">{userProgress}%</span>
-            </div>
-            <p className="text-muted-foreground mt-2">You've completed {completedLessons} lessons.</p>
+            {isLoadingTotalLessons || isLoadingUserCompletedLessons || authLoading ? (
+              <p className="text-center text-muted-foreground">Loading...</p>
+            ) : (
+              <>
+                <div className="flex items-center gap-4">
+                  <Progress value={userProgress} className="w-full" />
+                  <span className="text-lg font-semibold">{userProgress}%</span>
+                </div>
+                <p className="text-muted-foreground mt-2">You've completed {userCompletedLessonsCount} out of {totalLessonsCount} lessons.</p>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -202,6 +221,9 @@ const Index = () => {
                 <Bar dataKey="quizzes" fill="#82ca9d" name="Quizzes Taken" />
               </BarChart>
             </ResponsiveContainer>
+            <p className="text-muted-foreground mt-2 text-sm">
+              *Weekly activity data is currently illustrative. For dynamic data, a dedicated activity log table in Supabase would be needed.
+            </p>
           </CardContent>
         </Card>
 
@@ -220,6 +242,9 @@ const Index = () => {
                 <Line type="monotone" dataKey="streak" stroke="#ffc658" activeDot={{ r: 8 }} />
               </LineChart>
             </ResponsiveContainer>
+            <p className="text-muted-foreground mt-2 text-sm">
+              *Streak history data is currently illustrative. For dynamic data, a dedicated streak log table in Supabase would be needed.
+            </p>
           </CardContent>
         </Card>
       </section>
