@@ -13,7 +13,7 @@ import { AuthContext } from '@/App';
 
 const Layout = () => {
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile(); // Now true for screens < 640px
   const { session } = useContext(AuthContext);
 
   const handleLogout = async () => {
@@ -39,17 +39,23 @@ const Layout = () => {
             <img src="/logo.png" alt="Luvoro Labs Logo" className="h-7 w-7" />
             <span className="hidden sm:inline">Luvoro Labs</span>
           </Link>
-          {isMobile ? (
+          {isMobile ? ( // If screen < 640px, show MobileNav
             <MobileNav isAuthenticated={!!session} />
-          ) : (
-            <nav className="flex items-center space-x-4">
+          ) : ( // If screen >= 640px, show desktop nav
+            <nav className="flex items-center space-x-2 sm:space-x-4"> {/* Adjusted space-x for smaller screens */}
               <Button variant="ghost" asChild>
-                <Link to="/dashboard"><LayoutDashboard className="mr-2 h-4 w-4" />Dashboard</Link>
+                <Link to="/dashboard">
+                  <LayoutDashboard className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">Dashboard</span>
+                </Link>
               </Button>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="ghost" asChild>
-                    <Link to="/courses"><BookOpen className="h-4 w-4" /></Link>
+                    <Link to="/courses">
+                      <BookOpen className="h-4 w-4 md:mr-2" />
+                      <span className="hidden md:inline">Courses</span>
+                    </Link>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -57,13 +63,20 @@ const Layout = () => {
                 </TooltipContent>
               </Tooltip>
               <Button variant="ghost" asChild>
-                <Link to="/achievements"><Award className="mr-2 h-4 w-4" />Achievements</Link>
+                <Link to="/achievements">
+                  <Award className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">Achievements</span>
+                </Link>
               </Button>
               <Button variant="ghost" asChild>
-                <Link to="/settings"><Settings className="mr-2 h-4 w-4" />Settings</Link>
+                <Link to="/settings">
+                  <Settings className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">Settings</span>
+                </Link>
               </Button>
               <Button variant="ghost" onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />Logout
+                <LogOut className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Logout</span>
               </Button>
             </nav>
           )}

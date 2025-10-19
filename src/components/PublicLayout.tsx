@@ -14,7 +14,7 @@ import MobileNav from './MobileNav';
 const PublicLayout = () => {
   const { session } = useContext(AuthContext);
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile(); // Now true for screens < 640px
 
   const handleLogout = async () => {
     try {
@@ -39,17 +39,23 @@ const PublicLayout = () => {
             <img src="/logo.png" alt="Luvoro Labs Logo" className="h-7 w-7" />
             <span className="hidden sm:inline">Luvoro Labs</span>
           </Link>
-          {isMobile ? (
+          {isMobile ? ( // If screen < 640px, show MobileNav
             <MobileNav isAuthenticated={!!session} />
-          ) : (
-            <nav className="flex items-center space-x-4">
+          ) : ( // If screen >= 640px, show desktop nav
+            <nav className="flex items-center space-x-2 sm:space-x-4"> {/* Adjusted space-x for smaller screens */}
               <Button variant="ghost" asChild>
-                <Link to="/"><Home className="mr-2 h-4 w-4" />Home</Link>
+                <Link to="/">
+                  <Home className="h-4 w-4 md:mr-2" /> {/* md:mr-2 adds margin only on md and up */}
+                  <span className="hidden md:inline">Home</span> {/* Hidden on sm, visible on md and up */}
+                </Link>
               </Button>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="ghost" asChild>
-                    <Link to="/courses"><BookOpen className="h-4 w-4" /></Link>
+                    <Link to="/courses">
+                      <BookOpen className="h-4 w-4 md:mr-2" />
+                      <span className="hidden md:inline">Courses</span>
+                    </Link>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -59,15 +65,22 @@ const PublicLayout = () => {
               {session ? (
                 <>
                   <Button variant="ghost" asChild>
-                    <Link to="/dashboard"><LayoutDashboard className="mr-2 h-4 w-4" />Dashboard</Link>
+                    <Link to="/dashboard">
+                      <LayoutDashboard className="h-4 w-4 md:mr-2" />
+                      <span className="hidden md:inline">Dashboard</span>
+                    </Link>
                   </Button>
                   <Button variant="ghost" onClick={handleLogout}>
-                    <LogOut className="mr-2 h-4 w-4" />Logout
+                    <LogOut className="h-4 w-4 md:mr-2" />
+                    <span className="hidden md:inline">Logout</span>
                   </Button>
                 </>
               ) : (
                 <Button asChild>
-                  <Link to="/auth">Login / Sign Up</Link>
+                  <Link to="/auth">
+                    <span className="hidden md:inline">Login / Sign Up</span>
+                    <span className="inline md:hidden">Login</span> {/* Show "Login" text on small screens if not icon-only */}
+                  </Link>
                 </Button>
               )}
             </nav>
