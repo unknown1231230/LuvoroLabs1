@@ -378,7 +378,7 @@ const UnitTestingPage = () => {
   const isCurrentSectionSubmitted = submittedSections[currentSection.id];
 
   return (
-    <> {/* Added React Fragment */}
+    <>
       <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-950">
         {/* Top Header Bar */}
         <header className="flex items-center justify-between px-6 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm">
@@ -414,7 +414,7 @@ const UnitTestingPage = () => {
         {/* Main Content Area */}
         <div className="flex flex-grow overflow-hidden">
           {/* Left Panel: Question Content */}
-          <div className="flex-grow p-6 overflow-y-auto bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
+          <div className="flex-1 min-w-0 p-6 overflow-y-auto bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
             <div className="prose dark:prose-invert !max-w-full w-full">
               <p className="text-lg font-medium leading-relaxed text-foreground">{currentQuestion.question}</p>
               {/* Placeholder for image/data table if needed */}
@@ -422,7 +422,7 @@ const UnitTestingPage = () => {
           </div>
 
           {/* Right Panel: Answer Choices & Tools */}
-          <div className="w-full lg:w-[200px] flex-shrink-0 flex flex-col p-6 bg-gray-50 dark:bg-gray-950 overflow-y-auto">
+          <div className="w-96 flex-shrink-0 flex flex-col p-6 bg-gray-50 dark:bg-gray-950 overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-1 text-lg font-semibold flex-wrap">
                 <span className="bg-primary text-primary-foreground px-2 py-1 rounded-md">
