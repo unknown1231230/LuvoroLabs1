@@ -61,61 +61,56 @@ export const fetchUserCompletedLessonsCount = async (userId: string): Promise<nu
   }
 };
 
+// Helper to get the start of the day in UTC for a given date
+const getStartOfDayUTC = (date: Date): Date => {
+  const d = new Date(date);
+  d.setUTCHours(0, 0, 0, 0);
+  d.setUTCMilliseconds(0);
+  return d;
+};
+
 export const updateUserStreak = async (userId: string) => {
   try {
     const { data: existingStreak, error: fetchError } = await supabase
       .from('streaks')
-      .select('*')
+      .select('current_streak, last_active_date') // Only select necessary columns
       .eq('user_id', userId)
       .single();
 
     if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 means no rows found
+      console.error("[Streak Debug] Error fetching existing streak:", fetchError.message);
       throw fetchError;
     }
 
-    const todayUtc = new Date();
-    todayUtc.setUTCHours(0, 0, 0, 0); // Normalize to start of UTC day
-
+    const todayUtc = getStartOfDayUTC(new Date());
     let newStreak = 1;
-    let lastActiveDateToSave = todayUtc.toISOString().split('T')[0]; // Save only the date part (YYYY-MM-DD)
+    let lastActiveDateToSave = todayUtc.toISOString().split('T')[0]; // YYYY-MM-DD format for DB
 
     if (existingStreak) {
-      const lastActiveDateFromDB = existingStreak.last_active_date; // e.g., "2023-10-27"
-      let lastActiveUtc: Date;
-
-      if (lastActiveDateFromDB && typeof lastActiveDateFromDB === 'string') {
-        // Explicitly parse the date string as UTC to avoid local timezone issues
-        // Append 'T00:00:00Z' to ensure it's treated as UTC midnight
-        lastActiveUtc = new Date(lastActiveDateFromDB + 'T00:00:00Z');
-      } else {
-        lastActiveUtc = new Date(0); // Fallback to a very old date
-      }
+      const lastActiveDateFromDB = existingStreak.last_active_date;
+      // Ensure lastActiveDateFromDB is treated as UTC date
+      const lastActiveUtc = getStartOfDayUTC(new Date(lastActiveDateFromDB + 'T00:00:00Z'));
 
       // Check if the last active date is today (UTC)
-      if (
-        lastActiveUtc.getUTCFullYear() === todayUtc.getUTCFullYear() &&
-        lastActiveUtc.getUTCMonth() === todayUtc.getUTCMonth() &&
-        lastActiveUtc.getUTCDate() === todayUtc.getUTCDate()
-      ) {
-        // Already active today (UTC), no streak change
+      if (lastActiveUtc.getTime() === todayUtc.getTime()) {
         newStreak = existingStreak.current_streak;
+        console.log(`[Streak Debug] User ${userId}: Same UTC day (${lastActiveDateToSave}), streak not changed. Current: ${newStreak}`);
       } else {
         // Check if the last active date was yesterday (UTC)
-        const yesterdayUtc = new Date(todayUtc);
-        yesterdayUtc.setUTCDate(todayUtc.getUTCDate() - 1); // Subtract one day in UTC
+        const yesterdayUtc = getStartOfDayUTC(new Date(todayUtc));
+        yesterdayUtc.setUTCDate(todayUtc.getUTCDate() - 1);
 
-        if (
-          lastActiveUtc.getUTCFullYear() === yesterdayUtc.getUTCFullYear() &&
-          lastActiveUtc.getUTCMonth() === yesterdayUtc.getUTCMonth() &&
-          lastActiveUtc.getUTCDate() === yesterdayUtc.getUTCDate()
-        ) {
-          // Active yesterday (UTC), increment streak
+        if (lastActiveUtc.getTime() === yesterdayUtc.getTime()) {
           newStreak = existingStreak.current_streak + 1;
+          console.log(`[Streak Debug] User ${userId}: Consecutive UTC day (${lastActiveDateToSave}), streak incremented. New: ${newStreak}`);
         } else {
           // Not active yesterday or today (UTC), reset streak
           newStreak = 1;
+          console.log(`[Streak Debug] User ${userId}: Gap detected (last active: ${lastActiveDateFromDB}), streak reset. New: ${newStreak}`);
         }
       }
+    } else {
+      console.log(`[Streak Debug] User ${userId}: First activity, starting streak at 1.`);
     }
 
     const { error: upsertError } = await supabase
@@ -123,13 +118,14 @@ export const updateUserStreak = async (userId: string) => {
       .upsert({ user_id: userId, current_streak: newStreak, last_active_date: lastActiveDateToSave }, { onConflict: 'user_id' });
 
     if (upsertError) {
+      console.error(`[Streak Debug] Error upserting streak for user ${userId}:`, upsertError.message);
       throw upsertError;
     }
 
     showSuccess(`Streak updated to ${newStreak} days!`);
     return newStreak;
   } catch (error: any) {
-    console.error("Error updating streak:", error.message);
+    console.error(`[Streak Debug] Unhandled error in updateUserStreak for user ${userId}:`, error.message);
     showError(`Failed to update streak: ${error.message}`);
     return null;
   }
@@ -184,13 +180,6 @@ export const incrementSiteMetric = async (metricName: string, incrementBy: numbe
   }
 };
 
-// Helper to get the start of the day in UTC for a given date
-const getStartOfDayUTC = (date: Date): Date => {
-  const d = new Date(date);
-  d.setUTCHours(0, 0, 0, 0);
-  d.setUTCMilliseconds(0);
-  return d;
-};
 
 export const fetchLessonsCompletedToday = async (userId: string): Promise<number> => {
   try {
