@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { supabase } from '@/lib/supabase';
 import { showSuccess, showError } from '@/utils/toast';
 import { useNavigate } from 'react-router-dom';
+import { FaGoogle } from 'react-icons/fa'; // Import Google icon
 
 const AuthForm = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -25,15 +26,35 @@ const AuthForm = () => {
         authResponse = await supabase.auth.signInWithPassword({ email, password });
       }
 
-      console.log("Supabase Auth Response:", authResponse); // Added for debugging
+      console.log("Supabase Auth Response:", authResponse);
 
       if (authResponse.error) {
         showError(authResponse.error.message);
       } else if (authResponse.data.user) {
-        // For signup, session might be null if email verification is required
-        // For login, session should be present
         showSuccess(isSignUp ? "Sign up successful! Please check your email to verify." : "Logged in successfully!");
-        navigate('/'); // Redirect to dashboard after login/signup
+        navigate('/');
+      }
+    } catch (error: any) {
+      showError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: 'https://luvorolabs.vercel.app/dashboard', // Ensure this matches your Vercel URL and Supabase redirect URLs
+        },
+      });
+
+      if (error) {
+        showError(error.message);
+      } else {
+        // Supabase will handle the redirect, so no need for navigate() here
       }
     } catch (error: any) {
       showError(error.message);
@@ -83,6 +104,20 @@ const AuthForm = () => {
             {isSignUp ? "Login" : "Sign Up"}
           </Button>
         </div>
+        <div className="relative flex justify-center text-xs uppercase mt-6">
+          <span className="bg-background px-2 text-muted-foreground">
+            Or continue with
+          </span>
+        </div>
+        <Button
+          variant="outline"
+          className="w-full mt-6 flex items-center justify-center gap-2"
+          onClick={handleGoogleSignIn}
+          disabled={loading}
+        >
+          <FaGoogle className="h-4 w-4" />
+          {loading ? "Loading..." : "Google"}
+        </Button>
       </CardContent>
     </Card>
   );
