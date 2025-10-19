@@ -79,11 +79,21 @@ export const courses: Course[] = [
                 <li>Δx = (v₀ + v)/2 * t</li>
               </ul>
               <p class="mt-4">Where: v = final velocity, v₀ = initial velocity, a = acceleration, t = time, Δx = displacement.</p>
-              <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning & Practice:</h3>
-              <ul class="list-disc list-inside space-y-1">
-                <li><strong>Khan Academy Video:</strong> <a href="https://www.khanacademy.org/science/physics/one-dimensional-motion/introduction-to-kinematics/v/introduction-to-kinematics" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Introduction to Kinematics</a></li>
-                <li><strong>Phet Simulation:</strong> Explore motion with the <a href="https://phet.colorado.edu/sims/html/moving-man/latest/moving-man_en.html" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">The Moving Man</a> simulation to visualize position, velocity, and acceleration graphs.</li>
-              </ul>
+              <h3 class="text-xl font-semibold mt-4 mb-2">Interactive Simulation:</h3>
+              <p>Use our custom 1D Kinematics Simulator below to experiment with different initial conditions and observe the resulting motion!</p>
+              <!-- SIMULATION_PLACEHOLDER_KINEMATICS_1D -->
+              <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
+              <div class="aspect-video w-full max-w-2xl mx-auto">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/ZM8Js_y_22Q"
+                  title="Introduction to Kinematics"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
             `,
             questions: [
               {
@@ -130,11 +140,18 @@ export const courses: Course[] = [
                   </ul>
                 </li>
               </ul>
-              <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning & Practice:</h3>
-              <ul class="list-disc list-inside space-y-1">
-                <li><strong>Khan Academy Video:</strong> <a href="https://www.khanacademy.org/science/physics/two-dimensional-motion/two-dimensional-projectile-mot/v/projectile-motion-introduction" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Projectile motion introduction</a></li>
-                <li><strong>Phet Simulation:</strong> Experiment with launch angles and initial speeds using the <a href="https://phet.colorado.edu/sims/html/projectile-motion/latest/projectile-motion_en.html" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Projectile Motion</a> simulation.</li>
-              </ul>
+              <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
+              <div class="aspect-video w-full max-w-2xl mx-auto">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/z_1z_A_9020"
+                  title="Projectile motion introduction"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
             `,
             questions: [
               {
@@ -161,11 +178,18 @@ export const courses: Course[] = [
                 <li><strong>Relative Velocity Equation (2D):</strong> For two-dimensional problems, you apply the vector subtraction (or addition, depending on the setup) to the x and y components separately. For example, V_boat/ground = V_boat/water + V_water/ground.</li>
               </ul>
               <p class="mt-4">This concept is crucial for understanding motion in different reference frames, such as a boat moving in a river or an airplane flying in wind. Always clearly define your reference frames and the velocities relative to those frames.</p>
-              <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning & Practice:</h3>
-              <ul class="list-disc list-inside space-y-1">
-                <li><strong>Khan Academy Video:</strong> <a href="https://www.khanacademy.org/science/physics/two-dimensional-motion/two-dimensional-relative-velocity/v/relative-velocity-in-one-dimension" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Relative velocity in one dimension</a></li>
-                <li><strong>Phet Simulation:</strong> While there isn't a direct Phet simulation for relative velocity, understanding vector addition is key. The <a href="https://phet.colorado.edu/sims/html/vector-addition/latest/vector-addition_en.html" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Vector Addition</a> simulation can help visualize how velocities combine.</li>
-              </ul>
+              <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
+              <div class="aspect-video w-full max-w-2xl mx-auto">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/BLF5_2_0000"
+                  title="Relative velocity in one dimension"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
             `,
             questions: [
               {
@@ -199,11 +223,18 @@ export const courses: Course[] = [
                 <li><strong>Second Law (F=ma):</strong> The acceleration of an object as produced by a net force is directly proportional to the magnitude of the net force, in the same direction as the net force, and inversely proportional to the mass of the object. Mathematically, this is expressed as ΣF = ma, where ΣF is the net force, m is mass, and a is acceleration. This is the most powerful of Newton's laws, allowing us to quantify the relationship between force and motion.</li>
                 <li><strong>Third Law (Action-Reaction):</strong> For every action, there is an equal and opposite reaction. This means that forces always occur in pairs. If object A exerts a force on object B, then object B simultaneously exerts an equal and opposite force on object A. These forces act on *different* objects and therefore do not cancel each other out.</li>
               </ul>
-              <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning & Practice:</h3>
-              <ul class="list-disc list-inside space-y-1">
-                <li><strong>Khan Academy Video:</strong> <a href="https://www.khanacademy.org/science/physics/forces-newtons-laws/newtons-laws-of-motion/v/newton-s-first-law-of-motion" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Newton's First Law of Motion</a></li>
-                <li><strong>Phet Simulation:</strong> Explore forces and motion with the <a href="https://phet.colorado.edu/sims/html/forces-and-motion-basics/latest/forces-and-motion-basics_en.html" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Forces and Motion: Basics</a> simulation.</li>
-              </ul>
+              <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
+              <div class="aspect-video w-full max-w-2xl mx-auto">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/k_G_j_2_000"
+                  title="Newton's First Law of Motion"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
             `,
             questions: [
               {
@@ -231,11 +262,18 @@ export const courses: Course[] = [
               <p class="mt-4">Both types of friction depend on the normal force (the force perpendicular to the surfaces in contact) and the coefficient of friction (μ), which is a property of the two surfaces in contact.</p>
               <h3 class="text-xl font-semibold mt-4 mb-2">Applying Force Concepts:</h3>
               <p>When solving problems involving friction, it's critical to draw a free-body diagram, identify all forces acting on the object (gravity, normal force, applied force, friction), and then apply Newton's Second Law (ΣF = ma) in both the horizontal and vertical directions.</p>
-              <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning & Practice:</h3>
-              <ul class="list-disc list-inside space-y-1">
-                <li><strong>Khan Academy Video:</strong> <a href="https://www.khanacademy.org/science/physics/forces-newtons-laws/inclined-planes-friction/v/introduction-to-friction" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Introduction to friction</a></li>
-                <li><strong>Phet Simulation:</strong> Explore how friction affects motion with the <a href="https://phet.colorado.edu/sims/html/friction/latest/friction_en.html" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Friction</a> simulation.</li>
-              </ul>
+              <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
+              <div class="aspect-video w-full max-w-2xl mx-auto">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/GuY6F4_0000"
+                  title="Introduction to friction"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
             `,
             questions: [
               {
@@ -270,11 +308,18 @@ export const courses: Course[] = [
                 <li><strong>Work-Energy Theorem:</strong> This fundamental theorem states that the net work done on an object (the work done by the net force) equals the change in its kinetic energy. Mathematically, W_net = ΔKE = KE_f - KE_i. This theorem provides a powerful way to relate forces and motion without directly using acceleration.</li>
               </ul>
               <p class="mt-4">Understanding the Work-Energy Theorem allows us to analyze situations where forces are not constant or where the path taken is complex, by focusing on the initial and final states of kinetic energy.</p>
-              <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning & Practice:</h3>
-              <ul class="list-disc list-inside space-y-1">
-                <li><strong>Khan Academy Video:</strong> <a href="https://www.khanacademy.org/science/physics/work-and-energy/work-and-kinetic-energy/v/introduction-to-work-and-energy" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Introduction to work and energy</a></li>
-                <li><strong>Phet Simulation:</strong> Explore how work and energy are related with the <a href="https://phet.colorado.edu/sims/html/energy-skate-park-basics/latest/energy-skate-park-basics_en.html" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Energy Skate Park: Basics</a> simulation.</li>
-              </ul>
+              <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
+              <div class="aspect-video w-full max-w-2xl mx-auto">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/f_0_0_0_000"
+                  title="Introduction to work and energy"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
             `,
             questions: [
               {

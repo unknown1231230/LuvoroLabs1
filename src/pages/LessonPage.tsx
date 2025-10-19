@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useContext } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -11,20 +11,20 @@ import { showSuccess, showError } from '@/utils/toast';
 import { markLessonAsCompleted, updateUserStreak } from '@/utils/supabaseUtils';
 import { AuthContext } from '@/App';
 import { findLessonById, findNextLessonPath } from '@/utils/courseContent.tsx';
-import { useQueryClient } from '@tanstack/react-query'; // Import useQueryClient
+import { useQueryClient } from '@tanstack/react-query';
+import Kinematics1DSimulation from '@/components/simulations/Kinematics1DSimulation'; // Import the new simulation component
 
 const LessonPage = () => {
   const { lessonId } = useParams<{ lessonId: string }>();
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const queryClient = useQueryClient(); // Initialize useQueryClient
+  const queryClient = useQueryClient();
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
   const [submittedAnswers, setSubmittedAnswers] = useState<Record<string, boolean>>({});
   const [allQuestionsCorrect, setAllQuestionsCorrect] = useState(false);
   const [isLessonMarkedComplete, setIsLessonMarkedComplete] = useState(false);
   const [isCompletingLesson, setIsCompletingLesson] = useState(false);
 
-  // Assuming courseId is 'ap-physics' for now, as per the routing structure
   const courseId = 'ap-physics';
   const lesson = findLessonById(courseId, lessonId || '');
 
@@ -81,7 +81,7 @@ const LessonPage = () => {
     const success = await markLessonAsCompleted(user.id, courseId, lessonId!);
     if (success) {
       await updateUserStreak(user.id);
-      queryClient.invalidateQueries({ queryKey: ['userStreak', user.id] }); // Invalidate streak query
+      queryClient.invalidateQueries({ queryKey: ['userStreak', user.id] });
       setIsLessonMarkedComplete(true);
       showSuccess("Lesson completed and streak updated!");
 
@@ -105,6 +105,9 @@ const LessonPage = () => {
 
       <h1 className="text-4xl font-bold text-center text-primary">{lesson.title}</h1>
       <div className="prose dark:prose-invert max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: lesson.content || '' }} />
+
+      {/* Conditionally render the simulation component */}
+      {lessonId === 'kinematics-1d' && <Kinematics1DSimulation />}
 
       {lesson.questions && lesson.questions.length > 0 && (
         <>
