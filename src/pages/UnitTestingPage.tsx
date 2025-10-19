@@ -6,10 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Flag, X, CheckCircle, Clock, ChevronLeft, ChevronRight, ListChecks, MoreHorizontal, BookOpen, ZoomIn, ZoomOut, MessageSquareQuote, Ear } from 'lucide-react';
+import { ArrowLeft, Flag, X, Clock, ChevronLeft, ChevronRight, ListChecks, MoreHorizontal, BookOpen, ZoomIn, ZoomOut, MessageSquareQuote, Ear } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
 import { AuthContext } from '@/context/AuthContext';
-import { findModuleById, UnitQuestion, UnitTestSection } from '@/utils/courseContent';
+import { findModuleById, UnitQuestion } from '@/utils/courseContent';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   startUnitTestSession,
@@ -48,7 +48,6 @@ const UnitTestingPage = () => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
 
-  // New state for tools
   const [isCalculatorVisible, setIsCalculatorVisible] = useState(false);
   const [isLineReaderVisible, setIsLineReaderVisible] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -72,8 +71,51 @@ const UnitTestingPage = () => {
   }, [unitTest, currentSectionIndex, currentQuestionIndex, currentSection, currentQuestion]);
 
   useEffect(() => {
-    // ... (existing useEffect for test initialization)
-  }, [user, unitTest, courseId, moduleId, navigate]);
+    const initializeTest = async () => {
+      if (!user || !unitTest || !courseId || !moduleId) return;
+
+      const session = await fetchUnitTestSession(user.id, courseId, moduleId);
+      if (session && (session.status === 'in-progress' || session.status === 'timed-out')) {
+        const endTime = new Date(session.end_time).getTime();
+        const now = Date.now();
+        const remainingTime = Math.max(0, (endTime - now) / 1000);
+
+        if (remainingTime > 0 && session.status === 'in-progress') {
+          setTestSessionId(session.id);
+          setTestStatus('in-progress');
+          startTimer(remainingTime);
+
+          const answers = await fetchUserUnitTestAnswers(session.id);
+          const newSelected: Record<string, string> = {};
+          const newFreeResponse: Record<string, string> = {};
+          const newMarked: Record<string, boolean> = {};
+          const newEliminated: Record<string, string[]> = {};
+
+          answers.forEach(ans => {
+            if (ans.selected_answer) {
+              const question = allQuestions.find(q => q.id === ans.question_id);
+              if (question?.type === 'multiple-choice') {
+                newSelected[ans.question_id] = ans.selected_answer;
+              } else {
+                newFreeResponse[ans.question_id] = ans.selected_answer;
+              }
+            }
+            newMarked[ans.question_id] = ans.marked_for_review || false;
+            newEliminated[ans.question_id] = ans.eliminated_options || [];
+          });
+
+          setSelectedAnswers(newSelected);
+          setFreeResponseAnswers(newFreeResponse);
+          setMarkedForReview(newMarked);
+          setEliminatedOptions(newEliminated);
+          showSuccess("Resuming your previous test session.");
+        } else {
+          setTestStatus('not-started');
+        }
+      }
+    };
+    initializeTest();
+  }, [user, unitTest, courseId, moduleId, allQuestions]);
 
   useEffect(() => {
     if (timeLeft !== null && timeLeft <= 0 && testStatus === 'in-progress' && currentSection) {
@@ -81,9 +123,15 @@ const UnitTestingPage = () => {
     }
   }, [timeLeft, testStatus, currentSection]);
 
-  const startTimer = (initialTime: number) => {
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
+
+  const startTimer = (initialTimeInSeconds: number) => {
     if (timerRef.current) clearInterval(timerRef.current);
-    setTimeLeft(initialTime);
+    setTimeLeft(initialTimeInSeconds);
     timerRef.current = setInterval(() => {
       setTimeLeft((prevTime) => {
         if (prevTime === null || prevTime <= 1) {
@@ -96,11 +144,76 @@ const UnitTestingPage = () => {
   };
 
   const handleStartTest = async () => {
-    // ... (existing handleStartTest logic)
+    if (!user || !unitTest || !courseId || !moduleId) return;
+    const firstSection = unitTest.sections[0];
+    const totalQuestions = allQuestions.length;
+
+    const session = await startUnitTestSession(user.id, courseId, moduleId, firstSection.durationMinutes, totalQuestions);
+
+    if (session) {
+      setTestSessionId(session.id);
+      setTestStatus('in-progress');
+      startTimer(firstSection.durationMinutes * 60);
+      showSuccess("Test started! Good luck.");
+    } else {
+      showError("Could not start the test session. Please try again.");
+    }
   };
 
+  const submitCurrentAnswer = async (question: UnitQuestion) => {
+    if (!testSessionId || !user) return;
+
+    const selectedAnswer = question.type === 'multiple-choice' ? selectedAnswers[question.id] : freeResponseAnswers[question.id];
+    const isCorrect = selectedAnswer === question.correctAnswer;
+
+    await submitUnitTestAnswer(
+      testSessionId,
+      user.id,
+      question.id,
+      selectedAnswer || null,
+      isCorrect,
+      markedForReview[question.id] || false,
+      eliminatedOptions[question.id] || []
+    );
+  };
+
+  useEffect(() => {
+    const prevQuestionIndex = currentQuestionIndex > 0 ? currentQuestionIndex - 1 : 0;
+    const prevQuestion = currentSection?.questions[prevQuestionIndex];
+    if (prevQuestion && testStatus === 'in-progress') {
+      submitCurrentAnswer(prevQuestion);
+    }
+  }, [currentQuestionIndex, testStatus]);
+
   const handleSectionSubmission = async (timedOut: boolean = false) => {
-    // ... (existing handleSectionSubmission logic)
+    if (!unitTest || !currentSection || !testSessionId || !user) return;
+
+    if (timerRef.current) clearInterval(timerRef.current);
+    setTimeLeft(null);
+
+    if (currentQuestion) {
+      await submitCurrentAnswer(currentQuestion);
+    }
+
+    setSubmittedSections(prev => ({ ...prev, [currentSection.id]: true }));
+    showSuccess(`Section "${currentSection.title}" submitted.`);
+
+    if (currentSectionIndex < unitTest.sections.length - 1) {
+      const nextSectionIndex = currentSectionIndex + 1;
+      const nextSection = unitTest.sections[nextSectionIndex];
+      setCurrentSectionIndex(nextSectionIndex);
+      setCurrentQuestionIndex(0);
+      startTimer(nextSection.durationMinutes * 60);
+    } else {
+      const allUserAnswers = await fetchUserUnitTestAnswers(testSessionId);
+      const score = allUserAnswers.filter(ans => ans.is_correct).length;
+      const finalStatus = timedOut ? 'timed-out' : 'completed';
+
+      await updateUnitTestSessionStatus(testSessionId, finalStatus, score);
+      setTestStatus(finalStatus);
+      queryClient.invalidateQueries({ queryKey: ['unitTestSession', user.id, courseId, moduleId] });
+      showSuccess("Test finished! Your results are being processed.");
+    }
   };
 
   const handleZoomIn = () => setZoomLevel(prev => Math.min(prev + 0.1, 2));
@@ -113,6 +226,38 @@ const UnitTestingPage = () => {
     } else {
       showError("Text-to-speech is not supported in your browser.");
     }
+  };
+
+  const handleOptionEliminate = (option: string) => {
+    if (!currentQuestion) return;
+    setEliminatedOptions(prev => {
+      const currentEliminated = prev[currentQuestion.id] || [];
+      if (currentEliminated.includes(option)) {
+        return { ...prev, [currentQuestion.id]: currentEliminated.filter(o => o !== option) };
+      } else {
+        return { ...prev, [currentQuestion.id]: [...currentEliminated, option] };
+      }
+    });
+  };
+
+  const handleMarkForReview = () => {
+    if (!currentQuestion) return;
+    setMarkedForReview(prev => ({ ...prev, [currentQuestion.id]: !prev[currentQuestion.id] }));
+  };
+
+  const getQuestionStatus = (questionId: string) => {
+    const isAnswered = selectedAnswers[questionId] || freeResponseAnswers[questionId];
+    const isFlagged = markedForReview[questionId];
+    if (isFlagged) return 'flagged';
+    if (isAnswered) return 'answered';
+    return 'skipped';
+  };
+
+  const formatTime = (seconds: number | null) => {
+    if (seconds === null) return "Loading...";
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
   if (!user) {
@@ -140,25 +285,6 @@ const UnitTestingPage = () => {
       </div>
     );
   }
-
-  const formatTime = (seconds: number | null) => {
-    if (seconds === null) return "Loading...";
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = Math.floor(seconds % 60);
-    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
-
-  const handleOptionEliminate = (option: string) => {
-    // ... (existing handleOptionEliminate logic)
-  };
-
-  const handleMarkForReview = () => {
-    // ... (existing handleMarkForReview logic)
-  };
-
-  const getQuestionStatus = (questionId: string) => {
-    // ... (existing getQuestionStatus logic)
-  };
 
   const isTestFinished = testStatus === 'completed' || testStatus === 'timed-out';
 
