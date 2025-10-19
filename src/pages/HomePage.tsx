@@ -41,9 +41,7 @@ const HomePage = () => {
               <Link to="/auth">Login / Sign Up</Link>
             </Button>
           )}
-          <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
-            <Link to="/courses">Explore Courses</Link>
-          </Button>
+          {/* Removed the "Explore Courses" button from here */}
         </div>
       </section>
 
