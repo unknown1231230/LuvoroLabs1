@@ -46,7 +46,7 @@ const PublicLayout = () => {
                   <Link to="/courses"><BookOpen className="h-4 w-4" /></Link>
                 </Button>
               </TooltipTrigger>
-              <TooltipContent className="text-blue-600">
+              <TooltipContent>
                 <p>Courses</p>
               </TooltipContent>
             </Tooltip>
