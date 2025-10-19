@@ -12,20 +12,30 @@ import Layout from "./components/Layout";
 import PublicLayout from "./components/PublicLayout";
 import CourseCatalog from "./pages/CourseCatalog";
 import APPhysicsCourse from "./pages/APPhysicsCourse";
-import LessonPage from "./pages/LessonPage"; // Import LessonPage
-import { useEffect, useState } from "react"; // Corrected this line
+import LessonPage from "./pages/LessonPage";
+import { useEffect, useState, createContext } from "react"; // Import createContext
 import { supabase } from "./lib/supabase";
-import { Session } from "@supabase/supabase-js";
+import { Session, User } from "@supabase/supabase-js";
+
+// Create AuthContext
+interface AuthContextType {
+  session: Session | null;
+  user: User | null;
+  loading: boolean;
+}
+export const AuthContext = createContext<AuthContextType>({ session: null, user: null, loading: true });
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<User | null>(null); // New state for user
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      setUser(session?.user || null); // Set user
       setLoading(false);
     });
 
@@ -33,6 +43,7 @@ const App = () => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      setUser(session?.user || null); // Set user on auth state change
       setLoading(false);
     });
 
@@ -53,30 +64,32 @@ const App = () => {
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<PublicLayout />}>
-              <Route index element={<Index />} />
-              <Route path="courses" element={<CourseCatalog />} />
-              <Route path="courses/ap-physics" element={<APPhysicsCourse />} />
-              <Route path="courses/ap-physics/lessons/:lessonId" element={<LessonPage />} /> {/* New Lesson Route */}
-              <Route path="auth" element={!session ? <Auth /> : <Navigate to="/" />} />
-            </Route>
+          <AuthContext.Provider value={{ session, user, loading }}> {/* Provide context */}
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<PublicLayout />}>
+                <Route index element={<Index />} />
+                <Route path="courses" element={<CourseCatalog />} />
+                <Route path="courses/ap-physics" element={<APPhysicsCourse />} />
+                <Route path="courses/ap-physics/lessons/:lessonId" element={<LessonPage />} />
+                <Route path="auth" element={!session ? <Auth /> : <Navigate to="/" />} />
+              </Route>
 
-            {/* Authenticated Routes */}
-            <Route
-              path="/"
-              element={session ? <Layout /> : <Navigate to="/auth" replace />}
-            >
-              {/* These routes are only accessible when logged in */}
-              <Route path="/lessons" element={<div>Lessons Page (Coming Soon!)</div>} />
-              <Route path="/achievements" element={<div>Achievements Page (Coming Soon!)</div>} />
-              <Route path="/settings" element={<div>Settings Page (Coming Soon!)</div>} />
-            </Route>
-            
-            {/* Catch-all for 404 */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+              {/* Authenticated Routes */}
+              <Route
+                path="/"
+                element={session ? <Layout /> : <Navigate to="/auth" replace />}
+              >
+                {/* These routes are only accessible when logged in */}
+                <Route path="/lessons" element={<div>Lessons Page (Coming Soon!)</div>} />
+                <Route path="/achievements" element={<div>Achievements Page (Coming Soon!)</div>} />
+                <Route path="/settings" element={<div>Settings Page (Coming Soon!)</div>} />
+              </Route>
+              
+              {/* Catch-all for 404 */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AuthContext.Provider>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

@@ -1,18 +1,21 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
+import { markLessonAsCompleted, updateUserStreak } from '@/utils/supabaseUtils'; // Import new utilities
+import { AuthContext } from '@/App'; // Import AuthContext
 
 // Mock lesson data - in a real app, this would come from a database or API
 const lessonData = {
   'kinematics-1d': {
     title: 'Introduction to 1D Kinematics',
+    courseId: 'ap-physics',
     content: `
       <p>Kinematics is the branch of classical mechanics that describes the motion of points, bodies (objects), and systems of bodies without considering the forces that cause them to move. In one-dimensional (1D) kinematics, we focus on motion along a straight line.</p>
       <h3 class="text-xl font-semibold mt-4 mb-2">Key Concepts:</h3>
@@ -52,9 +55,9 @@ const lessonData = {
       },
     ],
   },
-  // Add more lesson data here for other lessons
   'kinematics-2d': {
     title: '2D Motion & Projectiles',
+    courseId: 'ap-physics',
     content: `
       <p>Two-dimensional kinematics extends the concepts of 1D motion to motion in a plane. This is particularly useful for analyzing projectile motion, where an object moves under the influence of gravity alone.</p>
       <h3 class="text-xl font-semibold mt-4 mb-2">Projectile Motion:</h3>
@@ -80,10 +83,22 @@ const lessonData = {
 
 const LessonPage = () => {
   const { lessonId } = useParams<{ lessonId: string }>();
+  const { user } = useContext(AuthContext); // Get user from context
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
-  const [showResults, setShowResults] = useState<Record<string, boolean>>({});
+  const [submittedAnswers, setSubmittedAnswers] = useState<Record<string, boolean>>({}); // Track if an answer was submitted
+  const [allQuestionsCorrect, setAllQuestionsCorrect] = useState(false);
+  const [isLessonMarkedComplete, setIsLessonMarkedComplete] = useState(false);
+  const [isCompletingLesson, setIsCompletingLesson] = useState(false);
 
   const lesson = lessonData[lessonId as keyof typeof lessonData];
+
+  useEffect(() => {
+    if (lesson && user) {
+      // Check if all questions have been answered correctly
+      const allCorrect = lesson.questions.every(q => submittedAnswers[q.id] && selectedAnswers[q.id] === q.correctAnswer);
+      setAllQuestionsCorrect(allCorrect);
+    }
+  }, [selectedAnswers, submittedAnswers, lesson, user]);
 
   if (!lesson) {
     return (
@@ -101,12 +116,12 @@ const LessonPage = () => {
 
   const handleAnswerChange = (questionId: string, value: string) => {
     setSelectedAnswers((prev) => ({ ...prev, [questionId]: value }));
-    setShowResults((prev) => ({ ...prev, [questionId]: false })); // Hide result if answer changes
+    setSubmittedAnswers((prev) => ({ ...prev, [questionId]: false })); // Reset submission status if answer changes
   };
 
   const handleSubmitAnswer = (questionId: string, correctAnswer: string) => {
     if (selectedAnswers[questionId]) {
-      setShowResults((prev) => ({ ...prev, [questionId]: true }));
+      setSubmittedAnswers((prev) => ({ ...prev, [questionId]: true }));
       if (selectedAnswers[questionId] === correctAnswer) {
         showSuccess("Correct answer!");
       } else {
@@ -115,6 +130,26 @@ const LessonPage = () => {
     } else {
       showError("Please select an answer before submitting.");
     }
+  };
+
+  const handleCompleteLesson = async () => {
+    if (!user) {
+      showError("You must be logged in to complete lessons.");
+      return;
+    }
+    if (!allQuestionsCorrect) {
+      showError("Please answer all questions correctly before completing the lesson.");
+      return;
+    }
+
+    setIsCompletingLesson(true);
+    const success = await markLessonAsCompleted(user.id, lesson.courseId, lessonId!);
+    if (success) {
+      await updateUserStreak(user.id);
+      setIsLessonMarkedComplete(true);
+      showSuccess("Lesson completed and streak updated!");
+    }
+    setIsCompletingLesson(false);
   };
 
   return (
@@ -153,11 +188,11 @@ const LessonPage = () => {
               <Button
                 onClick={() => handleSubmitAnswer(q.id, q.correctAnswer)}
                 className="mt-4"
-                disabled={!selectedAnswers[q.id]}
+                disabled={!selectedAnswers[q.id] || submittedAnswers[q.id]}
               >
-                Submit Answer
+                {submittedAnswers[q.id] ? "Answer Submitted" : "Submit Answer"}
               </Button>
-              {showResults[q.id] && (
+              {submittedAnswers[q.id] && (
                 <div className="mt-4 p-3 rounded-md flex items-start gap-2">
                   {selectedAnswers[q.id] === q.correctAnswer ? (
                     <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
@@ -174,6 +209,25 @@ const LessonPage = () => {
           </Card>
         ))}
       </div>
+
+      {user && allQuestionsCorrect && !isLessonMarkedComplete && (
+        <div className="text-center mt-8">
+          <Button onClick={handleCompleteLesson} disabled={isCompletingLesson}>
+            {isCompletingLesson ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Completing...
+              </>
+            ) : (
+              "Complete Lesson"
+            )}
+          </Button>
+        </div>
+      )}
+      {isLessonMarkedComplete && (
+        <div className="text-center mt-8 text-green-600 font-semibold flex items-center justify-center gap-2">
+          <CheckCircle className="h-5 w-5" /> Lesson Completed!
+        </div>
+      )}
     </div>
   );
 };
