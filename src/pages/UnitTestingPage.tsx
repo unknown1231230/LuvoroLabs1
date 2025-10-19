@@ -44,7 +44,6 @@ const UnitTestingPage = () => {
   const [testSessionId, setTestSessionId] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [testStatus, setTestStatus] = useState<'not-started' | 'in-progress' | 'completed' | 'timed-out'>('not-started');
-  const [submittedSections, setSubmittedSections] = useState<Record<string, boolean>>({});
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
 
@@ -60,6 +59,11 @@ const UnitTestingPage = () => {
     return unitTest.sections.flatMap(section => section.questions);
   }, [unitTest]);
 
+  const totalDurationMinutes = useMemo(() => {
+    if (!unitTest) return 0;
+    return unitTest.sections.reduce((sum, section) => sum + section.durationMinutes, 0);
+  }, [unitTest]);
+
   const globalQuestionIndex = useMemo(() => {
     if (!unitTest || !currentSection || !currentQuestion) return 0;
     let index = 0;
@@ -69,6 +73,25 @@ const UnitTestingPage = () => {
     index += currentQuestionIndex;
     return index;
   }, [unitTest, currentSectionIndex, currentQuestionIndex, currentSection, currentQuestion]);
+
+  const handleFinishTest = async (timedOut: boolean = false) => {
+    if (!testSessionId || !user) return;
+    if (timerRef.current) clearInterval(timerRef.current);
+    setTimeLeft(null);
+
+    if (currentQuestion) {
+      await submitCurrentAnswer(currentQuestion);
+    }
+
+    const allUserAnswers = await fetchUserUnitTestAnswers(testSessionId);
+    const score = allUserAnswers.filter(ans => ans.is_correct).length;
+    const finalStatus = timedOut ? 'timed-out' : 'completed';
+
+    await updateUnitTestSessionStatus(testSessionId, finalStatus, score);
+    setTestStatus(finalStatus);
+    queryClient.invalidateQueries({ queryKey: ['unitTestSession', user.id, courseId, moduleId] });
+    showSuccess("Test finished! Your results are being processed.");
+  };
 
   useEffect(() => {
     const initializeTest = async () => {
@@ -118,10 +141,10 @@ const UnitTestingPage = () => {
   }, [user, unitTest, courseId, moduleId, allQuestions]);
 
   useEffect(() => {
-    if (timeLeft !== null && timeLeft <= 0 && testStatus === 'in-progress' && currentSection) {
-      handleSectionSubmission(true);
+    if (timeLeft !== null && timeLeft <= 0 && testStatus === 'in-progress') {
+      handleFinishTest(true);
     }
-  }, [timeLeft, testStatus, currentSection]);
+  }, [timeLeft, testStatus]);
 
   useEffect(() => {
     return () => {
@@ -145,15 +168,14 @@ const UnitTestingPage = () => {
 
   const handleStartTest = async () => {
     if (!user || !unitTest || !courseId || !moduleId) return;
-    const firstSection = unitTest.sections[0];
     const totalQuestions = allQuestions.length;
 
-    const session = await startUnitTestSession(user.id, courseId, moduleId, firstSection.durationMinutes, totalQuestions);
+    const session = await startUnitTestSession(user.id, courseId, moduleId, totalDurationMinutes, totalQuestions);
 
     if (session) {
       setTestSessionId(session.id);
       setTestStatus('in-progress');
-      startTimer(firstSection.durationMinutes * 60);
+      startTimer(totalDurationMinutes * 60);
       showSuccess("Test started! Good luck.");
     } else {
       showError("Could not start the test session. Please try again.");
@@ -185,34 +207,14 @@ const UnitTestingPage = () => {
     }
   }, [currentQuestionIndex, testStatus]);
 
-  const handleSectionSubmission = async (timedOut: boolean = false) => {
-    if (!unitTest || !currentSection || !testSessionId || !user) return;
-
-    if (timerRef.current) clearInterval(timerRef.current);
-    setTimeLeft(null);
-
-    if (currentQuestion) {
-      await submitCurrentAnswer(currentQuestion);
-    }
-
-    setSubmittedSections(prev => ({ ...prev, [currentSection.id]: true }));
-    showSuccess(`Section "${currentSection.title}" submitted.`);
-
+  const handleNextSection = () => {
+    if (!unitTest) return;
     if (currentSectionIndex < unitTest.sections.length - 1) {
-      const nextSectionIndex = currentSectionIndex + 1;
-      const nextSection = unitTest.sections[nextSectionIndex];
-      setCurrentSectionIndex(nextSectionIndex);
+      if (currentQuestion) {
+        submitCurrentAnswer(currentQuestion);
+      }
+      setCurrentSectionIndex(prev => prev + 1);
       setCurrentQuestionIndex(0);
-      startTimer(nextSection.durationMinutes * 60);
-    } else {
-      const allUserAnswers = await fetchUserUnitTestAnswers(testSessionId);
-      const score = allUserAnswers.filter(ans => ans.is_correct).length;
-      const finalStatus = timedOut ? 'timed-out' : 'completed';
-
-      await updateUnitTestSessionStatus(testSessionId, finalStatus, score);
-      setTestStatus(finalStatus);
-      queryClient.invalidateQueries({ queryKey: ['unitTestSession', user.id, courseId, moduleId] });
-      showSuccess("Test finished! Your results are being processed.");
     }
   };
 
@@ -255,8 +257,13 @@ const UnitTestingPage = () => {
 
   const formatTime = (seconds: number | null) => {
     if (seconds === null) return "Loading...";
-    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = Math.floor(seconds % 60);
+
+    if (hours > 0) {
+      return `${hours.toString()}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
@@ -297,15 +304,15 @@ const UnitTestingPage = () => {
             <CardDescription className="mt-2 text-muted-foreground">{unitTest.description}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-lg">This test has {unitTest.sections.length} sections:</p>
+            <p className="text-lg">This test has a total duration of {totalDurationMinutes} minutes.</p>
             <ul className="list-disc list-inside text-left mx-auto max-w-sm">
               {unitTest.sections.map((section) => (
                 <li key={section.id}>
-                  <strong>{section.title}:</strong> {section.questions.length} questions, {section.durationMinutes} minutes.
+                  <strong>{section.title}:</strong> {section.questions.length} questions.
                 </li>
               ))}
             </ul>
-            <p className="text-sm text-muted-foreground">Once you start, the timer begins for each section. You cannot go back to a previous section after submitting or timing out.</p>
+            <p className="text-sm text-muted-foreground">Once you start, the timer begins for the entire test. You cannot go back to a previous section.</p>
             <Button onClick={handleStartTest} size="lg" className="w-full">
               Start Test
             </Button>
@@ -362,7 +369,8 @@ const UnitTestingPage = () => {
     );
   }
 
-  const isCurrentSectionSubmitted = submittedSections[currentSection.id];
+  const isLastQuestionInSection = currentQuestionIndex === currentSection.questions.length - 1;
+  const isLastSection = currentSectionIndex === unitTest.sections.length - 1;
 
   return (
     <>
@@ -422,7 +430,6 @@ const UnitTestingPage = () => {
                 <Button
                   variant={markedForReview[currentQuestion.id] ? "secondary" : "outline"}
                   onClick={handleMarkForReview}
-                  disabled={isCurrentSectionSubmitted}
                   className="flex items-center gap-1 text-xs px-2 py-1"
                 >
                   <Flag className="h-3 w-3" /> Mark for Review
@@ -438,11 +445,10 @@ const UnitTestingPage = () => {
                 onValueChange={(value) => setSelectedAnswers(prev => ({ ...prev, [currentQuestion.id]: value }))}
                 value={selectedAnswers[currentQuestion.id] || ''}
                 className="flex flex-col gap-3 mb-6"
-                disabled={isCurrentSectionSubmitted}
               >
                 {currentQuestion.options?.map((option, index) => (
                   <div key={index} className="flex items-center space-x-3 p-3 border rounded-md bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors w-full">
-                    <RadioGroupItem value={option} id={`${currentQuestion.id}-${index}`} disabled={isCurrentSectionSubmitted} className="flex-shrink-0" />
+                    <RadioGroupItem value={option} id={`${currentQuestion.id}-${index}`} className="flex-shrink-0" />
                     <Label
                       htmlFor={`${currentQuestion.id}-${index}`}
                       className={cn(
@@ -452,16 +458,14 @@ const UnitTestingPage = () => {
                     >
                       {option}
                     </Label>
-                    {!isCurrentSectionSubmitted && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleOptionEliminate(option)}
-                        className="ml-auto text-xs text-muted-foreground hover:text-destructive flex-shrink-0"
-                      >
-                        <X className="h-3 w-3 mr-1" /> Eliminate
-                      </Button>
-                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleOptionEliminate(option)}
+                      className="ml-auto text-xs text-muted-foreground hover:text-destructive flex-shrink-0"
+                    >
+                      <X className="h-3 w-3 mr-1" /> Eliminate
+                    </Button>
                   </div>
                 ))}
               </RadioGroup>
@@ -475,7 +479,6 @@ const UnitTestingPage = () => {
                   onChange={(e) => setFreeResponseAnswers(prev => ({ ...prev, [currentQuestion.id]: e.target.value }))}
                   rows={10}
                   className="min-h-[150px]"
-                  disabled={isCurrentSectionSubmitted}
                 />
               </div>
             )}
@@ -517,7 +520,6 @@ const UnitTestingPage = () => {
                         getQuestionStatus(q.id) === 'flagged' && "bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-200",
                         getQuestionStatus(q.id) === 'skipped' && "bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200",
                       )}
-                      disabled={isCurrentSectionSubmitted}
                     >
                       {index + 1}
                       {markedForReview[q.id] && (
@@ -541,24 +543,30 @@ const UnitTestingPage = () => {
           <div className="flex items-center gap-2">
             <Button
               onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
-              disabled={currentQuestionIndex === 0 || isCurrentSectionSubmitted}
+              disabled={currentQuestionIndex === 0}
               variant="outline"
             >
               <ChevronLeft className="mr-2 h-4 w-4" /> Previous
             </Button>
-            {currentQuestionIndex === currentSection.questions.length - 1 ? (
-              <Button
-                onClick={() => handleSectionSubmission(false)}
-                disabled={isCurrentSectionSubmitted}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                {currentSectionIndex === unitTest.sections.length - 1 ? "Submit Test" : "Submit Section"}
-                <ChevronRight className="ml-2 h-4 w-4" />
-              </Button>
+            {isLastQuestionInSection ? (
+              isLastSection ? (
+                <Button
+                  onClick={() => handleFinishTest(false)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Finish Test
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleNextSection}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Next Section <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              )
             ) : (
               <Button
                 onClick={() => setCurrentQuestionIndex(prev => Math.min(currentSection.questions.length - 1, prev + 1))}
-                disabled={isCurrentSectionSubmitted}
               >
                 Next <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
