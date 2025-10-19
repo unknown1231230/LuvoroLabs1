@@ -87,7 +87,7 @@ export const courses: Course[] = [
                 <iframe
                   width="100%"
                   height="100%"
-                  src="https://www.youtube.com/embed/ZM8Js_y_22Q"
+                  src="https://www.youtube.com/embed/r_B8Dn_111Q"
                   title="Introduction to Kinematics"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
