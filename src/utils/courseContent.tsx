@@ -133,7 +133,7 @@ export const courses: Course[] = [
               </ul>
               <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
             `,
-            videoUrl: "ADD_YOUR_VIDEO_EMBED_URL_HERE", // Placeholder for user to add video
+            videoUrl: "https://streamable.com/e/21b3js", // Updated with Streamable embed URL
             questions: [
               {
                 id: 'q1',
