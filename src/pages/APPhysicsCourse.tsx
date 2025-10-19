@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, CheckCircle2, FlaskConical } from 'lucide-react';
 import LessonCard from '@/components/LessonCard';
-import { AuthContext } from '@/App';
+import { AuthContext } from '@/context/AuthContext'; // Updated import
 import { fetchUserLessonProgress } from '@/utils/supabaseUtils';
 import { courses, findCourseById } from '@/utils/courseContent.tsx'; // Updated import
 
