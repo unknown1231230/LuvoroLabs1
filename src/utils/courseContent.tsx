@@ -85,7 +85,7 @@ export const courses: Course[] = [
               <!-- SIMULATION_PLACEHOLDER_KINEMATICS_1D -->
               <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
             `,
-            videoUrl: "https://player.vimeo.com/video/924548799", // Updated with Vimeo URL
+            videoUrl: "https://streamable.com/e/21b3js",
             questions: [
               {
                 id: 'q1',
@@ -133,7 +133,7 @@ export const courses: Course[] = [
               </ul>
               <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
             `,
-            videoUrl: "https://streamable.com/e/21b3js", // Updated with Streamable embed URL
+            videoUrl: "https://streamable.com/e/21b3js",
             questions: [
               {
                 id: 'q1',
@@ -161,7 +161,7 @@ export const courses: Course[] = [
               <p class="mt-4">This concept is crucial for understanding motion in different reference frames, such as a boat moving in a river or an airplane flying in wind. Always clearly define your reference frames and the velocities relative to those frames.</p>
               <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
             `,
-            videoUrl: "ADD_YOUR_VIDEO_EMBED_URL_HERE", // Placeholder for user to add video
+            videoUrl: "https://streamable.com/e/21b3js",
             questions: [
               {
                 id: 'q1',
@@ -196,7 +196,7 @@ export const courses: Course[] = [
               </ul>
               <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
             `,
-            videoUrl: "ADD_YOUR_VIDEO_EMBED_URL_HERE", // Placeholder for user to add video
+            videoUrl: "https://streamable.com/e/21b3js",
             questions: [
               {
                 id: 'q1',
@@ -225,7 +225,7 @@ export const courses: Course[] = [
               <p>When solving problems involving friction, it's critical to draw a free-body diagram, identify all forces acting on the object (gravity, normal force, applied force, friction), and then apply Newton's Second Law (ΣF = ma) in both the horizontal and vertical directions.</p>
               <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
             `,
-            videoUrl: "ADD_YOUR_VIDEO_EMBED_URL_HERE", // Placeholder for user to add video
+            videoUrl: "https://streamable.com/e/21b3js",
             questions: [
               {
                 id: 'q1',
@@ -261,7 +261,7 @@ export const courses: Course[] = [
               <p class="mt-4">Understanding the Work-Energy Theorem allows us to analyze situations where forces are not constant or where the path taken is complex, by focusing on the initial and final states of kinetic energy.</p>
               <h3 class="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
             `,
-            videoUrl: "ADD_YOUR_VIDEO_EMBED_URL_HERE", // Placeholder for user to add video
+            videoUrl: "https://streamable.com/e/21b3js",
             questions: [
               {
                 id: 'q1',
