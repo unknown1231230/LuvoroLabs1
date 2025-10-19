@@ -61,62 +61,20 @@ export const fetchUserCompletedLessonsCount = async (userId: string): Promise<nu
   }
 };
 
-// Helper to get a date string in YYYY-MM-DD format for a given Date object
-const toYYYYMMDD = (date: Date): string => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
-
 export const updateUserStreak = async (userId: string) => {
   try {
-    const { data: existingStreak, error: fetchError } = await supabase
-      .from('streaks')
-      .select('current_streak, last_active_date')
-      .eq('user_id', userId)
-      .single();
+    const { data, error } = await supabase.rpc('update_user_streak', {
+      p_user_id: userId,
+    });
 
-    if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 means no rows found
-      throw fetchError;
+    if (error) {
+      throw error;
     }
 
-    const today = new Date();
-    const todayString = toYYYYMMDD(today);
-
-    let newStreak = 1;
-
-    if (existingStreak) {
-      const lastActiveDateString = existingStreak.last_active_date; // This is already YYYY-MM-DD
-
-      if (lastActiveDateString === todayString) {
-        // Already active today, streak doesn't change
-        newStreak = existingStreak.current_streak;
-      } else {
-        const yesterday = new Date();
-        yesterday.setDate(today.getDate() - 1);
-        const yesterdayString = toYYYYMMDD(yesterday);
-
-        if (lastActiveDateString === yesterdayString) {
-          // Consecutive day
-          newStreak = existingStreak.current_streak + 1;
-        } else {
-          // Gap detected, reset streak
-          newStreak = 1;
-        }
-      }
+    const newStreak = data;
+    if (newStreak) {
+      showSuccess(`Streak updated to ${newStreak} days!`);
     }
-    // If no existing streak, newStreak is already 1.
-
-    const { error: upsertError } = await supabase
-      .from('streaks')
-      .upsert({ user_id: userId, current_streak: newStreak, last_active_date: todayString }, { onConflict: 'user_id' });
-
-    if (upsertError) {
-      throw upsertError;
-    }
-
-    showSuccess(`Streak updated to ${newStreak} days!`);
     return newStreak;
   } catch (error: any) {
     console.error(`Error in updateUserStreak for user ${userId}:`, error.message);

@@ -121,9 +121,10 @@ const Dashboard = () => {
 
   const userProgress = totalLessonsCount > 0 ? Math.round((userCompletedLessonsCount / totalLessonsCount) * 100) : 0;
 
-  // Prepare streak history data for Recharts
+  // Prepare streak history data for Recharts, ensuring correct date parsing
   const formattedStreakHistory = streakHistory.map(entry => ({
-    date: new Date(entry.recorded_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    // By appending T00:00:00, we ensure the date is parsed in the user's local timezone, not UTC.
+    date: new Date(entry.recorded_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
     streak: entry.streak_count,
   }));
 
