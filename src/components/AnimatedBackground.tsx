@@ -4,10 +4,8 @@ import React from 'react';
 
 const AnimatedBackground: React.FC = () => {
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden">
-      <div className="stars"></div>
-      <div className="twinkling"></div>
-      <div className="clouds"></div>
+    <div className="animated-grid-background">
+      {/* The grid is now purely CSS, no child elements needed */}
     </div>
   );
 };
