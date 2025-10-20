@@ -35,7 +35,7 @@ const PublicLayout = () => {
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="sticky top-0 z-40 w-full py-2">
         <div className="container flex items-center justify-between px-4 py-2
-          bg-white/10 rounded-2xl shadow-lg backdrop-blur-md border border-white/20">
+          bg-card rounded-2xl shadow-lg border border-border"> {/* Updated header styling */}
           <Link to="/" className="flex items-center gap-2 text-2xl font-bold text-primary flex-shrink-0">
             <img src="/logo.png" alt="Luvoro Labs Logo" className="h-7 w-7" />
             <span className="hidden sm:inline">Luvoro Labs</span>
@@ -45,7 +45,7 @@ const PublicLayout = () => {
               <MobileNav isAuthenticated={!!session} />
             ) : (
               <nav className="flex items-center space-x-2 sm:space-x-4">
-                <Button variant="ghost" asChild>
+                <Button variant="ghost" asChild className="text-foreground hover:text-primary"> {/* Adjusted text color */}
                   <Link to="/">
                     <Home className="h-4 w-4 md:mr-2" />
                     <span className="hidden md:inline">Home</span>
@@ -53,7 +53,7 @@ const PublicLayout = () => {
                 </Button>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" asChild>
+                    <Button variant="ghost" asChild className="text-foreground hover:text-primary"> {/* Adjusted text color */}
                       <Link to="/courses">
                         <BookOpen className="h-4 w-4 md:mr-2" />
                         <span className="hidden md:inline">Courses</span>
@@ -66,13 +66,13 @@ const PublicLayout = () => {
                 </Tooltip>
                 {session ? (
                   <>
-                    <Button variant="ghost" asChild>
+                    <Button variant="ghost" asChild className="text-foreground hover:text-primary"> {/* Adjusted text color */}
                       <Link to="/dashboard">
                         <LayoutDashboard className="h-4 w-4 md:mr-2" />
                         <span className="hidden md:inline">Dashboard</span>
                       </Link>
                     </Button>
-                    <Button variant="ghost" onClick={handleLogout}>
+                    <Button variant="ghost" onClick={handleLogout} className="text-foreground hover:text-primary"> {/* Adjusted text color */}
                       <LogOut className="h-4 w-4 md:mr-2" />
                       <span className="hidden md:inline">Logout</span>
                     </Button>

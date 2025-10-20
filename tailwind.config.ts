@@ -65,6 +65,11 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Custom color for the "Students Helped" number
+        purpleAccent: {
+          DEFAULT: "hsl(260 80% 60%)", // Vibrant purple
+          foreground: "hsl(260 80% 70%)", // Slightly lighter for icons
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

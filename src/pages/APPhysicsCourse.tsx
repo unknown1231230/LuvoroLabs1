@@ -66,7 +66,7 @@ const APPhysicsCourse = () => {
 
   return (
     <div className="space-y-8">
-      <Button variant="outline" asChild className="mb-4">
+      <Button variant="outline" asChild className="mb-4 text-foreground hover:text-primary border-border"> {/* Outline button style */}
         <Link to="/courses">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Course Catalog
         </Link>
@@ -87,10 +87,10 @@ const APPhysicsCourse = () => {
           const isModuleUnlocked = user ? previousModuleCompleted : false;
 
           return (
-            <Card key={module.id} className={!isModuleUnlocked && user ? "opacity-50 shadow-sm" : "shadow-sm"}>
+            <Card key={module.id} className={!isModuleUnlocked && user ? "opacity-50 shadow-sm bg-card border-border" : "shadow-sm bg-card border-border"}> {/* Card background and border */}
               <CardHeader className="flex-row items-center space-x-3">
                 {module.icon}
-                <CardTitle>{module.title}</CardTitle>
+                <CardTitle className="text-foreground">{module.title}</CardTitle> {/* Title color foreground */}
                 {currentModuleCompleted && <CheckCircle2 className="h-5 w-5 text-green-500 ml-2" />}
               </CardHeader>
               <CardContent>
@@ -121,6 +121,7 @@ const APPhysicsCourse = () => {
                             asChild
                             disabled={!currentModuleCompleted}
                             variant={currentModuleCompleted ? "default" : "secondary"}
+                            className={currentModuleCompleted ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-secondary text-secondary-foreground"} // Primary button style
                           >
                             <Link to={`/courses/${courseId}/unit-test/${module.id}`}>
                               <FlaskConical className="mr-2 h-4 w-4" /> Start Unit Test
@@ -141,7 +142,7 @@ const APPhysicsCourse = () => {
 
                 {user && currentModuleCompleted && index < modules.length - 1 && (
                   <div className="mt-6 text-center">
-                    <Button onClick={() => handleNextModule(modules[index + 1].id)}>
+                    <Button onClick={() => handleNextModule(modules[index + 1].id)} className="bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
                       Go to {modules[index + 1].title}
                     </Button>
                   </div>

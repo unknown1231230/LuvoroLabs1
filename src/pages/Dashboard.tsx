@@ -140,9 +140,9 @@ const Dashboard = () => {
 
       {/* Features Section */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card className="shadow-sm">
+        <Card className="shadow-sm bg-card border-border"> {/* Card background and border */}
           <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Flame className="text-orange-500" />Current Streak</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-foreground"><Flame className="text-orange-500" />Current Streak</CardTitle>
           </CardHeader>
           <CardContent>
             {isLoadingStreak || authLoading ? (
@@ -156,9 +156,9 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card className="shadow-sm bg-card border-border"> {/* Card background and border */}
           <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Trophy className="text-yellow-500" />Achievements</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-foreground"><Trophy className="text-yellow-500" />Achievements</CardTitle>
           </CardHeader>
           <CardContent>
             {isLoadingAchievements || authLoading ? (
@@ -172,9 +172,9 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card className="shadow-sm bg-card border-border"> {/* Card background and border */}
           <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Lightbulb className="text-blue-500" />Personalized Recommendations</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-foreground"><Lightbulb className="text-primary" />Personalized Recommendations</CardTitle> {/* Icon color primary */}
           </CardHeader>
           <CardContent>
             {isLoadingRecommendations || authLoading ? (
@@ -190,20 +190,20 @@ const Dashboard = () => {
         </Card>
       </section>
 
-      <Separator />
+      <Separator className="bg-border" /> {/* Separator color */}
 
       {/* Global Metrics Section */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="shadow-sm">
+        <Card className="shadow-sm bg-card border-border"> {/* Card background and border */}
           <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Users className="text-purple-500" />Students Helped</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-foreground"><Users className="text-purpleAccent-foreground" />Students Helped</CardTitle> {/* Icon color purpleAccent-foreground */}
           </CardHeader>
           <CardContent>
             {isLoadingStudentsHelped ? (
               <p className="text-center text-muted-foreground">Loading...</p>
             ) : (
               <>
-                <p className="text-5xl font-extrabold text-center text-purple-600">{studentsHelped.toLocaleString()}</p>
+                <p className="text-5xl font-extrabold text-center text-purpleAccent">{studentsHelped.toLocaleString()}</p> {/* Number color purpleAccent */}
                 <p className="text-center text-muted-foreground mt-2">And counting!</p>
               </>
             )}
@@ -212,24 +212,24 @@ const Dashboard = () => {
         {/* Placeholder for other global metrics if needed */}
       </section>
 
-      <Separator />
+      <Separator className="bg-border" /> {/* Separator color */}
 
       {/* Course Catalog Link */}
       <section className="text-center">
-        <Button asChild size="lg">
+        <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
           <Link to="/courses">
             <BookOpen className="mr-2 h-5 w-5" /> Explore Our Course Catalog
           </Link>
         </Button>
       </section>
 
-      <Separator />
+      <Separator className="bg-border" /> {/* Separator color */}
 
       {/* Progress & Activity Summary Section */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="shadow-sm">
+        <Card className="shadow-sm bg-card border-border"> {/* Card background and border */}
           <CardHeader>
-            <CardTitle>Overall Progress</CardTitle>
+            <CardTitle className="text-foreground">Overall Progress</CardTitle>
           </CardHeader>
           <CardContent>
             {isLoadingTotalLessons || isLoadingUserCompletedLessons || authLoading ? (
@@ -237,8 +237,8 @@ const Dashboard = () => {
             ) : (
               <>
                 <div className="flex items-center gap-4">
-                  <Progress value={userProgress} className="w-full" />
-                  <span className="text-lg font-semibold">{userProgress}%</span>
+                  <Progress value={userProgress} className="w-full" indicatorColor="bg-primary" /> {/* Progress bar color */}
+                  <span className="text-lg font-semibold text-foreground">{userProgress}%</span>
                 </div>
                 <p className="text-muted-foreground mt-2">You've completed {userCompletedLessonsCount} out of {totalLessonsCount} lessons.</p>
               </>
@@ -246,53 +246,53 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card className="shadow-sm bg-card border-border"> {/* Card background and border */}
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">Activity Summary</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-foreground">Activity Summary</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-2 gap-4">
             <div className="text-center">
               <CheckCircle className="h-8 w-8 text-green-500 mx-auto mb-2" />
               <p className="text-sm text-muted-foreground">Lessons Today</p>
               {isLoadingLessonsToday || authLoading ? (
-                <p className="text-xl font-bold">...</p>
+                <p className="text-xl font-bold text-foreground">...</p>
               ) : (
-                <p className="text-xl font-bold">{lessonsCompletedToday}</p>
+                <p className="text-xl font-bold text-foreground">{lessonsCompletedToday}</p>
               )}
             </div>
             <div className="text-center">
-              <ClipboardCheck className="h-8 w-8 text-blue-500 mx-auto mb-2" />
+              <ClipboardCheck className="h-8 w-8 text-primary mx-auto mb-2" /> {/* Icon color primary */}
               <p className="text-sm text-muted-foreground">Quizzes Today</p>
               {isLoadingQuizzesToday || authLoading ? (
-                <p className="text-xl font-bold">...</p>
+                <p className="text-xl font-bold text-foreground">...</p>
               ) : (
-                <p className="text-xl font-bold">{quizzesTakenToday}</p>
+                <p className="text-xl font-bold text-foreground">{quizzesTakenToday}</p>
               )}
             </div>
             <div className="text-center">
               <CheckCircle className="h-8 w-8 text-green-500 mx-auto mb-2" />
               <p className="text-sm text-muted-foreground">Total Lessons</p>
               {isLoadingUserCompletedLessons || authLoading ? (
-                <p className="text-xl font-bold">...</p>
+                <p className="text-xl font-bold text-foreground">...</p>
               ) : (
-                <p className="text-xl font-bold">{userCompletedLessonsCount}</p>
+                <p className="text-xl font-bold text-foreground">{userCompletedLessonsCount}</p>
               )}
             </div>
             <div className="text-center">
-              <ClipboardCheck className="h-8 w-8 text-blue-500 mx-auto mb-2" />
+              <ClipboardCheck className="h-8 w-8 text-primary mx-auto mb-2" /> {/* Icon color primary */}
               <p className="text-sm text-muted-foreground">Total Quizzes</p>
               {isLoadingTotalQuizzes || authLoading ? (
-                <p className="text-xl font-bold">...</p>
+                <p className="text-xl font-bold text-foreground">...</p>
               ) : (
-                <p className="text-xl font-bold">{totalQuizAttempts}</p>
+                <p className="text-xl font-bold text-foreground">{totalQuizAttempts}</p>
               )}
             </div>
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-2 shadow-sm">
+        <Card className="lg:col-span-2 shadow-sm bg-card border-border"> {/* Card background and border */}
           <CardHeader>
-            <CardTitle>Streak History</CardTitle>
+            <CardTitle className="text-foreground">Streak History</CardTitle>
           </CardHeader>
           <CardContent>
             {isLoadingStreakHistory || authLoading ? (
@@ -300,12 +300,12 @@ const Dashboard = () => {
             ) : formattedStreakHistory.length > 0 ? (
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={formattedStreakHistory}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" /> {/* Grid color */}
+                  <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" /> {/* Axis text color */}
+                  <YAxis stroke="hsl(var(--muted-foreground))" /> {/* Axis text color */}
+                  <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }} itemStyle={{ color: 'hsl(var(--foreground))' }} /> {/* Tooltip styling */}
                   <Legend />
-                  <Line type="monotone" dataKey="streak" stroke="#ffc658" activeDot={{ r: 8 }} />
+                  <Line type="monotone" dataKey="streak" stroke="hsl(var(--primary))" activeDot={{ r: 8 }} /> {/* Line color primary */}
                 </LineChart>
               </ResponsiveContainer>
             ) : (

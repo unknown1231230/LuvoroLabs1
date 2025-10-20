@@ -106,7 +106,7 @@ const LessonPage = () => {
       <div className="text-center py-10">
         <h1 className="text-3xl font-bold text-destructive">Lesson Not Found</h1>
         <p className="text-muted-foreground mt-2">The lesson you are looking for does not exist.</p>
-        <Button asChild className="mt-4">
+        <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
           <Link to="/courses/ap-physics">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to AP Physics 1
           </Link>
@@ -161,7 +161,7 @@ const LessonPage = () => {
 
   return (
     <div className="space-y-8">
-      <Button variant="outline" asChild className="mb-4">
+      <Button variant="outline" asChild className="mb-4 text-foreground hover:text-primary border-border"> {/* Outline button style */}
         <Link to="/courses/ap-physics">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to AP Physics 1
         </Link>
@@ -172,7 +172,7 @@ const LessonPage = () => {
 
       {lessonId === 'kinematics-1d' && <Kinematics1DSimulation />}
 
-      <h3 className="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
+      <h3 className="text-xl font-semibold mt-4 mb-2 text-foreground">Further Learning:</h3> {/* Text color foreground */}
       {lesson.videoUrl && lesson.videoUrl !== "ADD_YOUR_VIDEO_EMBED_URL_HERE" ? (
         <div className="aspect-video w-full max-w-2xl mx-auto shadow-md rounded-lg overflow-hidden">
           <iframe
@@ -186,7 +186,7 @@ const LessonPage = () => {
           ></iframe>
         </div>
       ) : (
-        <div className="aspect-video w-full max-w-2xl mx-auto bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-muted-foreground p-4 rounded-md shadow-md">
+        <div className="aspect-video w-full max-w-2xl mx-auto bg-card flex items-center justify-center text-muted-foreground p-4 rounded-md shadow-md border-border"> {/* Card background and border */}
           <p className="text-center">
             <strong>Video Placeholder:</strong> Please add an embed URL for this lesson.
             <br/>
@@ -205,9 +205,9 @@ const LessonPage = () => {
               const selectedValue = submission ? submission.answer : selectedAnswers[q.id];
 
               return (
-                <Card key={q.id} className="shadow-sm">
+                <Card key={q.id} className="shadow-sm bg-card border-border"> {/* Card background and border */}
                   <CardHeader>
-                    <CardTitle>{q.question}</CardTitle>
+                    <CardTitle className="text-foreground">{q.question}</CardTitle> {/* Title color foreground */}
                   </CardHeader>
                   <CardContent>
                     <RadioGroup
@@ -220,7 +220,8 @@ const LessonPage = () => {
                         <div key={index} className="flex items-center space-x-2">
                           <RadioGroupItem value={option} id={`${q.id}-${index}`} disabled={isQuestionDisabled} />
                           <Label htmlFor={`${q.id}-${index}`} className={cn(
-                            isQuestionDisabled && option === q.correctAnswer && "font-bold text-green-600",
+                            "text-muted-foreground", // Default text color
+                            isQuestionDisabled && option === q.correctAnswer && "font-bold text-green-500",
                             isQuestionDisabled && option === selectedValue && option !== q.correctAnswer && "line-through text-red-500"
                           )}>
                             {option}
@@ -233,21 +234,21 @@ const LessonPage = () => {
                     {!isQuestionDisabled && (
                       <Button
                         onClick={() => handleSubmitAnswer(q.id, q.correctAnswer)}
-                        className="mt-4"
+                        className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90" // Primary button style
                         disabled={!selectedAnswers[q.id]}
                       >
                         Submit Answer
                       </Button>
                     )}
                     {submission && (
-                      <div className="mt-4 p-3 rounded-md flex flex-col gap-2">
+                      <div className="mt-4 p-3 rounded-md flex flex-col gap-2 bg-muted border-border"> {/* Muted background and border */}
                         <div className="flex items-center gap-2">
                           {submission.isCorrect ? (
                             <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
                           ) : (
                             <XCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
                           )}
-                          <p className={submission.isCorrect ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}>
+                          <p className={submission.isCorrect ? "text-green-500 font-semibold" : "text-red-500 font-semibold"}>
                             {submission.isCorrect ? "Correct!" : "Incorrect."}
                           </p>
                         </div>
@@ -255,7 +256,7 @@ const LessonPage = () => {
                           Your answer: <span className={cn("font-bold", !submission.isCorrect && "line-through text-red-500")}>{submission.answer}</span>
                         </p>
                         <p className="text-muted-foreground text-sm">
-                          Correct answer: <span className="font-bold text-green-600">{q.correctAnswer}</span>
+                          Correct answer: <span className="font-bold text-green-500">{q.correctAnswer}</span>
                         </p>
                         <p className="text-muted-foreground text-sm mt-1">
                           Explanation: {q.explanation}
@@ -271,7 +272,7 @@ const LessonPage = () => {
       )}
 
       {isLessonMarkedComplete && (
-        <div className="text-center mt-8 text-green-600 font-semibold flex flex-col items-center justify-center gap-2">
+        <div className="text-center mt-8 text-green-500 font-semibold flex flex-col items-center justify-center gap-2">
           <CheckCircle className="h-5 w-5" />
           <span>Lesson Completed!</span>
           {lessonScore && (
@@ -279,13 +280,13 @@ const LessonPage = () => {
           )}
           <div className="mt-4">
             {findNextLessonPath(lessonId!, courseId) ? (
-              <Button asChild>
+              <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
                 <Link to={findNextLessonPath(lessonId!, courseId)!}>
                   Continue to Next Lesson
                 </Link>
               </Button>
             ) : (
-              <Button asChild>
+              <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
                 <Link to={`/courses/${courseId}`}>
                   Back to Course Overview
                 </Link>

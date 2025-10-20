@@ -78,7 +78,7 @@ const UnitTestResultsPage = () => {
       <div className="text-center py-10">
         <h1 className="text-3xl font-bold text-destructive">Error</h1>
         <p className="text-muted-foreground mt-2">{error}</p>
-        <Button asChild className="mt-4">
+        <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
           <Link to={`/courses/${courseId}`}>
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
           </Link>
@@ -92,7 +92,7 @@ const UnitTestResultsPage = () => {
       <div className="text-center py-10">
         <h1 className="text-3xl font-bold text-destructive">Results Not Available</h1>
         <p className="text-muted-foreground mt-2">Could not find the test or session data.</p>
-        <Button asChild className="mt-4">
+        <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
           <Link to={`/courses/${courseId}`}>
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
           </Link>
@@ -107,13 +107,13 @@ const UnitTestResultsPage = () => {
 
   return (
     <div className="space-y-8">
-      <Button variant="outline" asChild className="mb-4">
+      <Button variant="outline" asChild className="mb-4 text-foreground hover:text-primary border-border"> {/* Outline button style */}
         <Link to={`/courses/${courseId}`}>
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
         </Link>
       </Button>
 
-      <Card className="w-full max-w-3xl mx-auto shadow-lg text-center">
+      <Card className="w-full max-w-3xl mx-auto shadow-lg text-center bg-card border-border"> {/* Card background and border */}
         <CardHeader>
           <CardTitle className="text-4xl font-bold text-primary">{unitTest.title} Results</CardTitle>
           <CardDescription className="mt-2 text-muted-foreground">
@@ -122,9 +122,9 @@ const UnitTestResultsPage = () => {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex flex-col items-center gap-4">
-            <p className="text-6xl font-extrabold text-green-600">{scorePercentage}%</p>
-            <Progress value={scorePercentage} className="w-full max-w-xs" />
-            <p className="text-xl font-semibold">
+            <p className="text-6xl font-extrabold text-green-500">{scorePercentage}%</p>
+            <Progress value={scorePercentage} className="w-full max-w-xs" indicatorColor="bg-green-500" /> {/* Progress bar color */}
+            <p className="text-xl font-semibold text-foreground">
               You scored {sessionData.score} out of {sessionData.total_questions} questions correctly.
             </p>
             <p className="text-muted-foreground">
@@ -143,8 +143,8 @@ const UnitTestResultsPage = () => {
       <div className="space-y-6">
         {unitTest.sections.map((section, sectionIndex) => (
           <div key={section.id} className="space-y-4">
-            <h3 className="text-2xl font-bold text-secondary-foreground mt-8 mb-4">{section.title}</h3>
-            <Separator />
+            <h3 className="text-2xl font-bold text-foreground mt-8 mb-4">{section.title}</h3> {/* Text color foreground */}
+            <Separator className="bg-border" /> {/* Separator color */}
             {section.questions.map((question, index) => {
               const userAnswer = userAnswers.find(ans => ans.question_id === question.id);
               const isCorrect = userAnswer?.is_correct;
@@ -153,9 +153,9 @@ const UnitTestResultsPage = () => {
               const eliminatedOptions = userAnswer?.eliminated_options || [];
 
               return (
-                <Card key={question.id} className={cn("shadow-sm", isCorrect ? "border-green-200" : "border-red-200")}>
+                <Card key={question.id} className={cn("shadow-sm bg-card border-border", isCorrect ? "border-green-500" : "border-red-500")}> {/* Card background and border */}
                   <CardHeader className="flex-row items-center justify-between">
-                    <CardTitle className="text-lg flex items-center gap-2">
+                    <CardTitle className="text-lg flex items-center gap-2 text-foreground"> {/* Text color foreground */}
                       {isCorrect ? (
                         <CheckCircle2 className="h-5 w-5 text-green-500" />
                       ) : (
@@ -166,15 +166,15 @@ const UnitTestResultsPage = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <p className="text-lg font-medium">{question.question}</p>
+                    <p className="text-lg font-medium text-foreground">{question.question}</p> {/* Text color foreground */}
                     {question.type === 'multiple-choice' && question.options && (
                       <div className="grid gap-2">
                         {question.options.map((option, optIndex) => (
                           <div key={optIndex} className="flex items-center space-x-2">
                             <span
                               className={cn(
-                                "text-base",
-                                option === question.correctAnswer && "font-bold text-green-600",
+                                "text-foreground", // Default text color
+                                option === question.correctAnswer && "font-bold text-green-500",
                                 option === selectedOption && option !== question.correctAnswer && "line-through text-red-500",
                                 eliminatedOptions.includes(option) && "line-through text-muted-foreground"
                               )}
@@ -199,7 +199,7 @@ const UnitTestResultsPage = () => {
                         </p>
                         {question.correctAnswer && (
                           <p className="text-muted-foreground text-sm mt-1">
-                            Expected Answer: <span className="font-bold text-green-600">{question.correctAnswer}</span>
+                            Expected Answer: <span className="font-bold text-green-500">{question.correctAnswer}</span>
                           </p>
                         )}
                         {/* Display AI feedback if available */}

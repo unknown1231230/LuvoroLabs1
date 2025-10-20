@@ -301,7 +301,7 @@ const UnitTestingPage = () => {
       <div className="text-center py-10">
         <h1 className="text-3xl font-bold text-destructive">Authentication Required</h1>
         <p className="text-muted-foreground mt-2">Please log in to take this unit test.</p>
-        <Button asChild className="mt-4">
+        <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
           <Link to="/auth">Login / Sign Up</Link>
         </Button>
       </div>
@@ -313,7 +313,7 @@ const UnitTestingPage = () => {
       <div className="text-center py-10">
         <h1 className="text-3xl font-bold text-destructive">Unit Test Not Found</h1>
         <p className="text-muted-foreground mt-2">The unit test for this module could not be loaded.</p>
-        <Button asChild className="mt-4">
+        <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
           <Link to={`/courses/${courseId}`}>
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
           </Link>
@@ -327,14 +327,14 @@ const UnitTestingPage = () => {
   if (testStatus === 'not-started') {
     return (
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] p-4">
-        <Card className="w-full max-w-lg shadow-lg text-center">
+        <Card className="w-full max-w-lg shadow-lg text-center bg-card border-border"> {/* Card background and border */}
           <CardHeader>
             <CardTitle className="text-3xl font-bold text-primary">{unitTest.title}</CardTitle>
             <CardDescription className="mt-2 text-muted-foreground">{unitTest.description}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-lg">This test has a total duration of {totalDurationMinutes} minutes.</p>
-            <ul className="list-disc list-inside text-left mx-auto max-w-sm">
+            <p className="text-lg text-foreground">This test has a total duration of {totalDurationMinutes} minutes.</p>
+            <ul className="list-disc list-inside text-left mx-auto max-w-sm text-muted-foreground">
               {unitTest.sections.map((section) => (
                 <li key={section.id}>
                   <strong>{section.title}:</strong> {section.questions.length} questions.
@@ -342,10 +342,10 @@ const UnitTestingPage = () => {
               ))}
             </ul>
             <p className="text-sm text-muted-foreground">Once you start, the timer begins for the entire test. You cannot go back to a previous section.</p>
-            <Button onClick={handleStartTest} size="lg" className="w-full">
+            <Button onClick={handleStartTest} size="lg" className="w-full bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
               Start Test
             </Button>
-            <Button variant="outline" asChild className="w-full">
+            <Button variant="outline" asChild className="w-full text-foreground hover:text-primary border-border"> {/* Outline button style */}
               <Link to={`/courses/${courseId}`}>
                 <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
               </Link>
@@ -359,7 +359,7 @@ const UnitTestingPage = () => {
   if (isTestFinished) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] p-4">
-        <Card className="w-full max-w-lg shadow-lg text-center">
+        <Card className="w-full max-w-lg shadow-lg text-center bg-card border-border"> {/* Card background and border */}
           <CardHeader>
             <CardTitle className="text-3xl font-bold text-primary">Test {testStatus === 'timed-out' ? 'Timed Out' : 'Completed'}</CardTitle>
             <CardDescription className="mt-2 text-muted-foreground">
@@ -367,13 +367,13 @@ const UnitTestingPage = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-lg">You can view your results now.</p>
-            <Button asChild size="lg" className="w-full">
+            <p className="text-lg text-foreground">You can view your results now.</p>
+            <Button asChild size="lg" className="w-full bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
               <Link to={`/courses/${courseId}/unit-test/${moduleId}/results/${testSessionId}`}>
                 View Results
               </Link>
             </Button>
-            <Button variant="outline" asChild className="w-full">
+            <Button variant="outline" asChild className="w-full text-foreground hover:text-primary border-border"> {/* Outline button style */}
               <Link to={`/courses/${courseId}`}>
                 <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
               </Link>
@@ -389,7 +389,7 @@ const UnitTestingPage = () => {
       <div className="text-center py-10">
         <h1 className="text-3xl font-bold text-destructive">Error Loading Question</h1>
         <p className="text-muted-foreground mt-2">Could not find the current section or question.</p>
-        <Button asChild className="mt-4">
+        <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
           <Link to={`/courses/${courseId}`}>
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
           </Link>
@@ -405,10 +405,10 @@ const UnitTestingPage = () => {
     <>
       {isCalculatorVisible && <Calculator onClose={() => setIsCalculatorVisible(false)} />}
       {isLineReaderVisible && <LineReader />}
-      <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
-        <header className="flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm sm:px-6">
+      <div className="flex flex-col min-h-screen bg-background"> {/* Background color */}
+        <header className="flex items-center justify-between px-4 py-3 bg-card border-b border-border shadow-sm sm:px-6"> {/* Card background and border */}
           <div className="flex items-center gap-2 sm:gap-4">
-            <h1 className="text-base font-semibold text-gray-800 dark:text-gray-100 sm:text-xl">
+            <h1 className="text-base font-semibold text-foreground sm:text-xl"> {/* Text color foreground */}
               {currentSection.title}
             </h1>
             <span className="hidden text-sm text-muted-foreground sm:inline">
@@ -420,39 +420,39 @@ const UnitTestingPage = () => {
               <Clock className="h-4 w-4 sm:h-5 sm:w-5" />
               <span>{formatTime(timeLeft)}</span>
             </div>
-            <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9" disabled>
+            <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9 text-foreground hover:text-primary" disabled> {/* Adjusted text color */}
               <MessageSquareQuote className="h-4 w-4" />
               <span className="sr-only">Annotate</span>
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9">
+                <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9 text-foreground hover:text-primary"> {/* Adjusted text color */}
                   <MoreHorizontal className="h-5 w-5" />
                   <span className="sr-only">More Tools</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setIsLineReaderVisible(prev => !prev)}>
+              <DropdownMenuContent align="end" className="bg-card border-border text-foreground"> {/* Dropdown styling */}
+                <DropdownMenuItem onClick={() => setIsLineReaderVisible(prev => !prev)} className="hover:bg-muted">
                   {isLineReaderVisible ? 'Hide' : 'Show'} Line Reader
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleZoomIn}><ZoomIn className="h-4 w-4 mr-2" />Zoom In</DropdownMenuItem>
-                <DropdownMenuItem onClick={handleZoomOut}><ZoomOut className="h-4 w-4 mr-2" />Zoom Out</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleReadAloud}><Ear className="h-4 w-4 mr-2" />Read Aloud</DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-border" />
+                <DropdownMenuItem onClick={handleZoomIn} className="hover:bg-muted"><ZoomIn className="h-4 w-4 mr-2" />Zoom In</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleZoomOut} className="hover:bg-muted"><ZoomOut className="h-4 w-4 mr-2" />Zoom Out</DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-border" />
+                <DropdownMenuItem onClick={handleReadAloud} className="hover:bg-muted"><Ear className="h-4 w-4 mr-2" />Read Aloud</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </header>
 
         <div className="flex flex-col lg:flex-row flex-grow" style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'top left' }}>
-          <div className="flex-1 min-w-0 p-6 bg-white dark:bg-gray-900 lg:overflow-y-auto lg:border-r border-b lg:border-b-0 border-gray-200 dark:border-gray-800">
+          <div className="flex-1 min-w-0 p-6 bg-card lg:overflow-y-auto lg:border-r border-b lg:border-b-0 border-border"> {/* Card background and border */}
             <div className="prose dark:prose-invert !max-w-full w-full">
               <p className="text-lg font-medium leading-relaxed text-foreground">{currentQuestion.question}</p>
             </div>
           </div>
 
-          <div className="w-full lg:w-96 flex-shrink-0 flex flex-col p-6 bg-gray-50 dark:bg-gray-950 lg:overflow-y-auto">
+          <div className="w-full lg:w-96 flex-shrink-0 flex flex-col p-6 bg-background lg:overflow-y-auto"> {/* Background color */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-1 text-lg font-semibold flex-wrap">
                 <span className="bg-primary text-primary-foreground px-2 py-1 rounded-md">
@@ -461,12 +461,12 @@ const UnitTestingPage = () => {
                 <Button
                   variant={markedForReview[currentQuestion.id] ? "secondary" : "outline"}
                   onClick={handleMarkForReview}
-                  className="flex items-center gap-1 text-xs px-2 py-1"
+                  className={cn("flex items-center gap-1 text-xs px-2 py-1", markedForReview[currentQuestion.id] ? "bg-secondary text-secondary-foreground" : "text-foreground hover:text-primary border-border")} // Adjusted button style
                 >
                   <Flag className="h-3 w-3" /> Mark for Review
                 </Button>
               </div>
-              <Button variant="ghost" size="sm" disabled>
+              <Button variant="ghost" size="sm" disabled className="text-muted-foreground"> {/* Adjusted text color */}
                 <BookOpen className="h-4 w-4" />
               </Button>
             </div>
@@ -478,12 +478,12 @@ const UnitTestingPage = () => {
                 className="flex flex-col gap-3 mb-6"
               >
                 {currentQuestion.options?.map((option, index) => (
-                  <div key={index} className="flex items-center space-x-3 p-3 border rounded-md bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors w-full">
+                  <div key={index} className="flex items-center space-x-3 p-3 border rounded-md bg-card border-border hover:bg-muted transition-colors w-full"> {/* Card background and border */}
                     <RadioGroupItem value={option} id={`${currentQuestion.id}-${index}`} className="flex-shrink-0" />
                     <Label
                       htmlFor={`${currentQuestion.id}-${index}`}
                       className={cn(
-                        "text-base cursor-pointer flex-1 break-words",
+                        "text-foreground cursor-pointer flex-1 break-words", // Text color foreground
                         eliminatedOptions[currentQuestion.id]?.includes(option) && "line-through text-muted-foreground"
                       )}
                     >
@@ -502,14 +502,14 @@ const UnitTestingPage = () => {
               </RadioGroup>
             ) : (
               <div className="grid gap-2 mb-6">
-                <Label htmlFor={`frq-${currentQuestion.id}`} className="text-lg font-semibold">Your Answer:</Label>
+                <Label htmlFor={`frq-${currentQuestion.id}`} className="text-lg font-semibold text-foreground">Your Answer:</Label> {/* Text color foreground */}
                 <Textarea
                   id={`frq-${currentQuestion.id}`}
                   placeholder="Type your free-response answer here..."
                   value={freeResponseAnswers[currentQuestion.id] || ''}
                   onChange={(e) => setFreeResponseAnswers(prev => ({ ...prev, [currentQuestion.id]: e.target.value }))}
                   rows={10}
-                  className="min-h-[150px]"
+                  className="min-h-[150px] bg-input border-border text-foreground" // Input styling
                   disabled={isGradingAI}
                 />
                 {isGradingAI && (
@@ -522,25 +522,25 @@ const UnitTestingPage = () => {
             )}
 
             <div className="grid grid-cols-2 gap-2 mt-auto">
-              <Button variant="outline" onClick={() => setIsCalculatorVisible(true)}>Calculator</Button>
-              <Button variant="outline" disabled>Reference (N/A)</Button>
+              <Button variant="outline" onClick={() => setIsCalculatorVisible(true)} className="text-foreground hover:text-primary border-border">Calculator</Button> {/* Outline button style */}
+              <Button variant="outline" disabled className="text-muted-foreground border-border">Reference (N/A)</Button> {/* Outline button style */}
             </div>
           </div>
         </div>
 
-        <footer className="flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shadow-sm sm:px-6">
+        <footer className="flex items-center justify-between px-4 py-3 bg-card border-t border-border shadow-sm sm:px-6"> {/* Card background and border */}
           <Dialog open={isPaletteOpen} onOpenChange={setIsPaletteOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2">
+              <Button variant="outline" className="flex items-center gap-2 text-foreground hover:text-primary border-border"> {/* Outline button style */}
                 <ListChecks className="h-4 w-4" />
                 <span className="hidden sm:inline">Question {globalQuestionIndex + 1} of {allQuestions.length}</span>
                 <span className="inline sm:hidden">{globalQuestionIndex + 1}/{allQuestions.length}</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] max-h-[80vh] flex flex-col">
+            <DialogContent className="sm:max-w-[425px] max-h-[80vh] flex flex-col bg-card border-border text-foreground"> {/* Dialog styling */}
               <DialogHeader>
-                <DialogTitle>Question Palette</DialogTitle>
-                <DialogDescription>Jump to any question in the current section.</DialogDescription>
+                <DialogTitle className="text-foreground">Question Palette</DialogTitle>
+                <DialogDescription className="text-muted-foreground">Jump to any question in the current section.</DialogDescription>
               </DialogHeader>
               <ScrollArea className="flex-grow pr-4">
                 <div className="grid grid-cols-5 gap-2">
@@ -558,9 +558,10 @@ const UnitTestingPage = () => {
                       }}
                       className={cn(
                         "relative",
-                        getQuestionStatus(q.id) === 'answered' && "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900 dark:text-green-200",
-                        getQuestionStatus(q.id) === 'flagged' && "bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-200",
-                        getQuestionStatus(q.id) === 'skipped' && "bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200",
+                        index === currentQuestionIndex && "bg-primary text-primary-foreground hover:bg-primary/90", // Current question
+                        getQuestionStatus(q.id) === 'answered' && "bg-green-500/20 text-green-300 hover:bg-green-500/30 border-green-500", // Answered
+                        getQuestionStatus(q.id) === 'flagged' && "bg-yellow-500/20 text-yellow-300 hover:bg-yellow-500/30 border-yellow-500", // Flagged
+                        getQuestionStatus(q.id) === 'skipped' && "bg-card text-foreground hover:bg-muted border-border", // Skipped
                       )}
                     >
                       {index + 1}
@@ -573,11 +574,11 @@ const UnitTestingPage = () => {
               </ScrollArea>
               <DialogFooter className="flex flex-col sm:flex-row sm:justify-between gap-2 mt-4">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-green-100 dark:bg-green-900 border border-green-500"></span> Answered</span>
-                  <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-yellow-100 dark:bg-yellow-900 border border-yellow-500"></span> Flagged</span>
-                  <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-500"></span> Skipped</span>
+                  <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500"></span> Answered</span>
+                  <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500"></span> Flagged</span>
+                  <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-card border border-border"></span> Skipped</span>
                 </div>
-                <Button onClick={() => setIsPaletteOpen(false)}>Close</Button>
+                <Button onClick={() => setIsPaletteOpen(false)} className="bg-primary text-primary-foreground hover:bg-primary/90">Close</Button> {/* Primary button style */}
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -588,7 +589,7 @@ const UnitTestingPage = () => {
               disabled={currentQuestionIndex === 0 && currentSectionIndex === 0}
               variant="outline"
               size="icon"
-              className="sm:w-auto sm:px-4"
+              className="sm:w-auto sm:px-4 text-foreground hover:text-primary border-border" // Outline button style
             >
               <ChevronLeft className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Previous</span>
@@ -597,14 +598,14 @@ const UnitTestingPage = () => {
               isLastSection ? (
                 <Button
                   onClick={() => handleFinishTest(false)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90" // Primary button style
                 >
                   Finish Test
                 </Button>
               ) : (
                 <Button
                   onClick={handleNextSection}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90" // Primary button style
                 >
                   <span className="hidden sm:inline">Next Section</span>
                   <span className="inline sm:hidden">Next</span>
@@ -615,7 +616,7 @@ const UnitTestingPage = () => {
               <Button
                 onClick={handleNextQuestion}
                 size="icon"
-                className="sm:w-auto sm:px-4"
+                className="sm:w-auto sm:px-4 bg-primary text-primary-foreground hover:bg-primary/90" // Primary button style
               >
                 <span className="hidden sm:inline">Next</span>
                 <ChevronRight className="h-4 w-4 sm:ml-2" />
