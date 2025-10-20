@@ -51,51 +51,53 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
         <nav className="flex flex-col gap-4 flex-grow">
           <Button variant="ghost" asChild onClick={closeSheet} className="justify-start">
             <Link to="/">
-              <span>
+              <>
                 <Home className="mr-2 h-4 w-4" />Home
-              </span>
+              </>
             </Link>
           </Button>
           <Button variant="ghost" asChild onClick={closeSheet} className="justify-start">
             <Link to="/courses">
-              <span>
+              <>
                 <BookOpen className="mr-2 h-4 w-4" />Courses
-              </span>
+              </>
             </Link>
           </Button>
           {isAuthenticated ? (
             <>
               <Button variant="ghost" asChild onClick={closeSheet} className="justify-start">
                 <Link to="/dashboard">
-                  <span>
+                  <>
                     <LayoutDashboard className="mr-2 h-4 w-4" />Dashboard
-                  </span>
+                  </>
                 </Link>
               </Button>
               <Button variant="ghost" asChild onClick={closeSheet} className="justify-start">
                 <Link to="/achievements">
-                  <span>
+                  <>
                     <Award className="mr-2 h-4 w-4" />Achievements
-                  </span>
+                  </>
                 </Link>
               </Button>
               <Button variant="ghost" asChild onClick={closeSheet} className="justify-start">
                 <Link to="/settings">
-                  <span>
+                  <>
                     <Settings className="mr-2 h-4 w-4" />Settings
-                  </span>
+                  </>
                 </Link>
               </Button>
               <Button variant="ghost" onClick={handleLogout} className="justify-start text-destructive hover:text-destructive">
-                <LogOut className="mr-2 h-4 w-4" />Logout
+                <>
+                  <LogOut className="mr-2 h-4 w-4" />Logout
+                </>
               </Button>
             </>
           ) : (
             <Button asChild onClick={closeSheet} className="justify-start">
               <Link to="/auth">
-                <span>
+                <>
                   Login / Sign Up
-                </span>
+                </>
               </Link>
             </Button>
           )}
