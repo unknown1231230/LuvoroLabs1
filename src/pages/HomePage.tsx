@@ -38,7 +38,11 @@ const HomePage = () => {
               </Button>
             ) : (
               <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
-                <Link to="/auth">Explore Courses <BookOpen className="ml-2 h-4 w-4" /></Link>
+                <Link to="/auth">
+                  <>
+                    Explore Courses <BookOpen className="ml-2 h-4 w-4" />
+                  </>
+                </Link>
               </Button>
             )}
           </div>

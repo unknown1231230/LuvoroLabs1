@@ -128,7 +128,9 @@ const APPhysicsCourse = () => {
                             className={currentModuleCompleted ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-secondary text-secondary-foreground"} // Primary button style
                           >
                             <Link to={`/courses/${courseId}/unit-test/${module.id}`}>
-                              <FlaskConical className="mr-2 h-4 w-4" /> Start Unit Test
+                              <>
+                                <FlaskConical className="mr-2 h-4 w-4" /> Start Unit Test
+                              </>
                             </Link>
                           </Button>
                           {!currentModuleCompleted && (
