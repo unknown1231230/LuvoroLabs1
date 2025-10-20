@@ -51,53 +51,39 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
         <nav className="flex flex-col gap-4 flex-grow">
           <Button variant="ghost" asChild onClick={closeSheet} className="justify-start">
             <Link to="/">
-              <>
-                <Home className="mr-2 h-4 w-4" />Home
-              </>
+              <Home className="mr-2 h-4 w-4" />Home
             </Link>
           </Button>
           <Button variant="ghost" asChild onClick={closeSheet} className="justify-start">
             <Link to="/courses">
-              <>
-                <BookOpen className="mr-2 h-4 w-4" />Courses
-              </>
+              <BookOpen className="mr-2 h-4 w-4" />Courses
             </Link>
           </Button>
           {isAuthenticated ? (
             <>
               <Button variant="ghost" asChild onClick={closeSheet} className="justify-start">
                 <Link to="/dashboard">
-                  <>
-                    <LayoutDashboard className="mr-2 h-4 w-4" />Dashboard
-                  </>
+                  <LayoutDashboard className="mr-2 h-4 w-4" />Dashboard
                 </Link>
               </Button>
               <Button variant="ghost" asChild onClick={closeSheet} className="justify-start">
                 <Link to="/achievements">
-                  <>
-                    <Award className="mr-2 h-4 w-4" />Achievements
-                  </>
+                  <Award className="mr-2 h-4 w-4" />Achievements
                 </Link>
               </Button>
               <Button variant="ghost" asChild onClick={closeSheet} className="justify-start">
                 <Link to="/settings">
-                  <>
-                    <Settings className="mr-2 h-4 w-4" />Settings
-                  </>
+                  <Settings className="mr-2 h-4 w-4" />Settings
                 </Link>
               </Button>
               <Button variant="ghost" onClick={handleLogout} className="justify-start text-destructive hover:text-destructive">
-                <>
-                  <LogOut className="mr-2 h-4 w-4" />Logout
-                </>
+                <LogOut className="mr-2 h-4 w-4" />Logout
               </Button>
             </>
           ) : (
             <Button asChild onClick={closeSheet} className="justify-start">
               <Link to="/auth">
-                <>
-                  Login / Sign Up
-                </>
+                Login / Sign Up
               </Link>
             </Button>
           )}

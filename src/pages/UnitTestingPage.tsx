@@ -315,9 +315,7 @@ const UnitTestingPage = () => {
         <p className="text-muted-foreground mt-2">The unit test for this module could not be loaded.</p>
         <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
           <Link to={`/courses/${courseId}`}>
-            <>
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
-            </>
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
           </Link>
         </Button>
       </div>
@@ -349,9 +347,7 @@ const UnitTestingPage = () => {
             </Button>
             <Button variant="outline" asChild className="w-full text-foreground hover:text-primary border-border"> {/* Outline button style */}
               <Link to={`/courses/${courseId}`}>
-                <>
-                  <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
-                </>
+                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
               </Link>
             </Button>
           </CardContent>
@@ -379,9 +375,7 @@ const UnitTestingPage = () => {
             </Button>
             <Button variant="outline" asChild className="w-full text-foreground hover:text-primary border-border"> {/* Outline button style */}
               <Link to={`/courses/${courseId}`}>
-                <>
-                  <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
-                </>
+                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
               </Link>
             </Button>
           </CardContent>
@@ -397,9 +391,7 @@ const UnitTestingPage = () => {
         <p className="text-muted-foreground mt-2">Could not find the current section or question.</p>
         <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
           <Link to={`/courses/${courseId}`}>
-            <>
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
-            </>
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
           </Link>
         </Button>
       </div>

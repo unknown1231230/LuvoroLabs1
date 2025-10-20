@@ -47,20 +47,16 @@ const PublicLayout = () => {
               <nav className="flex items-center space-x-2 sm:space-x-4">
                 <Button variant="ghost" asChild className="text-foreground hover:text-primary">
                   <Link to="/">
-                    <>
-                      <Home className="h-4 w-4 md:mr-2" />
-                      <span className="hidden md:inline">Home</span>
-                    </>
+                    <Home className="h-4 w-4 md:mr-2" />
+                    <span className="hidden md:inline">Home</span>
                   </Link>
                 </Button>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button variant="ghost" asChild className="text-foreground hover:text-primary">
                       <Link to="/courses">
-                        <>
-                          <BookOpen className="h-4 w-4 md:mr-2" />
-                          <span className="hidden md:inline">Courses</span>
-                        </>
+                        <BookOpen className="h-4 w-4 md:mr-2" />
+                        <span className="hidden md:inline">Courses</span>
                       </Link>
                     </Button>
                   </TooltipTrigger>
@@ -72,26 +68,20 @@ const PublicLayout = () => {
                   <>
                     <Button variant="ghost" asChild className="text-foreground hover:text-primary">
                       <Link to="/dashboard">
-                        <>
-                          <LayoutDashboard className="h-4 w-4 md:mr-2" />
-                          <span className="hidden md:inline">Dashboard</span>
-                        </>
+                        <LayoutDashboard className="h-4 w-4 md:mr-2" />
+                        <span className="hidden md:inline">Dashboard</span>
                       </Link>
                     </Button>
                     <Button variant="ghost" onClick={handleLogout} className="text-foreground hover:text-primary">
-                      <>
-                        <LogOut className="h-4 w-4 md:mr-2" />
-                        <span className="hidden md:inline">Logout</span>
-                      </>
+                      <LogOut className="h-4 w-4 md:mr-2" />
+                      <span className="hidden md:inline">Logout</span>
                     </Button>
                   </>
                 ) : (
                   <Button asChild>
                     <Link to="/auth">
-                      <>
-                        <span className="hidden md:inline">Login / Sign Up</span>
-                        <span className="inline md:hidden">Login</span>
-                      </>
+                      <span className="hidden md:inline">Login / Sign Up</span>
+                      <span className="inline md:hidden">Login</span>
                     </Link>
                   </Button>
                 )}

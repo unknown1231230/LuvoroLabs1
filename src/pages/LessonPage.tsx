@@ -108,9 +108,7 @@ const LessonPage = () => {
         <p className="text-muted-foreground mt-2">The lesson you are looking for does not exist.</p>
         <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
           <Link to="/courses/ap-physics">
-            <>
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back to AP Physics 1
-            </>
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to AP Physics 1
           </Link>
         </Button>
       </div>
@@ -165,9 +163,7 @@ const LessonPage = () => {
     <div className="space-y-8">
       <Button variant="outline" asChild className="mb-4 text-foreground hover:text-primary border-border"> {/* Outline button style */}
         <Link to="/courses/ap-physics">
-          <>
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to AP Physics 1
-          </>
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back to AP Physics 1
         </Link>
       </Button>
 

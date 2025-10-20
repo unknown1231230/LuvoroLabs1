@@ -25,9 +25,7 @@ const APPhysicsCourse = () => {
         <p className="text-muted-foreground mt-2">The AP Physics 1 course data could not be loaded.</p>
         <Button asChild className="mt-4">
           <Link to="/courses">
-            <>
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Course Catalog
-            </>
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Course Catalog
           </Link>
         </Button>
       </div>
@@ -68,9 +66,7 @@ const APPhysicsCourse = () => {
     <div className="space-y-8">
       <Button variant="outline" asChild className="mb-4 text-foreground hover:text-primary border-border">
         <Link to="/courses">
-          <>
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Course Catalog
-          </>
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Course Catalog
         </Link>
       </Button>
 
@@ -126,9 +122,7 @@ const APPhysicsCourse = () => {
                             className={currentModuleCompleted ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-secondary text-secondary-foreground"}
                           >
                             <Link to={`/courses/${courseId}/unit-test/${module.id}`}>
-                              <>
-                                <FlaskConical className="mr-2 h-4 w-4" /> Start Unit Test
-                              </>
+                              <FlaskConical className="mr-2 h-4 w-4" /> Start Unit Test
                             </Link>
                           </Button>
                           {!currentModuleCompleted && (

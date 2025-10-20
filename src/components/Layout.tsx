@@ -47,20 +47,16 @@ const Layout = () => {
               <nav className="flex items-center space-x-2 sm:space-x-4">
                 <Button variant="ghost" asChild className="text-foreground hover:text-primary">
                   <Link to="/dashboard">
-                    <>
-                      <LayoutDashboard className="h-4 w-4 md:mr-2" />
-                      <span className="hidden md:inline">Dashboard</span>
-                    </>
+                    <LayoutDashboard className="h-4 w-4 md:mr-2" />
+                    <span className="hidden md:inline">Dashboard</span>
                   </Link>
                 </Button>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button variant="ghost" asChild className="text-foreground hover:text-primary">
                       <Link to="/courses">
-                        <>
-                          <BookOpen className="h-4 w-4 md:mr-2" />
-                          <span className="hidden md:inline">Courses</span>
-                        </>
+                        <BookOpen className="h-4 w-4 md:mr-2" />
+                        <span className="hidden md:inline">Courses</span>
                       </Link>
                     </Button>
                   </TooltipTrigger>
@@ -70,25 +66,19 @@ const Layout = () => {
                 </Tooltip>
                 <Button variant="ghost" asChild className="text-foreground hover:text-primary">
                   <Link to="/achievements">
-                    <>
-                      <Award className="h-4 w-4 md:mr-2" />
-                      <span className="hidden md:inline">Achievements</span>
-                    </>
+                    <Award className="h-4 w-4 md:mr-2" />
+                    <span className="hidden md:inline">Achievements</span>
                   </Link>
                 </Button>
                 <Button variant="ghost" asChild className="text-foreground hover:text-primary">
                   <Link to="/settings">
-                    <>
-                      <Settings className="h-4 w-4 md:mr-2" />
-                      <span className="hidden md:inline">Settings</span>
-                    </>
+                    <Settings className="h-4 w-4 md:mr-2" />
+                    <span className="hidden md:inline">Settings</span>
                   </Link>
                 </Button>
                 <Button variant="ghost" onClick={handleLogout} className="text-foreground hover:text-primary">
-                  <>
-                    <LogOut className="h-4 w-4 md:mr-2" />
-                    <span className="hidden md:inline">Logout</span>
-                  </>
+                  <LogOut className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">Logout</span>
                 </Button>
               </nav>
             )}
