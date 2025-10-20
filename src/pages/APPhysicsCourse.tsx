@@ -6,9 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, CheckCircle2, FlaskConical } from 'lucide-react';
 import LessonCard from '@/components/LessonCard';
-import { AuthContext } from '@/context/AuthContext'; // Updated import
+import { AuthContext } from '@/context/AuthContext';
 import { fetchUserLessonProgress } from '@/utils/supabaseUtils';
-import { courses, findCourseById } from '@/utils/courseContent.tsx'; // Updated import
+import { courses, findCourseById } from '@/utils/courseContent.tsx';
 
 const APPhysicsCourse = () => {
   const { user } = useContext(AuthContext);
@@ -25,14 +25,16 @@ const APPhysicsCourse = () => {
         <p className="text-muted-foreground mt-2">The AP Physics 1 course data could not be loaded.</p>
         <Button asChild className="mt-4">
           <Link to="/courses">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Course Catalog
+            <>
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Course Catalog
+            </>
           </Link>
         </Button>
       </div>
     );
   }
 
-  const modules = apPhysicsCourse.modules; // Use modules from centralized data
+  const modules = apPhysicsCourse.modules;
 
   useEffect(() => {
     const getProgress = async () => {
@@ -53,22 +55,22 @@ const APPhysicsCourse = () => {
     return moduleLessons.every(lesson => isLessonCompleted(lesson.id));
   };
 
-  // This function is no longer strictly needed for navigation, as LessonPage handles it.
-  // Keeping it for potential future use or if a user wants to manually jump to next module.
   const handleNextModule = (nextModuleId: string) => {
     const nextModule = modules.find(m => m.id === nextModuleId);
     if (nextModule && nextModule.lessons.length > 0) {
       navigate(nextModule.lessons[0].link);
     } else {
-      navigate(apPhysicsCourse.link); // Go back to course overview if no lessons in next module
+      navigate(apPhysicsCourse.link);
     }
   };
 
   return (
     <div className="space-y-8">
-      <Button variant="outline" asChild className="mb-4 text-foreground hover:text-primary border-border"> {/* Outline button style */}
+      <Button variant="outline" asChild className="mb-4 text-foreground hover:text-primary border-border">
         <Link to="/courses">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Course Catalog
+          <>
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Course Catalog
+          </>
         </Link>
       </Button>
 
@@ -87,10 +89,10 @@ const APPhysicsCourse = () => {
           const isModuleUnlocked = user ? previousModuleCompleted : false;
 
           return (
-            <Card key={module.id} className={!isModuleUnlocked && user ? "opacity-50 shadow-sm bg-card border-border" : "shadow-sm bg-card border-border"}> {/* Card background and border */}
+            <Card key={module.id} className={!isModuleUnlocked && user ? "opacity-50 shadow-sm bg-card border-border" : "shadow-sm bg-card border-border"}>
               <CardHeader className="flex-row items-center space-x-3">
                 {module.icon}
-                <CardTitle className="text-foreground">{module.title}</CardTitle> {/* Title color foreground */}
+                <CardTitle className="text-foreground">{module.title}</CardTitle>
                 {currentModuleCompleted && <CheckCircle2 className="h-5 w-5 text-green-500 ml-2" />}
               </CardHeader>
               <CardContent>
@@ -121,7 +123,7 @@ const APPhysicsCourse = () => {
                             asChild
                             disabled={!currentModuleCompleted}
                             variant={currentModuleCompleted ? "default" : "secondary"}
-                            className={currentModuleCompleted ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-secondary text-secondary-foreground"} // Primary button style
+                            className={currentModuleCompleted ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-secondary text-secondary-foreground"}
                           >
                             <Link to={`/courses/${courseId}/unit-test/${module.id}`}>
                               <>
@@ -144,7 +146,7 @@ const APPhysicsCourse = () => {
 
                 {user && currentModuleCompleted && index < modules.length - 1 && (
                   <div className="mt-6 text-center">
-                    <Button onClick={() => handleNextModule(modules[index + 1].id)} className="bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
+                    <Button onClick={() => handleNextModule(modules[index + 1].id)} className="bg-primary text-primary-foreground hover:bg-primary/90">
                       Go to {modules[index + 1].title}
                     </Button>
                   </div>

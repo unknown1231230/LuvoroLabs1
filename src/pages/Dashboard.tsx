@@ -4,8 +4,8 @@ import React, { useContext } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'; // Added ResponsiveContainer
-import { Flame, Trophy, Lightbulb, Users, BookOpen, CheckCircle, ClipboardCheck } from 'lucide-react'; // Added Users, BookOpen, CheckCircle, ClipboardCheck
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Flame, Trophy, Lightbulb, Users, BookOpen, CheckCircle, ClipboardCheck } from 'lucide-react';
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
