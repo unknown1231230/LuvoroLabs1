@@ -266,6 +266,7 @@ const UnitTestingPage = () => {
       if (currentEliminated.includes(option)) {
         return { ...prev, [currentQuestion.id]: currentEliminated.filter(o => o !== option) };
       } else {
+        // Corrected line: Use spread operator for the array value
         return { ...prev, [currentQuestion.id]: [...currentEliminated, option] };
       }
     });
