@@ -21,7 +21,7 @@ import { supabase } from "./lib/supabase";
 import { AuthContext } from "./context/AuthContext";
 import { ThemeProvider } from "@/components/theme-provider";
 import AnimatedBackground from "./components/AnimatedBackground";
-import { useTheme } from "next-themes"; // New: Import useTheme
+// import { useTheme } from "next-themes"; // Removed: No longer needed for conditional rendering here
 
 const queryClient = new QueryClient();
 
@@ -29,7 +29,7 @@ const App = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const { theme } = useTheme(); // New: Get current theme
+  // const { theme } = useTheme(); // Removed: No longer needed for conditional rendering here
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -65,7 +65,7 @@ const App = () => {
         <TooltipProvider>
           <Toaster />
           <Sonner position="top-left" className="sonner-custom-offset" />
-          {theme === 'dark' && <AnimatedBackground />} {/* New: Conditionally render AnimatedBackground */}
+          <AnimatedBackground /> {/* Always render, CSS will control visibility */}
           <BrowserRouter>
             <AuthContext.Provider value={{ session, user, loading }}>
               <Routes>

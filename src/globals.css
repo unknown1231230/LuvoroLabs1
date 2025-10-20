@@ -120,7 +120,12 @@
     linear-gradient(to bottom, hsl(var(--border)) 1px, transparent 1px);
   background-size: 40px 40px; /* Adjust grid size as needed */
   animation: move-grid 60s linear infinite;
-  opacity: 0.1; /* Subtle opacity */
+  opacity: 0; /* Hidden by default */
+  transition: opacity 0.5s ease-in-out; /* Smooth transition */
+}
+
+.dark .animated-grid-background {
+  opacity: 0.1; /* Visible in dark mode */
 }
 
 @keyframes move-grid {
