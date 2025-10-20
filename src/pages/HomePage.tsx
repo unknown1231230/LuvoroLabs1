@@ -39,7 +39,9 @@ const HomePage = () => {
             ) : (
               <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
                 <Link to="/auth">
-                  Explore Courses <BookOpen className="ml-2 h-4 w-4" />
+                  <span className="flex items-center">
+                    Explore Courses <BookOpen className="ml-2 h-4 w-4" />
+                  </span>
                 </Link>
               </Button>
             )}

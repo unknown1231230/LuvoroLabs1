@@ -51,29 +51,39 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
         <nav className="flex flex-col gap-4 flex-grow">
           <Button variant="ghost" asChild onClick={closeSheet} className="justify-start">
             <Link to="/">
-              <Home className="mr-2 h-4 w-4" />Home
+              <span className="flex items-center">
+                <Home className="mr-2 h-4 w-4" />Home
+              </span>
             </Link>
           </Button>
           <Button variant="ghost" asChild onClick={closeSheet} className="justify-start">
             <Link to="/courses">
-              <BookOpen className="mr-2 h-4 w-4" />Courses
+              <span className="flex items-center">
+                <BookOpen className="mr-2 h-4 w-4" />Courses
+              </span>
             </Link>
           </Button>
           {isAuthenticated ? (
             <>
               <Button variant="ghost" asChild onClick={closeSheet} className="justify-start">
                 <Link to="/dashboard">
-                  <LayoutDashboard className="mr-2 h-4 w-4" />Dashboard
+                  <span className="flex items-center">
+                    <LayoutDashboard className="mr-2 h-4 w-4" />Dashboard
+                  </span>
                 </Link>
               </Button>
               <Button variant="ghost" asChild onClick={closeSheet} className="justify-start">
                 <Link to="/achievements">
-                  <Award className="mr-2 h-4 w-4" />Achievements
+                  <span className="flex items-center">
+                    <Award className="mr-2 h-4 w-4" />Achievements
+                  </span>
                 </Link>
               </Button>
               <Button variant="ghost" asChild onClick={closeSheet} className="justify-start">
                 <Link to="/settings">
-                  <Settings className="mr-2 h-4 w-4" />Settings
+                  <span className="flex items-center">
+                    <Settings className="mr-2 h-4 w-4" />Settings
+                  </span>
                 </Link>
               </Button>
               <Button variant="ghost" onClick={handleLogout} className="justify-start text-destructive hover:text-destructive">

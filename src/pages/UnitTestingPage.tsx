@@ -315,7 +315,9 @@ const UnitTestingPage = () => {
         <p className="text-muted-foreground mt-2">The unit test for this module could not be loaded.</p>
         <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
           <Link to={`/courses/${courseId}`}>
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
+            <span className="flex items-center">
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
+            </span>
           </Link>
         </Button>
       </div>
@@ -347,7 +349,9 @@ const UnitTestingPage = () => {
             </Button>
             <Button variant="outline" asChild className="w-full text-foreground hover:text-primary border-border"> {/* Outline button style */}
               <Link to={`/courses/${courseId}`}>
-                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
+                <span className="flex items-center">
+                  <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
+                </span>
               </Link>
             </Button>
           </CardContent>
@@ -375,7 +379,9 @@ const UnitTestingPage = () => {
             </Button>
             <Button variant="outline" asChild className="w-full text-foreground hover:text-primary border-border"> {/* Outline button style */}
               <Link to={`/courses/${courseId}`}>
-                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
+                <span className="flex items-center">
+                  <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
+                </span>
               </Link>
             </Button>
           </CardContent>
@@ -391,7 +397,9 @@ const UnitTestingPage = () => {
         <p className="text-muted-foreground mt-2">Could not find the current section or question.</p>
         <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
           <Link to={`/courses/${courseId}`}>
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
+            <span className="flex items-center">
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
+            </span>
           </Link>
         </Button>
       </div>
@@ -591,8 +599,10 @@ const UnitTestingPage = () => {
               size="icon"
               className="sm:w-auto sm:px-4 text-foreground hover:text-primary border-border" // Outline button style
             >
-              <ChevronLeft className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Previous</span>
+              <span className="flex items-center">
+                <ChevronLeft className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Previous</span>
+              </span>
             </Button>
             {isLastQuestionInSection ? (
               isLastSection ? (
@@ -607,9 +617,11 @@ const UnitTestingPage = () => {
                   onClick={handleNextSection}
                   className="bg-primary text-primary-foreground hover:bg-primary/90" // Primary button style
                 >
-                  <span className="hidden sm:inline">Next Section</span>
-                  <span className="inline sm:hidden">Next</span>
-                  <ChevronRight className="ml-1 h-4 w-4 sm:ml-2" />
+                  <span className="flex items-center">
+                    <span className="hidden sm:inline">Next Section</span>
+                    <span className="inline sm:hidden">Next</span>
+                    <ChevronRight className="ml-1 h-4 w-4 sm:ml-2" />
+                  </span>
                 </Button>
               )
             ) : (
@@ -618,8 +630,10 @@ const UnitTestingPage = () => {
                 size="icon"
                 className="sm:w-auto sm:px-4 bg-primary text-primary-foreground hover:bg-primary/90" // Primary button style
               >
-                <span className="hidden sm:inline">Next</span>
-                <ChevronRight className="h-4 w-4 sm:ml-2" />
+                <span className="flex items-center">
+                  <span className="hidden sm:inline">Next</span>
+                  <ChevronRight className="h-4 w-4 sm:ml-2" />
+                </span>
               </Button>
             )}
           </div>

@@ -80,7 +80,9 @@ const UnitTestResultsPage = () => {
         <p className="text-muted-foreground mt-2">{error}</p>
         <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
           <Link to={`/courses/${courseId}`}>
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
+            <span className="flex items-center">
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
+            </span>
           </Link>
         </Button>
       </div>
@@ -94,7 +96,9 @@ const UnitTestResultsPage = () => {
         <p className="text-muted-foreground mt-2">Could not find the test or session data.</p>
         <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
           <Link to={`/courses/${courseId}`}>
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
+            <span className="flex items-center">
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
+            </span>
           </Link>
         </Button>
       </div>
@@ -109,7 +113,9 @@ const UnitTestResultsPage = () => {
     <div className="space-y-8">
       <Button variant="outline" asChild className="mb-4 text-foreground hover:text-primary border-border"> {/* Outline button style */}
         <Link to={`/courses/${courseId}`}>
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
+          <span className="flex items-center">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
+          </span>
         </Link>
       </Button>
 
