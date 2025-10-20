@@ -19,8 +19,8 @@ import UnitTestResultsPage from "./pages/UnitTestResultsPage";
 import { useEffect, useState } from "react";
 import { supabase } from "./lib/supabase";
 import { AuthContext } from "./context/AuthContext";
-import { ThemeProvider } from "@/components/theme-provider"; // New: Import ThemeProvider
-import AnimatedBackground from "./components/AnimatedBackground"; // New: Import AnimatedBackground
+import { ThemeProvider } from "@/components/theme-provider";
+import AnimatedBackground from "./components/AnimatedBackground";
 
 const queryClient = new QueryClient();
 
@@ -59,11 +59,11 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme"> {/* New: ThemeProvider */}
+      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme" attribute="class"> {/* Added attribute="class" */}
         <TooltipProvider>
           <Toaster />
           <Sonner position="top-left" className="sonner-custom-offset" />
-          <AnimatedBackground /> {/* New: AnimatedBackground */}
+          <AnimatedBackground />
           <BrowserRouter>
             <AuthContext.Provider value={{ session, user, loading }}>
               <Routes>
@@ -96,7 +96,7 @@ const App = () => {
             </AuthContext.Provider>
           </BrowserRouter>
         </TooltipProvider>
-      </ThemeProvider> {/* New: Close ThemeProvider */}
+      </ThemeProvider>
     </QueryClientProvider>
   );
 };
