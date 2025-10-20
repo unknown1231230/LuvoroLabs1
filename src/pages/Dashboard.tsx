@@ -218,7 +218,9 @@ const Dashboard = () => {
         <section className="text-center">
           <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
             <Link to="/courses">
-              <BookOpen className="mr-2 h-5 w-5" /> Explore Our Course Catalog
+              <>
+                <BookOpen className="mr-2 h-5 w-5" /> Explore Our Course Catalog
+              </>
             </Link>
           </Button>
         </section>
