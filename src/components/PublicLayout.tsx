@@ -4,17 +4,18 @@ import React, { useContext } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Home, BookOpen, LogOut, LayoutDashboard } from 'lucide-react';
-import { AuthContext } from '@/context/AuthContext'; // Updated import
+import { AuthContext } from '@/context/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { showSuccess, showError } from '@/utils/toast';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MobileNav from './MobileNav';
+import { ThemeToggle } from './ThemeToggle'; // New: Import ThemeToggle
 
 const PublicLayout = () => {
   const { session } = useContext(AuthContext);
   const navigate = useNavigate();
-  const isMobile = useIsMobile(); // Now true for screens < 640px
+  const isMobile = useIsMobile();
 
   const handleLogout = async () => {
     try {
@@ -39,52 +40,55 @@ const PublicLayout = () => {
             <img src="/logo.png" alt="Luvoro Labs Logo" className="h-7 w-7" />
             <span className="hidden sm:inline">Luvoro Labs</span>
           </Link>
-          {isMobile ? ( // If screen < 640px, show MobileNav
-            <MobileNav isAuthenticated={!!session} />
-          ) : ( // If screen >= 640px, show desktop nav
-            <nav className="flex items-center space-x-2 sm:space-x-4"> {/* Adjusted space-x for smaller screens */}
-              <Button variant="ghost" asChild>
-                <Link to="/">
-                  <Home className="h-4 w-4 md:mr-2" /> {/* md:mr-2 adds margin only on md and up */}
-                  <span className="hidden md:inline">Home</span> {/* Hidden on sm, visible on md and up */}
-                </Link>
-              </Button>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" asChild>
-                    <Link to="/courses">
-                      <BookOpen className="h-4 w-4 md:mr-2" />
-                      <span className="hidden md:inline">Courses</span>
-                    </Link>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Courses</p>
-                </TooltipContent>
-              </Tooltip>
-              {session ? (
-                <>
-                  <Button variant="ghost" asChild>
-                    <Link to="/dashboard">
-                      <LayoutDashboard className="h-4 w-4 md:mr-2" />
-                      <span className="hidden md:inline">Dashboard</span>
-                    </Link>
-                  </Button>
-                  <Button variant="ghost" onClick={handleLogout}>
-                    <LogOut className="h-4 w-4 md:mr-2" />
-                    <span className="hidden md:inline">Logout</span>
-                  </Button>
-                </>
-              ) : (
-                <Button asChild>
-                  <Link to="/auth">
-                    <span className="hidden md:inline">Login / Sign Up</span>
-                    <span className="inline md:hidden">Login</span> {/* Show "Login" text on small screens if not icon-only */}
+          <div className="flex items-center gap-2 sm:gap-4"> {/* Wrap nav and toggle */}
+            {isMobile ? (
+              <MobileNav isAuthenticated={!!session} />
+            ) : (
+              <nav className="flex items-center space-x-2 sm:space-x-4">
+                <Button variant="ghost" asChild>
+                  <Link to="/">
+                    <Home className="h-4 w-4 md:mr-2" />
+                    <span className="hidden md:inline">Home</span>
                   </Link>
                 </Button>
-              )}
-            </nav>
-          )}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" asChild>
+                      <Link to="/courses">
+                        <BookOpen className="h-4 w-4 md:mr-2" />
+                        <span className="hidden md:inline">Courses</span>
+                      </Link>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Courses</p>
+                  </TooltipContent>
+                </Tooltip>
+                {session ? (
+                  <>
+                    <Button variant="ghost" asChild>
+                      <Link to="/dashboard">
+                        <LayoutDashboard className="h-4 w-4 md:mr-2" />
+                        <span className="hidden md:inline">Dashboard</span>
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" onClick={handleLogout}>
+                      <LogOut className="h-4 w-4 md:mr-2" />
+                      <span className="hidden md:inline">Logout</span>
+                    </Button>
+                  </>
+                ) : (
+                  <Button asChild>
+                    <Link to="/auth">
+                      <span className="hidden md:inline">Login / Sign Up</span>
+                      <span className="inline md:hidden">Login</span>
+                    </Link>
+                  </Button>
+                )}
+              </nav>
+            )}
+            <ThemeToggle /> {/* New: ThemeToggle */}
+          </div>
         </div>
       </header>
       <main className="flex-grow container py-8">
