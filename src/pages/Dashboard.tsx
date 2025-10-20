@@ -89,9 +89,9 @@ const Dashboard = () => {
     enabled: !authLoading, // Recommendations can be generated even if user is null (will return login message)
   });
 
-  const { data: studentsHelped = 0, isLoading: isLoadingStudentsHelped } = useQuery({
-    queryKey: ['studentsHelped'],
-    queryFn: () => fetchSiteMetric('students_helped'),
+  const { data: siteViews = 0, isLoading: isLoadingSiteViews } = useQuery({ // Changed to siteViews
+    queryKey: ['siteViews'], // Changed query key
+    queryFn: () => fetchSiteMetric('site_views'), // Fetch 'site_views'
   });
 
   // New queries for daily and total activity
@@ -196,14 +196,14 @@ const Dashboard = () => {
       <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="shadow-sm bg-card border-border"> {/* Card background and border */}
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-foreground"><Users className="text-purpleAccent-foreground" />Students Helped</CardTitle> {/* Icon color purpleAccent-foreground */}
+            <CardTitle className="flex items-center gap-2 text-foreground"><Users className="text-purpleAccent-foreground" />Site Views</CardTitle> {/* Changed title to Site Views */}
           </CardHeader>
           <CardContent>
-            {isLoadingStudentsHelped ? (
+            {isLoadingSiteViews ? ( {/* Changed isLoadingStudentsHelped to isLoadingSiteViews */}
               <p className="text-center text-muted-foreground">Loading...</p>
             ) : (
               <>
-                <p className="text-5xl font-extrabold text-center text-purpleAccent">{studentsHelped.toLocaleString()}</p> {/* Number color purpleAccent */}
+                <p className="text-5xl font-extrabold text-center text-purpleAccent">{siteViews.toLocaleString()}</p> {/* Changed studentsHelped to siteViews */}
                 <p className="text-center text-muted-foreground mt-2">And counting!</p>
               </>
             )}

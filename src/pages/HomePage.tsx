@@ -13,9 +13,9 @@ import { courses as allCourses } from '@/utils/courseContent';
 const HomePage = () => {
   const { session, loading: authLoading } = useContext(AuthContext);
 
-  const { data: studentsHelped = 0, isLoading: isLoadingStudentsHelped } = useQuery({
-    queryKey: ['studentsHelped'],
-    queryFn: () => fetchSiteMetric('students_helped'),
+  const { data: siteViews = 0, isLoading: isLoadingSiteViews } = useQuery({ // Changed to siteViews
+    queryKey: ['siteViews'], // Changed query key
+    queryFn: () => fetchSiteMetric('site_views'), // Fetch 'site_views'
   });
 
   const featuredCourses = allCourses.slice(0, 3);
@@ -48,14 +48,14 @@ const HomePage = () => {
         <Card className="w-full max-w-md mx-auto shadow-lg bg-card border-border">
           <CardHeader>
             <CardTitle className="flex items-center justify-center gap-2 text-2xl text-purpleAccent-foreground">
-              <Users className="text-purpleAccent-foreground" /> Students Helped
-            </CardTitle>
+              <Users className="text-purpleAccent-foreground" /> Site Views
+            </CardTitle> {/* Changed title to Site Views */}
           </CardHeader>
           <CardContent>
-            {isLoadingStudentsHelped ? (
+            {isLoadingSiteViews ? ( {/* Changed isLoadingStudentsHelped to isLoadingSiteViews */}
               <p className="text-center text-muted-foreground">Loading...</p>
             ) : (
-              <p className="text-6xl font-extrabold text-center text-purpleAccent">{studentsHelped.toLocaleString()}</p>
+              <p className="text-6xl font-extrabold text-center text-purpleAccent">{siteViews.toLocaleString()}</p> {/* Changed studentsHelped to siteViews */}
             )}
             <p className="text-center text-muted-foreground mt-2">Join our growing community of learners!</p>
           </CardContent>

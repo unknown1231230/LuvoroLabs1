@@ -21,7 +21,7 @@ import { supabase } from "./lib/supabase";
 import { AuthContext } from "./context/AuthContext";
 import { ThemeProvider } from "@/components/theme-provider";
 import AnimatedBackground from "./components/AnimatedBackground";
-// import { useTheme } from "next-themes"; // Removed: No longer needed for conditional rendering here
+import { incrementSiteMetric } from "./utils/supabaseUtils"; // Import the utility function
 
 const queryClient = new QueryClient();
 
@@ -29,9 +29,11 @@ const App = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  // const { theme } = useTheme(); // Removed: No longer needed for conditional rendering here
 
   useEffect(() => {
+    // Increment site views on initial load
+    incrementSiteMetric('site_views');
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user || null);
@@ -65,7 +67,7 @@ const App = () => {
         <TooltipProvider>
           <Toaster />
           <Sonner position="top-left" className="sonner-custom-offset" />
-          <AnimatedBackground /> {/* Always render, CSS will control visibility */}
+          <AnimatedBackground />
           <BrowserRouter>
             <AuthContext.Provider value={{ session, user, loading }}>
               <Routes>
