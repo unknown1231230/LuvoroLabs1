@@ -266,7 +266,6 @@ const UnitTestingPage = () => {
       if (currentEliminated.includes(option)) {
         return { ...prev, [currentQuestion.id]: currentEliminated.filter(o => o !== option) };
       } else {
-        // Corrected line: Use spread operator for the array value
         return { ...prev, [currentQuestion.id]: [...currentEliminated, option] };
       }
     });
@@ -303,7 +302,7 @@ const UnitTestingPage = () => {
         <h1 className="text-3xl font-bold text-destructive">Authentication Required</h1>
         <p className="text-muted-foreground mt-2">Please log in to take this unit test.</p>
         <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
-          <Link to="/auth">Login / Sign Up</Link>
+          <Link to="/auth"><span>Login / Sign Up</span></Link>
         </Button>
       </div>
     );
@@ -375,7 +374,7 @@ const UnitTestingPage = () => {
             <p className="text-lg text-foreground">You can view your results now.</p>
             <Button asChild size="lg" className="w-full bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
               <Link to={`/courses/${courseId}/unit-test/${moduleId}/results/${testSessionId}`}>
-                View Results
+                <span>View Results</span>
               </Link>
             </Button>
             <Button variant="outline" asChild className="w-full text-foreground hover:text-primary border-border"> {/* Outline button style */}

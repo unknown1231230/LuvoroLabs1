@@ -93,7 +93,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
           ) : (
             <Button asChild onClick={closeSheet} className="justify-start">
               <Link to="/auth">
-                Login / Sign Up
+                <span>Login / Sign Up</span>
               </Link>
             </Button>
           )}

@@ -286,13 +286,13 @@ const LessonPage = () => {
             {findNextLessonPath(lessonId!, courseId) ? (
               <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
                 <Link to={findNextLessonPath(lessonId!, courseId)!}>
-                  Continue to Next Lesson
+                  <span>Continue to Next Lesson</span>
                 </Link>
               </Button>
             ) : (
               <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
                 <Link to={`/courses/${courseId}`}>
-                  Back to Course Overview
+                  <span>Back to Course Overview</span>
                 </Link>
               </Button>
             )}

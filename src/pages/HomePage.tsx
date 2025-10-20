@@ -90,7 +90,7 @@ const HomePage = () => {
                     </Button>
                   ) : (
                     <Button asChild className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-                      <Link to={course.link!}>View Course</Link>
+                      <Link to={course.link!}><span>View Course</span></Link>
                     </Button>
                   )}
                 </div>
@@ -99,7 +99,7 @@ const HomePage = () => {
           </div>
           <div className="text-center mt-8">
             <Button asChild size="lg" variant="outline" className="text-foreground hover:text-primary border-border">
-              <Link to="/courses">View All Courses</Link>
+              <Link to="/courses"><span>View All Courses</span></Link>
             </Button>
           </div>
         </section>
