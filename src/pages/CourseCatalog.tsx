@@ -14,20 +14,23 @@ const CourseCatalog = () => {
       description: 'Explore the fundamental principles of physics, including Newtonian mechanics, work, energy, power, and simple harmonic motion.',
       icon: <Atom className="h-6 w-6 text-blue-500" />,
       link: '/courses/ap-physics',
+      isComingSoon: false,
     },
     {
       id: 'ap-chemistry',
       title: 'AP Chemistry',
       description: 'Dive into the world of atoms, molecules, and chemical reactions. Covers topics like stoichiometry, thermodynamics, and kinetics.',
       icon: <FlaskConical className="h-6 w-6 text-green-500" />,
-      link: '/courses/ap-chemistry', // Placeholder link
+      link: null, // No active link for now
+      isComingSoon: true,
     },
     {
       id: 'ap-biology',
       title: 'AP Biology',
       description: 'Study the science of life, from molecular biology to ecology. Understand biological processes and their impact on living organisms.',
       icon: <Brain className="h-6 w-6 text-purple-500" />,
-      link: '/courses/ap-biology', // Placeholder link
+      link: null, // No active link for now
+      isComingSoon: true,
     },
   ];
 
@@ -49,9 +52,15 @@ const CourseCatalog = () => {
               <CardDescription>{course.description}</CardDescription>
             </CardContent>
             <div className="p-6 pt-0">
-              <Button asChild className="w-full">
-                <Link to={course.link}>View Course</Link>
-              </Button>
+              {course.isComingSoon ? (
+                <Button className="w-full" disabled>
+                  Coming Soon
+                </Button>
+              ) : (
+                <Button asChild className="w-full">
+                  <Link to={course.link!}>View Course</Link>
+                </Button>
+              )}
             </div>
           </Card>
         ))}
