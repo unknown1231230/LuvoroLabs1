@@ -237,7 +237,7 @@ const Dashboard = () => {
               ) : (
                 <>
                   <div className="flex items-center gap-4">
-                    <Progress value={userProgress} className="w-full" indicatorColor="bg-primary" />
+                    <Progress value={userProgress} className="w-full" />
                     <span className="text-lg font-semibold text-foreground">{userProgress}%</span>
                   </div>
                   <p className="text-muted-foreground mt-2">You've completed {userCompletedLessonsCount} out of {totalLessonsCount} lessons.</p>

@@ -80,7 +80,9 @@ const UnitTestResultsPage = () => {
         <p className="text-muted-foreground mt-2">{error}</p>
         <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
           <Link to={`/courses/${courseId}`}>
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
+            <>
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
+            </>
           </Link>
         </Button>
       </div>
@@ -94,7 +96,9 @@ const UnitTestResultsPage = () => {
         <p className="text-muted-foreground mt-2">Could not find the test or session data.</p>
         <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
           <Link to={`/courses/${courseId}`}>
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
+            <>
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
+            </>
           </Link>
         </Button>
       </div>
@@ -109,7 +113,9 @@ const UnitTestResultsPage = () => {
     <div className="space-y-8">
       <Button variant="outline" asChild className="mb-4 text-foreground hover:text-primary border-border"> {/* Outline button style */}
         <Link to={`/courses/${courseId}`}>
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
+          <>
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
+          </>
         </Link>
       </Button>
 
@@ -123,7 +129,7 @@ const UnitTestResultsPage = () => {
         <CardContent className="space-y-6">
           <div className="flex flex-col items-center gap-4">
             <p className="text-6xl font-extrabold text-green-500">{scorePercentage}%</p>
-            <Progress value={scorePercentage} className="w-full max-w-xs" indicatorColor="bg-green-500" /> {/* Progress bar color */}
+            <Progress value={scorePercentage} className="w-full max-w-xs [&>div]:bg-green-500" /> {/* Progress bar color */}
             <p className="text-xl font-semibold text-foreground">
               You scored {sessionData.score} out of {sessionData.total_questions} questions correctly.
             </p>

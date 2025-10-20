@@ -204,11 +204,11 @@ export const fetchStreakHistory = async (userId: string): Promise<{ recorded_dat
   }
 };
 
-export const fetchUserQuizAttempts = async (userId: string, courseId: string, lessonId: string): Promise<Array<{ question_id: string; is_correct: boolean; selected_answer: string | null }>> => {
+export const fetchUserQuizAttempts = async (userId: string, courseId: string, lessonId: string): Promise<Array<{ question_id: string; is_correct: boolean; selected_answer: string | null; attempted_at: string | null }>> => {
   try {
     const { data, error } = await supabase
       .from('user_quiz_attempts')
-      .select('question_id, is_correct, selected_answer')
+      .select('question_id, is_correct, selected_answer, attempted_at')
       .eq('user_id', userId)
       .eq('course_id', courseId)
       .eq('lesson_id', lessonId);

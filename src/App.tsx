@@ -22,6 +22,7 @@ import { AuthContext } from "./context/AuthContext";
 import { ThemeProvider } from "@/components/theme-provider";
 import AnimatedBackground from "./components/AnimatedBackground";
 import { incrementSiteMetric } from "./utils/supabaseUtils"; // Import the utility function
+import type { Session, User } from "@supabase/supabase-js";
 
 const queryClient = new QueryClient();
 

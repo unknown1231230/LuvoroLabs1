@@ -66,6 +66,7 @@ export interface Course {
   icon: React.ReactNode;
   link: string;
   modules: Module[];
+  isComingSoon?: boolean;
 }
 
 // --- Course Data ---
@@ -76,6 +77,7 @@ export const courses: Course[] = [
     description: 'Explore the fundamental principles of physics, including Newtonian mechanics, work, energy, power, and simple harmonic motion.',
     icon: <Atom className="h-6 w-6 text-blue-500" />,
     link: '/courses/ap-physics',
+    isComingSoon: false,
     modules: [
       {
         id: 'kinematics',
@@ -472,6 +474,7 @@ export const courses: Course[] = [
     description: 'Dive into the world of atoms, molecules, and chemical reactions. Covers topics like stoichiometry, thermodynamics, and kinetics.',
     icon: <FlaskConical className="h-6 w-6 text-green-500" />,
     link: '/courses/ap-chemistry',
+    isComingSoon: true,
     modules: [], // Placeholder
   },
   {
@@ -480,6 +483,7 @@ export const courses: Course[] = [
     description: 'Study the science of life, from molecular biology to ecology. Understand biological processes and their impact on living organisms.',
     icon: <Brain className="h-6 w-6 text-purple-500" />,
     link: '/courses/ap-biology',
+    isComingSoon: true,
     modules: [], // Placeholder
   },
 ];

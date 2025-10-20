@@ -25,7 +25,9 @@ const APPhysicsCourse = () => {
         <p className="text-muted-foreground mt-2">The AP Physics 1 course data could not be loaded.</p>
         <Button asChild className="mt-4">
           <Link to="/courses">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Course Catalog
+            <>
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Course Catalog
+            </>
           </Link>
         </Button>
       </div>
@@ -68,7 +70,9 @@ const APPhysicsCourse = () => {
     <div className="space-y-8">
       <Button variant="outline" asChild className="mb-4 text-foreground hover:text-primary border-border"> {/* Outline button style */}
         <Link to="/courses">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Course Catalog
+          <>
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Course Catalog
+          </>
         </Link>
       </Button>
 
