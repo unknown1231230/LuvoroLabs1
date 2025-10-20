@@ -21,6 +21,7 @@ import { supabase } from "./lib/supabase";
 import { AuthContext } from "./context/AuthContext";
 import { ThemeProvider } from "@/components/theme-provider";
 import AnimatedBackground from "./components/AnimatedBackground";
+import { useTheme } from "next-themes"; // New: Import useTheme
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const { theme } = useTheme(); // New: Get current theme
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -59,11 +61,11 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme" attribute="class"> {/* Added attribute="class" */}
+      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme" attribute="class">
         <TooltipProvider>
           <Toaster />
           <Sonner position="top-left" className="sonner-custom-offset" />
-          <AnimatedBackground />
+          {theme === 'dark' && <AnimatedBackground />} {/* New: Conditionally render AnimatedBackground */}
           <BrowserRouter>
             <AuthContext.Provider value={{ session, user, loading }}>
               <Routes>
