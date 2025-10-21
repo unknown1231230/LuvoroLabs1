@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { ArrowLeft, CheckCircle, XCircle } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
 import { markLessonAsCompleted, updateUserStreak, fetchUserQuizAttempts, fetchUserLessonProgress } from '@/utils/supabaseUtils';
-import { AuthContext } from '@/context/AuthContext'; // Updated import
+import { AuthContext } from '@/context/AuthContext';
 import { findLessonById, findNextLessonPath } from '@/utils/courseContent.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 import Kinematics1DSimulation from '@/components/simulations/Kinematics1DSimulation';
@@ -106,7 +106,7 @@ const LessonPage = () => {
       <div className="text-center py-10">
         <h1 className="text-3xl font-bold text-destructive">Lesson Not Found</h1>
         <p className="text-muted-foreground mt-2">The lesson you are looking for does not exist.</p>
-        <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
+        <Button asChild className="mt-4">
           <Link to="/courses/ap-physics">
             <span className="flex items-center">
               <ArrowLeft className="mr-2 h-4 w-4" /> Back to AP Physics 1
@@ -163,7 +163,7 @@ const LessonPage = () => {
 
   return (
     <div className="space-y-8">
-      <Button variant="outline" asChild className="mb-4 text-foreground hover:text-primary border-border"> {/* Outline button style */}
+      <Button variant="outline" asChild className="mb-4">
         <Link to="/courses/ap-physics">
           <span className="flex items-center">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to AP Physics 1
@@ -172,11 +172,11 @@ const LessonPage = () => {
       </Button>
 
       <h1 className="text-4xl font-bold text-center text-primary">{lesson.title}</h1>
-      <div className="prose dark:prose-invert max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: lesson.content || '' }} />
+      <div className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: lesson.content || '' }} />
 
       {lessonId === 'kinematics-1d' && <Kinematics1DSimulation />}
 
-      <h3 className="text-xl font-semibold mt-4 mb-2 text-foreground">Further Learning:</h3> {/* Text color foreground */}
+      <h3 className="text-xl font-semibold mt-4 mb-2">Further Learning:</h3>
       {lesson.videoUrl && lesson.videoUrl !== "ADD_YOUR_VIDEO_EMBED_URL_HERE" ? (
         <div className="aspect-video w-full max-w-2xl mx-auto shadow-md rounded-lg overflow-hidden">
           <iframe
@@ -190,7 +190,7 @@ const LessonPage = () => {
           ></iframe>
         </div>
       ) : (
-        <div className="aspect-video w-full max-w-2xl mx-auto bg-card flex items-center justify-center text-muted-foreground p-4 rounded-md shadow-md border-border"> {/* Card background and border */}
+        <div className="aspect-video w-full max-w-2xl mx-auto bg-card flex items-center justify-center text-muted-foreground p-4 rounded-md shadow-md border-border">
           <p className="text-center">
             <strong>Video Placeholder:</strong> Please add an embed URL for this lesson.
             <br/>
@@ -209,9 +209,9 @@ const LessonPage = () => {
               const selectedValue = submission ? submission.answer : selectedAnswers[q.id];
 
               return (
-                <Card key={q.id} className="shadow-sm bg-card border-border"> {/* Card background and border */}
+                <Card key={q.id} className="shadow-sm">
                   <CardHeader>
-                    <CardTitle className="text-foreground">{q.question}</CardTitle> {/* Title color foreground */}
+                    <CardTitle>{q.question}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <RadioGroup
@@ -224,11 +224,11 @@ const LessonPage = () => {
                         <div key={index} className="flex items-center space-x-2">
                           <RadioGroupItem value={option} id={`${q.id}-${index}`} disabled={isQuestionDisabled} />
                           <Label htmlFor={`${q.id}-${index}`} className={cn(
-                            "text-muted-foreground", // Default text color
+                            "",
                             isQuestionDisabled && option === q.correctAnswer && "font-bold text-green-500",
                             isQuestionDisabled && option === selectedValue && option !== q.correctAnswer && "line-through text-red-500"
                           )}>
-                            {option}
+                            <span>{option}</span>
                             {isQuestionDisabled && option === q.correctAnswer && <CheckCircle className="ml-2 h-4 w-4 inline text-green-500" />}
                             {isQuestionDisabled && option === selectedValue && option !== q.correctAnswer && <XCircle className="ml-2 h-4 w-4 inline text-red-500" />}
                           </Label>
@@ -238,14 +238,14 @@ const LessonPage = () => {
                     {!isQuestionDisabled && (
                       <Button
                         onClick={() => handleSubmitAnswer(q.id, q.correctAnswer)}
-                        className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90" // Primary button style
+                        className="mt-4"
                         disabled={!selectedAnswers[q.id]}
                       >
-                        Submit Answer
+                        <span>Submit Answer</span>
                       </Button>
                     )}
                     {submission && (
-                      <div className="mt-4 p-3 rounded-md flex flex-col gap-2 bg-muted border-border"> {/* Muted background and border */}
+                      <div className="mt-4 p-3 rounded-md flex flex-col gap-2 bg-muted">
                         <div className="flex items-center gap-2">
                           {submission.isCorrect ? (
                             <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
@@ -284,13 +284,13 @@ const LessonPage = () => {
           )}
           <div className="mt-4">
             {findNextLessonPath(lessonId!, courseId) ? (
-              <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
+              <Button asChild>
                 <Link to={findNextLessonPath(lessonId!, courseId)!}>
                   <span>Continue to Next Lesson</span>
                 </Link>
               </Button>
             ) : (
-              <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
+              <Button asChild>
                 <Link to={`/courses/${courseId}`}>
                   <span>Back to Course Overview</span>
                 </Link>
