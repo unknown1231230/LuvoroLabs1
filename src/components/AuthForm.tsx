@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from '@/lib/supabase';
 import { showSuccess, showError } from '@/utils/toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { FaGoogle } from 'react-icons/fa';
 
 const AuthForm = () => {
@@ -103,7 +103,7 @@ const AuthForm = () => {
             onClick={() => setIsSignUp(!isSignUp)} 
             className="p-0 h-auto font-normal"
           >
-            {isSignUp ? "Login" : "Sign Up"}
+            <span>{isSignUp ? "Login" : "Sign Up"}</span>
           </Button>
         </div>
         <div className="relative flex justify-center text-xs uppercase mt-6">
@@ -117,8 +117,10 @@ const AuthForm = () => {
           onClick={handleGoogleSignIn}
           disabled={loading}
         >
-          <FaGoogle className="h-4 w-4" />
-          <span>{loading ? "Loading..." : "Google"}</span>
+          <>
+            <FaGoogle className="h-4 w-4" />
+            <span>{loading ? "Loading..." : "Google"}</span>
+          </>
         </Button>
       </CardContent>
     </Card>
