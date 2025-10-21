@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { supabase } from '@/lib/supabase';
 import { showSuccess, showError } from '@/utils/toast';
 import { useNavigate } from 'react-router-dom';
-import { FaGoogle } from 'react-icons/fa'; // Import Google icon
+import { FaGoogle } from 'react-icons/fa';
 
 const AuthForm = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -47,17 +47,12 @@ const AuthForm = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          // IMPORTANT: This URL must exactly match one of the "Redirect URLs" configured in your Supabase project
-          // and also one of the "Authorized redirect URIs" in your Google Cloud Console OAuth client.
-          // Supabase will redirect to this URL after Google authenticates the user.
           redirectTo: 'https://luvorolabs.vercel.app/dashboard', 
         },
       });
 
       if (error) {
         showError(error.message);
-      } else {
-        // Supabase will handle the redirect, so no need for navigate() here
       }
     } catch (error: any) {
       showError(error.message);
@@ -103,7 +98,11 @@ const AuthForm = () => {
         </form>
         <div className="mt-4 text-center text-sm">
           {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
-          <Button variant="link" onClick={() => setIsSignUp(!isSignUp)} className="p-0 h-auto">
+          <Button 
+            variant="link" 
+            onClick={() => setIsSignUp(!isSignUp)} 
+            className="p-0 h-auto font-normal"
+          >
             {isSignUp ? "Login" : "Sign Up"}
           </Button>
         </div>
@@ -119,7 +118,7 @@ const AuthForm = () => {
           disabled={loading}
         >
           <FaGoogle className="h-4 w-4" />
-          {loading ? "Loading..." : "Google"}
+          <span>{loading ? "Loading..." : "Google"}</span>
         </Button>
       </CardContent>
     </Card>
