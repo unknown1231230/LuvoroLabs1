@@ -55,8 +55,8 @@ const App = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-        <p className="text-xl text-gray-600 dark:text-gray-400">Loading Luvoro Labs...</p>
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+        <p className="text-xl">Loading Luvoro Labs...</p>
       </div>
     );
   }
@@ -70,9 +70,19 @@ const App = () => {
           <AnimatedBackground />
           <BrowserRouter>
             <AuthContext.Provider value={{ session, user, loading }}>
-              <div className="min-h-screen flex flex-col safe-area-inset-top safe-area-inset-bottom">
+              <div className="min-h-screen flex flex-col bg-background text-foreground safe-area-inset-top safe-area-inset-bottom">
                 <Routes>
-                  {/* ... existing routes ... */}
+                  <Route path="/" element={<PublicLayout />}>
+                    <Route index element={<HomePage />} />
+                    <Route path="courses" element={<CourseCatalog />} />
+                    <Route path="courses/ap-physics" element={<APPhysicsCourse />} />
+                    <Route path="courses/ap-physics/lessons/:lessonId" element={<LessonPage />} />
+                    <Route path="courses/:courseId/unit-test/:moduleId" element={<UnitTestingPage />} />
+                    <Route path="courses/:courseId/unit-test/:moduleId/results/:sessionId" element={<UnitTestResultsPage />} />
+                    <Route path="auth" element={<Auth />} />
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Route>
                 </Routes>
               </div>
             </AuthContext.Provider>

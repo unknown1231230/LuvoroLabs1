@@ -4,17 +4,65 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0, 0%, 100%;
+    --foreground: 222.2, 84%, 4.9%;
 
-    /* ... existing variables ... */
+    --card: 0, 0%, 100%;
+    --card-foreground: 222.2, 84%, 4.9%;
+
+    --popover: 0, 0%, 100%;
+    --popover-foreground: 222.2, 84%, 4.9%;
+
+    --primary: 222.2, 47.4%, 11.2%;
+    --primary-foreground: 210, 40%, 98%;
+
+    --secondary: 210, 40%, 96.1%;
+    --secondary-foreground: 222.2, 47.4%, 11.2%;
+
+    --muted: 210, 40%, 96.1%;
+    --muted-foreground: 215.4, 16.3%, 46.9%;
+
+    --accent: 210, 40%, 96.1%;
+    --accent-foreground: 222.2, 47.4%, 11.2%;
+
+    --destructive: 0, 84.2%, 60.2%;
+    --destructive-foreground: 210, 40%, 98%;
+
+    --border: 214.3, 31.8%, 91.4%;
+    --input: 214.3, 31.8%, 91.4%;
+    --ring: 222.2, 84%, 4.9%;
+
+    --radius: 1rem;
   }
 
   .dark {
-    --background: 220 10% 3.9%;
-    --foreground: 0 0% 98%;
+    --background: 220, 10%, 3.9%;
+    --foreground: 210, 40%, 98%;
 
-    /* ... existing variables ... */
+    --card: 220, 10%, 3.9%;
+    --card-foreground: 210, 40%, 98%;
+
+    --popover: 220, 10%, 3.9%;
+    --popover-foreground: 210, 40%, 98%;
+
+    --primary: 210, 40%, 98%;
+    --primary-foreground: 220, 10%, 3.9%;
+
+    --secondary: 215.4, 16.3%, 46.9%;
+    --secondary-foreground: 210, 40%, 98%;
+
+    --muted: 215.4, 16.3%, 46.9%;
+    --muted-foreground: 217.9, 10.6%, 64.9%;
+
+    --accent: 215.4, 16.3%, 46.9%;
+    --accent-foreground: 210, 40%, 98%;
+
+    --destructive: 0, 62.8%, 30.6%;
+    --destructive-foreground: 210, 40%, 98%;
+
+    --border: 214.3, 17.3%, 19.8%;
+    --input: 214.3, 17.3%, 19.8%;
+    --ring: 216, 14.3%, 80.6%;
   }
 }
 
@@ -31,5 +79,3 @@
     padding-right: env(safe-area-inset-right, 0px);
   }
 }
-
-/* ... rest of the existing CSS ... */
