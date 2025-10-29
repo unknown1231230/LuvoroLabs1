@@ -111,7 +111,7 @@
   
   /* Mobile PWA specific styles */
   .mobile-pwa-container {
-    padding-bottom: 70px; /* Space for footer */
+    padding-bottom: calc(5rem + max(env(safe-area-inset-bottom, 20px), 20px));
   }
   
   /* Colorful active states for mobile navigation */

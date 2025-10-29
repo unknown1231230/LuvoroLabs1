@@ -33,7 +33,7 @@ const PublicLayout = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
+    <div className="min-h-screen flex flex-col bg-background text-foreground safe-area-inset-top safe-area-inset-bottom">
       {isMobile ? null : (
         <header className="sticky top-0 z-40 w-full py-2 header-container">
           <div className="container flex items-center justify-between px-4 py-2 glass">
