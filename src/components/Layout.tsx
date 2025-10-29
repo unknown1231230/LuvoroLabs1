@@ -9,6 +9,7 @@ import { Home, BookOpen, Award, Settings, LogOut, LayoutDashboard } from 'lucide
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MobileNav from './MobileNav';
+import MobileFooterNav from './MobileFooterNav';
 import { AuthContext } from '@/context/AuthContext';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -101,12 +102,10 @@ const Layout = () => {
           </div>
         </div>
       </header>
-      <main className="flex-grow container py-8">
+      <main className={`flex-grow container py-8 ${isMobile ? 'pb-16' : ''}`}>
         <Outlet />
       </main>
-      <footer className="border-t bg-card py-4">
-        {/* MadeWithDyad component removed */}
-      </footer>
+      {isMobile && <MobileFooterNav />}
     </div>
   );
 };

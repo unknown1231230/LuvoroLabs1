@@ -10,6 +10,7 @@ import { showSuccess, showError } from '@/utils/toast';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MobileNav from './MobileNav';
+import MobileFooterNav from './MobileFooterNav';
 import { ThemeToggle } from './ThemeToggle';
 
 const PublicLayout = () => {
@@ -98,12 +99,10 @@ const PublicLayout = () => {
           </div>
         </div>
       </header>
-      <main className="flex-grow container py-8">
+      <main className={`flex-grow container py-8 ${isMobile ? 'pb-16' : ''}`}>
         <Outlet />
       </main>
-      <footer className="border-t bg-card py-4">
-        {/* MadeWithDyad component removed */}
-      </footer>
+      {isMobile && <MobileFooterNav />}
     </div>
   );
 };
