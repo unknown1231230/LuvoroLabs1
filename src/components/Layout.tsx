@@ -33,7 +33,7 @@ const Layout = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground safe-area-inset-top safe-area-inset-bottom">
-      <header className="sticky top-0 z-40 w-full py-2">
+      <header className="sticky top-0 z-40 w-full py-2 header-container">
         <div className="container flex items-center justify-between px-4 py-2 glass">
           <Link to="/" className="flex items-center gap-2 text-2xl font-bold text-primary flex-shrink-0">
             <img src="/logo.png" alt="Luvoro Labs Logo" className="h-7 w-7" />
