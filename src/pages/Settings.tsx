@@ -19,7 +19,8 @@ import {
   Shield, 
   Bell, 
   CreditCard,
-  Globe
+  Globe,
+  Laptop
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
@@ -42,8 +43,8 @@ const Settings = () => {
     }
   };
 
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+  const toggleTheme = (themeOption: string) => {
+    setTheme(themeOption);
   };
 
   if (!user) {
@@ -90,10 +91,32 @@ const Settings = () => {
           <CardTitle className="text-foreground">Preferences</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button variant="outline" className="w-full justify-start" onClick={toggleTheme}>
-            {theme === 'dark' ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
-            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-          </Button>
+          <div className="space-y-2">
+            <Button 
+              variant={theme === 'system' ? "default" : "outline"} 
+              className="w-full justify-start"
+              onClick={() => toggleTheme('system')}
+            >
+              <Laptop className="mr-2 h-4 w-4" />
+              System
+            </Button>
+            <Button 
+              variant={theme === 'light' ? "default" : "outline"} 
+              className="w-full justify-start"
+              onClick={() => toggleTheme('light')}
+            >
+              <Sun className="mr-2 h-4 w-4" />
+              Light Mode
+            </Button>
+            <Button 
+              variant={theme === 'dark' ? "default" : "outline"} 
+              className="w-full justify-start"
+              onClick={() => toggleTheme('dark')}
+            >
+              <Moon className="mr-2 h-4 w-4" />
+              Dark Mode
+            </Button>
+          </div>
           <Button variant="outline" asChild className="w-full justify-start">
             <Link to="#">
               <Bell className="mr-2 h-4 w-4" /> Notifications

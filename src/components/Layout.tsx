@@ -46,22 +46,6 @@ const Layout = () => {
                 <MobileNav isAuthenticated={!!session} />
               ) : (
                 <nav className="flex items-center space-x-2 sm:space-x-4">
-                  <Button variant="ghost" asChild className="text-foreground hover:text-primary">
-                    <Link to="/">
-                      <span className="flex items-center">
-                        <Home className="h-4 w-4 md:mr-2" />
-                        <span className="hidden md:inline">Home</span>
-                      </span>
-                    </Link>
-                  </Button>
-                  <Button variant="ghost" asChild className="text-foreground hover:text-primary">
-                    <Link to="/courses">
-                      <span className="flex items-center">
-                        <BookOpen className="h-4 w-4 md:mr-2" />
-                        <span className="hidden md:inline">Courses</span>
-                      </span>
-                    </Link>
-                  </Button>
                   {session ? (
                     <>
                       <Button variant="ghost" asChild className="text-foreground hover:text-primary">
@@ -69,6 +53,14 @@ const Layout = () => {
                           <span className="flex items-center">
                             <LayoutDashboard className="h-4 w-4 md:mr-2" />
                             <span className="hidden md:inline">Profile</span>
+                          </span>
+                        </Link>
+                      </Button>
+                      <Button variant="ghost" asChild className="text-foreground hover:text-primary">
+                        <Link to="/courses">
+                          <span className="flex items-center">
+                            <BookOpen className="h-4 w-4 md:mr-2" />
+                            <span className="hidden md:inline">Courses</span>
                           </span>
                         </Link>
                       </Button>
@@ -84,11 +76,29 @@ const Layout = () => {
                       </Button>
                     </>
                   ) : (
-                    <Button asChild className="justify-start">
-                      <Link to="/auth">
-                        <span>Login / Sign Up</span>
-                      </Link>
-                    </Button>
+                    <>
+                      <Button variant="ghost" asChild className="text-foreground hover:text-primary">
+                        <Link to="/">
+                          <span className="flex items-center">
+                            <Home className="h-4 w-4 md:mr-2" />
+                            <span className="hidden md:inline">Home</span>
+                          </span>
+                        </Link>
+                      </Button>
+                      <Button variant="ghost" asChild className="text-foreground hover:text-primary">
+                        <Link to="/courses">
+                          <span className="flex items-center">
+                            <BookOpen className="h-4 w-4 md:mr-2" />
+                            <span className="hidden md:inline">Courses</span>
+                          </span>
+                        </Link>
+                      </Button>
+                      <Button asChild className="justify-start">
+                        <Link to="/auth">
+                          <span>Login / Sign Up</span>
+                        </Link>
+                      </Button>
+                    </>
                   )}
                 </nav>
               )}
