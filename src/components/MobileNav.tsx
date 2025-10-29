@@ -41,7 +41,10 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
           <span className="sr-only">Toggle navigation menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-[250px] sm:w-[300px] flex flex-col">
+      <SheetContent 
+        side="right" 
+        className="w-[250px] sm:w-[300px] flex flex-col mobile-nav-safe-area"
+      >
         <SheetHeader className="mb-4">
           <SheetTitle className="flex items-center gap-2 text-xl font-bold text-primary">
             <img src="/logo.png" alt="Luvoro Labs Logo" className="h-7 w-7" />

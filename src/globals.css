@@ -94,9 +94,13 @@
     border: 1px solid rgba(0, 0, 0, 0.12);
   }
   
-  /* Header spacing */
+  /* Header spacing - simplified to only use padding-top */
   .header-container {
     padding-top: max(env(safe-area-inset-top, 20px), 20px);
-    margin-top: max(env(safe-area-inset-top, 20px), 20px);
+  }
+  
+  /* Mobile navigation safe area handling */
+  .mobile-nav-safe-area {
+    padding-top: max(env(safe-area-inset-top, 20px), 20px);
   }
 }
