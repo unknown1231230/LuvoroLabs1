@@ -23,6 +23,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import AnimatedBackground from "./components/AnimatedBackground";
 import { incrementSiteMetric } from "./utils/supabaseUtils";
 import type { Session, User } from "@supabase/supabase-js";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -73,14 +75,15 @@ const App = () => {
               <div className="min-h-screen flex flex-col bg-background text-foreground safe-area-inset-top safe-area-inset-bottom">
                 <Routes>
                   <Route path="/" element={<PublicLayout />}>
-                    <Route index element={<HomePage />} />
+                    <Route index element={session ? <Navigate to="/profile" replace /> : <HomePage />} />
                     <Route path="courses" element={<CourseCatalog />} />
                     <Route path="courses/ap-physics" element={<APPhysicsCourse />} />
                     <Route path="courses/ap-physics/lessons/:lessonId" element={<LessonPage />} />
                     <Route path="courses/:courseId/unit-test/:moduleId" element={<UnitTestingPage />} />
                     <Route path="courses/:courseId/unit-test/:moduleId/results/:sessionId" element={<UnitTestResultsPage />} />
                     <Route path="auth" element={<Auth />} />
-                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="profile" element={session ? <Profile /> : <Navigate to="/auth" replace />} />
+                    <Route path="settings" element={session ? <Settings /> : <Navigate to="/auth" replace />} />
                     <Route path="*" element={<NotFound />} />
                   </Route>
                 </Routes>
