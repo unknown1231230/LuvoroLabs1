@@ -81,7 +81,7 @@ const App = () => {
                     <Route path="courses/ap-physics/lessons/:lessonId" element={<LessonPage />} />
                     <Route path="courses/:courseId/unit-test/:moduleId" element={<UnitTestingPage />} />
                     <Route path="courses/:courseId/unit-test/:moduleId/results/:sessionId" element={<UnitTestResultsPage />} />
-                    <Route path="auth" element={<Auth />} />
+                    <Route path="auth" element={session ? <Navigate to="/profile" replace /> : <Auth />} />
                     <Route path="profile" element={session ? <Profile /> : <Navigate to="/auth" replace />} />
                     <Route path="settings" element={session ? <Settings /> : <Navigate to="/auth" replace />} />
                     <Route path="*" element={<NotFound />} />
