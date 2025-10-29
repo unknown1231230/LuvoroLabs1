@@ -5,7 +5,7 @@ import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
 import { showSuccess, showError } from '@/utils/toast';
-import { Home, BookOpen, Award, Settings, LogOut, LayoutDashboard } from 'lucide-react';
+import { Rocket, BookOpen, BarChart3, GraduationCap, Settings, LogOut } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MobileNav from './MobileNav';
@@ -48,7 +48,7 @@ const Layout = () => {
                 <Button variant="ghost" asChild className="text-foreground hover:text-primary">
                   <Link to="/">
                     <span className="flex items-center">
-                      <Home className="h-4 w-4 md:mr-2" />
+                      <Rocket className="h-4 w-4 md:mr-2" />
                       <span className="hidden md:inline">Home</span>
                     </span>
                   </Link>
@@ -66,15 +66,15 @@ const Layout = () => {
                     <Button variant="ghost" asChild className="text-foreground hover:text-primary">
                       <Link to="/dashboard">
                         <span className="flex items-center">
-                          <LayoutDashboard className="h-4 w-4 md:mr-2" />
-                          <span className="hidden md:inline">Dashboard</span>
+                          <BarChart3 className="h-4 w-4 md:mr-2" />
+                          <span className="hidden md:inline">Progress</span>
                         </span>
                       </Link>
                     </Button>
                     <Button variant="ghost" asChild className="text-foreground hover:text-primary">
                       <Link to="/achievements">
                         <span className="flex items-center">
-                          <Award className="mr-2 h-4 w-4" />Achievements
+                          <GraduationCap className="mr-2 h-4 w-4" />Achievements
                         </span>
                       </Link>
                     </Button>
@@ -102,7 +102,7 @@ const Layout = () => {
           </div>
         </div>
       </header>
-      <main className={`flex-grow container py-8 ${isMobile ? 'pb-16' : ''}`}>
+      <main className={`flex-grow container py-8 ${isMobile ? 'pb-16' : ''} mobile-pwa-container`}>
         <Outlet />
       </main>
       {isMobile && <MobileFooterNav />}

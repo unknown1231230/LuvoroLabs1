@@ -108,4 +108,24 @@
   .pb-safe-area-inset-bottom {
     padding-bottom: max(env(safe-area-inset-bottom, 20px), 20px);
   }
+  
+  /* Mobile PWA specific styles */
+  .mobile-pwa-container {
+    padding-bottom: 70px; /* Space for footer */
+  }
+  
+  /* Colorful active states for mobile navigation */
+  .mobile-nav-active {
+    color: hsl(var(--primary));
+    font-weight: 600;
+  }
+  
+  /* Enhanced button styles for mobile */
+  .mobile-nav-button {
+    transition: all 0.2s ease;
+  }
+  
+  .mobile-nav-button:hover {
+    transform: translateY(-2px);
+  }
 }

@@ -3,7 +3,7 @@
 import React, { useContext } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Home, BookOpen, LogOut, LayoutDashboard } from 'lucide-react';
+import { Rocket, BookOpen, BarChart3, GraduationCap } from 'lucide-react';
 import { AuthContext } from '@/context/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { showSuccess, showError } from '@/utils/toast';
@@ -48,7 +48,7 @@ const PublicLayout = () => {
                 <Button variant="ghost" asChild className="text-foreground hover:text-primary">
                   <Link to="/">
                     <span className="flex items-center">
-                      <Home className="h-4 w-4 md:mr-2" />
+                      <Rocket className="h-4 w-4 md:mr-2" />
                       <span className="hidden md:inline">Home</span>
                     </span>
                   </Link>
@@ -65,7 +65,7 @@ const PublicLayout = () => {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Courses</p>
+                    <p>Explore Courses</p>
                   </TooltipContent>
                 </Tooltip>
                 {session ? (
@@ -73,13 +73,12 @@ const PublicLayout = () => {
                     <Button variant="ghost" asChild className="text-foreground hover:text-primary">
                       <Link to="/dashboard">
                         <span className="flex items-center">
-                          <LayoutDashboard className="h-4 w-4 md:mr-2" />
-                          <span className="hidden md:inline">Dashboard</span>
+                          <BarChart3 className="h-4 w-4 md:mr-2" />
+                          <span className="hidden md:inline">Progress</span>
                         </span>
                       </Link>
                     </Button>
                     <Button variant="ghost" onClick={handleLogout} className="text-foreground hover:text-primary">
-                      <LogOut className="h-4 w-4 md:mr-2" />
                       <span className="hidden md:inline">Logout</span>
                     </Button>
                   </>
@@ -99,7 +98,7 @@ const PublicLayout = () => {
           </div>
         </div>
       </header>
-      <main className={`flex-grow container py-8 ${isMobile ? 'pb-16' : ''}`}>
+      <main className={`flex-grow container py-8 ${isMobile ? 'pb-16' : ''} mobile-pwa-container`}>
         <Outlet />
       </main>
       {isMobile && <MobileFooterNav />}
