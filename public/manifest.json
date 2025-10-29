@@ -1,0 +1,17 @@
+{
+  "name": "Luvoro Labs",
+  "short_name": "Luvoro",
+  "description": "Your personalized learning hub for AP subjects",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
