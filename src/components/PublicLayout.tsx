@@ -26,9 +26,9 @@ const PublicLayout = () => {
         showSuccess("Logged out successfully!");
         navigate('/auth');
       }
-    } catch (error: any)      {
-        showError(error.message);
-      }
+    } catch (error: any) {
+      showError(error.message);
+    }
   };
 
   return (

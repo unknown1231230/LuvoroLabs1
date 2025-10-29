@@ -24,7 +24,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
       } else {
         showSuccess("Logged out successfully!");
         navigate('/auth');
-        setIsOpen(false); // Close sheet on logout
+        setIsOpen(false);
       }
     } catch (error: any) {
       showError(error.message);
