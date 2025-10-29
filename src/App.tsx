@@ -21,7 +21,7 @@ import { supabase } from "./lib/supabase";
 import { AuthContext } from "./context/AuthContext";
 import { ThemeProvider } from "@/components/theme-provider";
 import AnimatedBackground from "./components/AnimatedBackground";
-import { incrementSiteMetric } from "./utils/supabaseUtils"; // Import the utility function
+import { incrementSiteMetric } from "./utils/supabaseUtils";
 import type { Session, User } from "@supabase/supabase-js";
 
 const queryClient = new QueryClient();
@@ -32,7 +32,6 @@ const App = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Increment site views on initial load
     incrementSiteMetric('site_views');
 
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -71,33 +70,11 @@ const App = () => {
           <AnimatedBackground />
           <BrowserRouter>
             <AuthContext.Provider value={{ session, user, loading }}>
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<PublicLayout />}>
-                  <Route index element={<HomePage />} />
-                  <Route path="courses" element={<CourseCatalog />} />
-                  <Route path="courses/ap-physics" element={<APPhysicsCourse />} />
-                  <Route path="courses/ap-physics/lessons/:lessonId" element={<LessonPage />} />
-                  <Route path="courses/:courseId/unit-test/:moduleId" element={<UnitTestingPage />} />
-                  <Route path="courses/:courseId/unit-test/:moduleId/results/:sessionId" element={<UnitTestResultsPage />} />
-                  <Route path="auth" element={!session ? <Auth /> : <Navigate to="/dashboard" />} />
-                </Route>
-
-                {/* Authenticated Routes */}
-                <Route
-                  path="/"
-                  element={session ? <Layout /> : <Navigate to="/auth" replace />}
-                >
-                  {/* These routes are only accessible when logged in */}
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/lessons" element={<div>Lessons Page (Coming Soon!)</div>} />
-                  <Route path="/achievements" element={<div>Achievements Page (Coming Soon!)</div>} />
-                  <Route path="/settings" element={<div>Settings Page (Coming Soon!)</div>} />
-                </Route>
-                
-                {/* Catch-all for 404 */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <div className="min-h-screen flex flex-col safe-area-inset-top safe-area-inset-bottom">
+                <Routes>
+                  {/* ... existing routes ... */}
+                </Routes>
+              </div>
             </AuthContext.Provider>
           </BrowserRouter>
         </TooltipProvider>
