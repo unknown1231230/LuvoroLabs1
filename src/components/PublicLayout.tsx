@@ -111,9 +111,8 @@ const PublicLayout = () => {
           </div>
         </header>
       )}
-      <main className="flex-grow container py-8">
+      <main className="flex-grow container py-8 pb-24 md:pb-8">
         <Outlet />
-        {/* Removed the extra spacing div that was causing layout conflicts */}
       </main>
       {isMobile && <MobileFooterNav />}
     </div>
