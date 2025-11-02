@@ -104,9 +104,9 @@
     padding-top: env(safe-area-inset-top, 0px);
   }
   
-  /* Mobile specific styles - ONLY for content above footer */
+  /* Simple mobile spacing - just add footer height */
   .mobile-content-spacing {
-    padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: 4rem;
   }
   
   /* Colorful active states for mobile navigation */
