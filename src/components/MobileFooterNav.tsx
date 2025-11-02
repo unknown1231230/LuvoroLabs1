@@ -16,9 +16,9 @@ const MobileFooterNav = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-[env(safe-area-inset-bottom,0px)]">
+    <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-[max(env(safe-area-inset-bottom,24px),24px)]">
       <div className="glass rounded-2xl rounded-b-none border border-border mb-2 shadow-lg">
-        <div className="flex justify-around items-center h-[56px]">
+        <div className="flex justify-around items-center h-[64px]">
           {session ? (
             <>
               <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/profile') ? 'text-primary' : 'text-muted-foreground'}`}>
