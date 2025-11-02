@@ -16,56 +16,57 @@ const MobileFooterNav = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border z-50">
-      {/* Increased minimum height and improved safe area handling for consistent PWA/mobile appearance */}
-      <div className="flex justify-around items-center min-h-[56px] h-[calc(56px+env(safe-area-inset-bottom,0px))] px-4 pb-[env(safe-area-inset-bottom,0px)]" style={{ minHeight: '56px' }}>
-        {session ? (
-          <>
-            <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/profile') ? 'text-primary' : 'text-muted-foreground'}`}>
-              <Link to="/profile" className="flex flex-col items-center">
-                <GraduationCap className={`h-6 w-6 ${isActive('/profile') ? 'text-primary' : 'text-muted-foreground'}`} />
-                <span className={`text-xs mt-1 font-medium ${isActive('/profile') ? 'text-primary' : 'text-muted-foreground'}`}>Profile</span>
-              </Link>
-            </Button>
-            
-            <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`}>
-              <Link to="/courses" className="flex flex-col items-center">
-                <BookOpen className={`h-6 w-6 ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`} />
-                <span className={`text-xs mt-1 font-medium ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`}>Courses</span>
-              </Link>
-            </Button>
-            
-            <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/settings') ? 'text-primary' : 'text-muted-foreground'}`}>
-              <Link to="/settings" className="flex flex-col items-center">
-                <Settings className={`h-6 w-6 ${isActive('/settings') ? 'text-primary' : 'text-muted-foreground'}`} />
-                <span className={`text-xs mt-1 font-medium ${isActive('/settings') ? 'text-primary' : 'text-muted-foreground'}`}>Settings</span>
-              </Link>
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/') ? 'text-primary' : 'text-muted-foreground'}`}>
-              <Link to="/" className="flex flex-col items-center">
-                <Home className={`h-6 w-6 ${isActive('/') ? 'text-primary' : 'text-muted-foreground'}`} />
-                <span className={`text-xs mt-1 font-medium ${isActive('/') ? 'text-primary' : 'text-muted-foreground'}`}>Home</span>
-              </Link>
-            </Button>
-            
-            <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`}>
-              <Link to="/courses" className="flex flex-col items-center">
-                <BookOpen className={`h-6 w-6 ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`} />
-                <span className={`text-xs mt-1 font-medium ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`}>Courses</span>
-              </Link>
-            </Button>
-            
-            <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/auth') ? 'text-primary' : 'text-muted-foreground'}`}>
-              <Link to="/auth" className="flex flex-col items-center">
-                <LogIn className={`h-6 w-6 ${isActive('/auth') ? 'text-primary' : 'text-muted-foreground'}`} />
-                <span className={`text-xs mt-1 font-medium ${isActive('/auth') ? 'text-primary' : 'text-muted-foreground'}`}>Login</span>
-              </Link>
-            </Button>
-          </>
-        )}
+    <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-[env(safe-area-inset-bottom,0px)]">
+      <div className="glass rounded-2xl rounded-b-none border border-border mb-2 shadow-lg">
+        <div className="flex justify-around items-center h-[56px]">
+          {session ? (
+            <>
+              <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/profile') ? 'text-primary' : 'text-muted-foreground'}`}>
+                <Link to="/profile" className="flex flex-col items-center">
+                  <GraduationCap className={`h-6 w-6 ${isActive('/profile') ? 'text-primary' : 'text-muted-foreground'}`} />
+                  <span className={`text-xs mt-1 font-medium ${isActive('/profile') ? 'text-primary' : 'text-muted-foreground'}`}>Profile</span>
+                </Link>
+              </Button>
+              
+              <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`}>
+                <Link to="/courses" className="flex flex-col items-center">
+                  <BookOpen className={`h-6 w-6 ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`} />
+                  <span className={`text-xs mt-1 font-medium ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`}>Courses</span>
+                </Link>
+              </Button>
+              
+              <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/settings') ? 'text-primary' : 'text-muted-foreground'}`}>
+                <Link to="/settings" className="flex flex-col items-center">
+                  <Settings className={`h-6 w-6 ${isActive('/settings') ? 'text-primary' : 'text-muted-foreground'}`} />
+                  <span className={`text-xs mt-1 font-medium ${isActive('/settings') ? 'text-primary' : 'text-muted-foreground'}`}>Settings</span>
+                </Link>
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/') ? 'text-primary' : 'text-muted-foreground'}`}>
+                <Link to="/" className="flex flex-col items-center">
+                  <Home className={`h-6 w-6 ${isActive('/') ? 'text-primary' : 'text-muted-foreground'}`} />
+                  <span className={`text-xs mt-1 font-medium ${isActive('/') ? 'text-primary' : 'text-muted-foreground'}`}>Home</span>
+                </Link>
+              </Button>
+              
+              <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`}>
+                <Link to="/courses" className="flex flex-col items-center">
+                  <BookOpen className={`h-6 w-6 ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`} />
+                  <span className={`text-xs mt-1 font-medium ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`}>Courses</span>
+                </Link>
+              </Button>
+              
+              <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/auth') ? 'text-primary' : 'text-muted-foreground'}`}>
+                <Link to="/auth" className="flex flex-col items-center">
+                  <LogIn className={`h-6 w-6 ${isActive('/auth') ? 'text-primary' : 'text-muted-foreground'}`} />
+                  <span className={`text-xs mt-1 font-medium ${isActive('/auth') ? 'text-primary' : 'text-muted-foreground'}`}>Login</span>
+                </Link>
+              </Button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
