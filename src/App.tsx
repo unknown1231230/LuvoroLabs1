@@ -57,7 +57,12 @@ const App = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground">
+        <img 
+          src="/logo.png" 
+          alt="Luvoro Labs Logo" 
+          className="h-16 w-16 animate-spin mb-4" 
+        />
         <p className="text-xl">Loading Luvoro Labs...</p>
       </div>
     );
