@@ -104,14 +104,9 @@
     padding-top: env(safe-area-inset-top, 0px);
   }
   
-  /* Safe area for bottom of screen */
-  .pb-safe-area-inset-bottom {
-    padding-bottom: max(env(safe-area-inset-bottom, 20px), 20px);
-  }
-  
   /* Mobile specific styles - ONLY for content above footer */
   .mobile-content-spacing {
-    padding-bottom: 4.5rem;
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
   }
   
   /* Colorful active states for mobile navigation */
