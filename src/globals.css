@@ -94,6 +94,20 @@
     border: 1px solid rgba(0, 0, 0, 0.12);
   }
   
+  /* Active indicator for mobile footer */
+  .active-indicator {
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .dark .active-indicator {
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+  }
+  
   /* Header spacing */
   .header-container {
     padding-top: env(safe-area-inset-top, 0px);
