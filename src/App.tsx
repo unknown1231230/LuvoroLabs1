@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
@@ -29,11 +29,10 @@ import { AnimatePresence, motion } from "framer-motion";
 
 const queryClient = new QueryClient();
 
-const App = () => {
+const AppContent = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const location = useLocation();
 
   useEffect(() => {
     incrementSiteMetric('site_views');
@@ -73,6 +72,121 @@ const App = () => {
   }
 
   return (
+    <AuthContext.Provider value={{ session, user, loading }}>
+      <div className="min-h-screen flex flex-col bg-background text-foreground safe-area-inset-top safe-area-inset-bottom">
+        <AnimatePresence mode="wait">
+          <Routes>
+            <Route path="/" element={<PublicLayout />}>
+              <Route index element={
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  {session ? <Navigate to="/profile" replace /> : <HomePage />}
+                </motion.div>
+              } />
+              <Route path="courses" element={
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <CourseCatalog />
+                </motion.div>
+              } />
+              <Route path="courses/ap-physics" element={
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <APPhysicsCourse />
+                </motion.div>
+              } />
+              <Route path="courses/ap-physics/lessons/:lessonId" element={
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <LessonPage />
+                </motion.div>
+              } />
+              <Route path="courses/:courseId/unit-test/:moduleId" element={
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <UnitTestingPage />
+                </motion.div>
+              } />
+              <Route path="courses/:courseId/unit-test/:moduleId/results/:sessionId" element={
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <UnitTestResultsPage />
+                </motion.div>
+              } />
+              <Route path="auth" element={
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  {session ? <Navigate to="/profile" replace /> : <Auth />}
+                </motion.div>
+              } />
+              <Route path="profile" element={
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  {session ? <Profile /> : <Navigate to="/auth" replace />}
+                </motion.div>
+              } />
+              <Route path="settings" element={
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  {session ? <Settings /> : <Navigate to="/auth" replace />}
+                </motion.div>
+              } />
+              <Route path="*" element={
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <NotFound />
+                </motion.div>
+              } />
+            </Route>
+          </Routes>
+        </AnimatePresence>
+      </div>
+    </AuthContext.Provider>
+  );
+};
+
+const App = () => {
+  return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme" attribute="class">
         <TooltipProvider>
@@ -81,116 +195,7 @@ const App = () => {
           <AnimatedBackground />
           <div className="animated-gradient" />
           <BrowserRouter>
-            <AuthContext.Provider value={{ session, user, loading }}>
-              <div className="min-h-screen flex flex-col bg-background text-foreground safe-area-inset-top safe-area-inset-bottom">
-                <AnimatePresence mode="wait">
-                  <Routes location={location} key={location.pathname}>
-                    <Route path="/" element={<PublicLayout />}>
-                      <Route index element={
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.4 }}
-                        >
-                          {session ? <Navigate to="/profile" replace /> : <HomePage />}
-                        </motion.div>
-                      } />
-                      <Route path="courses" element={
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.4 }}
-                        >
-                          <CourseCatalog />
-                        </motion.div>
-                      } />
-                      <Route path="courses/ap-physics" element={
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.4 }}
-                        >
-                          <APPhysicsCourse />
-                        </motion.div>
-                      } />
-                      <Route path="courses/ap-physics/lessons/:lessonId" element={
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.4 }}
-                        >
-                          <LessonPage />
-                        </motion.div>
-                      } />
-                      <Route path="courses/:courseId/unit-test/:moduleId" element={
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.4 }}
-                        >
-                          <UnitTestingPage />
-                        </motion.div>
-                      } />
-                      <Route path="courses/:courseId/unit-test/:moduleId/results/:sessionId" element={
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.4 }}
-                        >
-                          <UnitTestResultsPage />
-                        </motion.div>
-                      } />
-                      <Route path="auth" element={
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.4 }}
-                        >
-                          {session ? <Navigate to="/profile" replace /> : <Auth />}
-                        </motion.div>
-                      } />
-                      <Route path="profile" element={
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.4 }}
-                        >
-                          {session ? <Profile /> : <Navigate to="/auth" replace />}
-                        </motion.div>
-                      } />
-                      <Route path="settings" element={
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.4 }}
-                        >
-                          {session ? <Settings /> : <Navigate to="/auth" replace />}
-                        </motion.div>
-                      } />
-                      <Route path="*" element={
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.4 }}
-                        >
-                          <NotFound />
-                        </motion.div>
-                      } />
-                    </Route>
-                  </Routes>
-                </AnimatePresence>
-              </div>
-            </AuthContext.Provider>
+            <AppContent />
           </BrowserRouter>
         </TooltipProvider>
       </ThemeProvider>
