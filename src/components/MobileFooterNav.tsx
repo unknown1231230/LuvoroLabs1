@@ -15,20 +15,26 @@ const MobileFooterNav = () => {
     return currentPath === path;
   };
 
+  // Calculate safe area inset bottom with fallback
+  const safeAreaInsetBottom = typeof window !== 'undefined' 
+    ? parseInt(getComputedStyle(document.documentElement).getPropertyValue('--safe-area-inset-bottom') || '0') 
+    : 0;
+  
+  // Ensure we have a minimum height for the footer
+  const footerHeight = Math.max(safeAreaInsetBottom + 56, 56);
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 glass rounded-t-3xl z-50 border-t border-border/50" 
-         style={{ 
-           paddingBottom: 'max(env(safe-area-inset-bottom, 20px), 20px)',
-           minHeight: 'calc(56px + env(safe-area-inset-bottom, 0px))'
-         }}>
-      <div className="flex justify-around items-center h-full px-4" 
-           style={{ 
-             minHeight: '56px',
-             paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 0px)'
-           }}>
+    <div 
+      className="fixed bottom-0 left-0 right-0 glass rounded-t-3xl z-50 border-t border-border/50"
+      style={{ 
+        height: `${footerHeight}px`,
+        paddingBottom: `${safeAreaInsetBottom}px`
+      }}
+    >
+      <div className="flex justify-around items-center h-full px-4">
         {session ? (
           <>
-            <div className="relative flex-1 flex justify-center items-center">
+            <div className="flex-1 flex justify-center items-center">
               <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/profile') ? 'text-primary' : 'text-muted-foreground'}`}>
                 <Link to="/profile" className="flex flex-col items-center">
                   <GraduationCap className={`h-6 w-6 ${isActive('/profile') ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -37,7 +43,7 @@ const MobileFooterNav = () => {
               </Button>
             </div>
             
-            <div className="relative flex-1 flex justify-center items-center">
+            <div className="flex-1 flex justify-center items-center">
               <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`}>
                 <Link to="/courses" className="flex flex-col items-center">
                   <BookOpen className={`h-6 w-6 ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -46,7 +52,7 @@ const MobileFooterNav = () => {
               </Button>
             </div>
             
-            <div className="relative flex-1 flex justify-center items-center">
+            <div className="flex-1 flex justify-center items-center">
               <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/settings') ? 'text-primary' : 'text-muted-foreground'}`}>
                 <Link to="/settings" className="flex flex-col items-center">
                   <Settings className={`h-6 w-6 ${isActive('/settings') ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -57,7 +63,7 @@ const MobileFooterNav = () => {
           </>
         ) : (
           <>
-            <div className="relative flex-1 flex justify-center items-center">
+            <div className="flex-1 flex justify-center items-center">
               <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/') ? 'text-primary' : 'text-muted-foreground'}`}>
                 <Link to="/" className="flex flex-col items-center">
                   <Home className={`h-6 w-6 ${isActive('/') ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -66,7 +72,7 @@ const MobileFooterNav = () => {
               </Button>
             </div>
             
-            <div className="relative flex-1 flex justify-center items-center">
+            <div className="flex-1 flex justify-center items-center">
               <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`}>
                 <Link to="/courses" className="flex flex-col items-center">
                   <BookOpen className={`h-6 w-6 ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -75,7 +81,7 @@ const MobileFooterNav = () => {
               </Button>
             </div>
             
-            <div className="relative flex-1 flex justify-center items-center">
+            <div className="flex-1 flex justify-center items-center">
               <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/auth') ? 'text-primary' : 'text-muted-foreground'}`}>
                 <Link to="/auth" className="flex flex-col items-center">
                   <LogIn className={`h-6 w-6 ${isActive('/auth') ? 'text-primary' : 'text-muted-foreground'}`} />
