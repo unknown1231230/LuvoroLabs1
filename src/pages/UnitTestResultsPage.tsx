@@ -78,7 +78,7 @@ const UnitTestResultsPage = () => {
       <div className="text-center py-10">
         <h1 className="text-3xl font-bold text-destructive">Error</h1>
         <p className="text-muted-foreground mt-2">{error}</p>
-        <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
+        <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90">
           <Link to={`/courses/${courseId}`}>
             <span className="flex items-center">
               <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
@@ -94,7 +94,7 @@ const UnitTestResultsPage = () => {
       <div className="text-center py-10">
         <h1 className="text-3xl font-bold text-destructive">Results Not Available</h1>
         <p className="text-muted-foreground mt-2">Could not find the test or session data.</p>
-        <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"> {/* Primary button style */}
+        <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90">
           <Link to={`/courses/${courseId}`}>
             <span className="flex items-center">
               <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
@@ -111,7 +111,7 @@ const UnitTestResultsPage = () => {
 
   return (
     <div className="space-y-8">
-      <Button variant="outline" asChild className="mb-4 text-foreground hover:text-primary border-border"> {/* Outline button style */}
+      <Button variant="outline" asChild className="mb-4 text-foreground hover:text-primary border-border">
         <Link to={`/courses/${courseId}`}>
           <span className="flex items-center">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Module Overview
@@ -119,7 +119,7 @@ const UnitTestResultsPage = () => {
         </Link>
       </Button>
 
-      <Card className="w-full max-w-3xl mx-auto shadow-lg text-center bg-card border-border"> {/* Card background and border */}
+      <Card className="w-full max-w-3xl mx-auto shadow-lg text-center bg-card border-border">
         <CardHeader>
           <CardTitle className="text-4xl font-bold text-primary">{unitTest.title} Results</CardTitle>
           <CardDescription className="mt-2 text-muted-foreground">
@@ -129,7 +129,7 @@ const UnitTestResultsPage = () => {
         <CardContent className="space-y-6">
           <div className="flex flex-col items-center gap-4">
             <p className="text-6xl font-extrabold text-green-500">{scorePercentage}%</p>
-            <Progress value={scorePercentage} className="w-full max-w-xs [&>div]:bg-green-500" /> {/* Progress bar color */}
+            <Progress value={scorePercentage} className="w-full max-w-xs [&>div]:bg-green-500" />
             <p className="text-xl font-semibold text-foreground">
               You scored {sessionData.score} out of {sessionData.total_questions} questions correctly.
             </p>
@@ -149,8 +149,8 @@ const UnitTestResultsPage = () => {
       <div className="space-y-6">
         {unitTest.sections.map((section, sectionIndex) => (
           <div key={section.id} className="space-y-4">
-            <h3 className="text-2xl font-bold text-foreground mt-8 mb-4">{section.title}</h3> {/* Text color foreground */}
-            <Separator className="bg-border" /> {/* Separator color */}
+            <h3 className="text-2xl font-bold text-foreground mt-8 mb-4">{section.title}</h3>
+            <Separator className="bg-border" />
             {section.questions.map((question, index) => {
               const userAnswer = userAnswers.find(ans => ans.question_id === question.id);
               const isCorrect = userAnswer?.is_correct;
@@ -159,27 +159,30 @@ const UnitTestResultsPage = () => {
               const eliminatedOptions = userAnswer?.eliminated_options || [];
 
               return (
-                <Card key={question.id} className={cn("shadow-sm bg-card border-border", isCorrect ? "border-green-500" : "border-red-500")}> {/* Card background and border */}
+                <Card key={question.id} className={cn("shadow-sm bg-card border-border", isCorrect ? "border-green-500" : "border-red-500")}>
                   <CardHeader className="flex-row items-center justify-between">
-                    <CardTitle className="text-lg flex items-center gap-2 text-foreground"> {/* Text color foreground */}
-                      {isCorrect ? (
-                        <CheckCircle2 className="h-5 w-5 text-green-500" />
-                      ) : (
-                        <XCircle className="h-5 w-5 text-red-500" />
-                      )}
-                      Question {index + 1}
-                      {markedForReview && <Flag className="ml-2 h-4 w-4 text-yellow-500" />}
+                    {/* Fix: Wrap CardTitle content in a single div to avoid React.Children.only error */}
+                    <CardTitle className="text-lg flex items-center gap-2 text-foreground">
+                      <div className="flex items-center gap-2">
+                        {isCorrect ? (
+                          <CheckCircle2 className="h-5 w-5 text-green-500" />
+                        ) : (
+                          <XCircle className="h-5 w-5 text-red-500" />
+                        )}
+                        <span>Question {index + 1}</span>
+                        {markedForReview && <Flag className="ml-2 h-4 w-4 text-yellow-500" />}
+                      </div>
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <p className="text-lg font-medium text-foreground">{question.question}</p> {/* Text color foreground */}
+                    <p className="text-lg font-medium text-foreground">{question.question}</p>
                     {question.type === 'multiple-choice' && question.options && (
                       <div className="grid gap-2">
                         {question.options.map((option, optIndex) => (
                           <div key={optIndex} className="flex items-center space-x-2">
                             <span
                               className={cn(
-                                "text-foreground", // Default text color
+                                "text-foreground",
                                 option === question.correctAnswer && "font-bold text-green-500",
                                 option === selectedOption && option !== question.correctAnswer && "line-through text-red-500",
                                 eliminatedOptions.includes(option) && "line-through text-muted-foreground"
@@ -208,7 +211,6 @@ const UnitTestResultsPage = () => {
                             Expected Answer: <span className="font-bold text-green-500">{question.correctAnswer}</span>
                           </p>
                         )}
-                        {/* Display AI feedback if available */}
                         {userAnswer?.ai_feedback && (
                           <p className="text-muted-foreground text-sm mt-1">
                             AI Feedback: <span className="font-bold">{userAnswer.ai_feedback}</span>
