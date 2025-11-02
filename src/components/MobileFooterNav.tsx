@@ -16,8 +16,16 @@ const MobileFooterNav = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 glass rounded-t-3xl z-50 border-t border-border/50">
-      <div className="flex justify-around items-center h-16 px-2" style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 0px)' }}>
+    <div className="fixed bottom-0 left-0 right-0 glass rounded-t-3xl z-50 border-t border-border/50" 
+         style={{ 
+           paddingBottom: 'max(env(safe-area-inset-bottom, 20px), 20px)',
+           minHeight: 'calc(56px + env(safe-area-inset-bottom, 0px))'
+         }}>
+      <div className="flex justify-around items-center h-full px-4" 
+           style={{ 
+             minHeight: '56px',
+             paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 0px)'
+           }}>
         {session ? (
           <>
             <div className="relative flex-1 flex justify-center items-center">
