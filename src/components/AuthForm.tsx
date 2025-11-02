@@ -47,7 +47,7 @@ const AuthForm = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: 'https://luvorolabs.vercel.app/dashboard', 
+          redirectTo: `${window.location.origin}/`, 
         },
       });
 
