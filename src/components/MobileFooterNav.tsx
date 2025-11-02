@@ -22,7 +22,7 @@ const MobileFooterNav = () => {
           <>
             <div className="relative flex-1 flex justify-center items-center">
               {isActive('/profile') && (
-                <div className="absolute -top-2 w-10 h-2 rounded-full glass active-indicator" />
+                <div className="absolute -top-2 w-8 h-1 rounded-full bg-primary" />
               )}
               <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/profile') ? 'text-primary' : 'text-muted-foreground'}`}>
                 <Link to="/profile" className="flex flex-col items-center">
@@ -34,7 +34,7 @@ const MobileFooterNav = () => {
             
             <div className="relative flex-1 flex justify-center items-center">
               {isActive('/courses') && (
-                <div className="absolute -top-2 w-10 h-2 rounded-full glass active-indicator" />
+                <div className="absolute -top-2 w-8 h-1 rounded-full bg-primary" />
               )}
               <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`}>
                 <Link to="/courses" className="flex flex-col items-center">
@@ -46,7 +46,7 @@ const MobileFooterNav = () => {
             
             <div className="relative flex-1 flex justify-center items-center">
               {isActive('/settings') && (
-                <div className="absolute -top-2 w-10 h-2 rounded-full glass active-indicator" />
+                <div className="absolute -top-2 w-8 h-1 rounded-full bg-primary" />
               )}
               <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/settings') ? 'text-primary' : 'text-muted-foreground'}`}>
                 <Link to="/settings" className="flex flex-col items-center">
@@ -60,7 +60,7 @@ const MobileFooterNav = () => {
           <>
             <div className="relative flex-1 flex justify-center items-center">
               {isActive('/') && (
-                <div className="absolute -top-2 w-10 h-2 rounded-full glass active-indicator" />
+                <div className="absolute -top-2 w-8 h-1 rounded-full bg-primary" />
               )}
               <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/') ? 'text-primary' : 'text-muted-foreground'}`}>
                 <Link to="/" className="flex flex-col items-center">
@@ -72,7 +72,7 @@ const MobileFooterNav = () => {
             
             <div className="relative flex-1 flex justify-center items-center">
               {isActive('/courses') && (
-                <div className="absolute -top-2 w-10 h-2 rounded-full glass active-indicator" />
+                <div className="absolute -top-2 w-8 h-1 rounded-full bg-primary" />
               )}
               <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`}>
                 <Link to="/courses" className="flex flex-col items-center">
@@ -84,7 +84,7 @@ const MobileFooterNav = () => {
             
             <div className="relative flex-1 flex justify-center items-center">
               {isActive('/auth') && (
-                <div className="absolute -top-2 w-10 h-2 rounded-full glass active-indicator" />
+                <div className="absolute -top-2 w-8 h-1 rounded-full bg-primary" />
               )}
               <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/auth') ? 'text-primary' : 'text-muted-foreground'}`}>
                 <Link to="/auth" className="flex flex-col items-center">
