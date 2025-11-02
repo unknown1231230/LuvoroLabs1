@@ -17,7 +17,7 @@ const MobileFooterNav = () => {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border z-50">
-      <div className="flex justify-around items-center h-16 px-2 pb-safe-area-inset-bottom">
+      <div className="flex justify-around items-center h-16 px-2" style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 0px)' }}>
         {session ? (
           <>
             <Button variant="ghost" asChild className={`flex flex-col items-center justify-center h-full ${isActive('/profile') ? 'text-primary' : 'text-muted-foreground'}`}>
