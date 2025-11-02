@@ -107,7 +107,7 @@ const Layout = () => {
           </div>
         </header>
       )}
-      <main className="flex-grow container py-8 pb-[env(safe-area-inset-bottom)]">
+      <main className="flex-grow container py-8 pb-[calc(80px+env(safe-area-inset-bottom))]">
         <Outlet />
       </main>
       {isMobile && <MobileFooterNav />}
