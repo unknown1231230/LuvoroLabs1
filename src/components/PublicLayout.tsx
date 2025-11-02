@@ -111,8 +111,9 @@ const PublicLayout = () => {
           </div>
         </header>
       )}
-      <main className={`flex-grow container py-8 ${isMobile ? 'mobile-content-spacing' : ''}`}>
+      <main className="flex-grow container py-8">
         <Outlet />
+        {isMobile && <div className="h-16" aria-hidden="true" />}
       </main>
       {isMobile && <MobileFooterNav />}
     </div>

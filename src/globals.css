@@ -104,11 +104,6 @@
     padding-top: env(safe-area-inset-top, 0px);
   }
   
-  /* Simple mobile spacing - just add footer height */
-  .mobile-content-spacing {
-    padding-bottom: 4rem;
-  }
-  
   /* Colorful active states for mobile navigation */
   .mobile-nav-active {
     color: hsl(var(--primary));
