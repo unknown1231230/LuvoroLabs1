@@ -3,6 +3,7 @@
 import { createContext } from "react";
 import { Session, User } from "@supabase/supabase-js";
 
+// Create AuthContext
 interface AuthContextType {
   session: Session | null;
   user: User | null;
