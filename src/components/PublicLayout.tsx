@@ -111,7 +111,7 @@ const PublicLayout = () => {
           </div>
         </header>
       )}
-      <main className={`flex-grow container py-8 ${isMobile ? 'pb-16' : ''} mobile-pwa-container`}>
+      <main className={`flex-grow container py-8 ${isMobile ? 'mobile-content-container' : ''}`}>
         <Outlet />
       </main>
       {isMobile && <MobileFooterNav />}

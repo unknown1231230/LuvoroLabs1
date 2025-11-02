@@ -109,6 +109,11 @@
     padding-bottom: max(env(safe-area-inset-bottom, 20px), 20px);
   }
   
+  /* Mobile specific styles */
+  .mobile-content-container {
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+  }
+  
   /* Mobile PWA specific styles */
   .mobile-pwa-container {
     padding-bottom: calc(5rem + max(env(safe-area-inset-bottom, 20px), 20px));
