@@ -111,7 +111,7 @@ const PublicLayout = () => {
           </div>
         </header>
       )}
-      <main className="flex-grow container py-8 pb-24">
+      <main className="flex-grow container py-8 pb-[calc(80px+env(safe-area-inset-bottom))]">
         <Outlet />
       </main>
       {isMobile && <MobileFooterNav />}
