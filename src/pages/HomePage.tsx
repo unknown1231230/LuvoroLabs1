@@ -71,15 +71,17 @@ const HomePage = () => {
               <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
                 <Users className="h-8 w-8 text-white" />
               </div>
-              <CardTitle className="text-2xl text-gradient">Community</CardTitle>
+              <CardTitle className="text-2xl text-gradient">Active Learners</CardTitle>
             </CardHeader>
             <CardContent>
               {isLoadingSiteSignUps ? (
                 <p className="text-center text-muted-foreground">Loading...</p>
               ) : (
-                <p className="text-4xl font-bold text-primary">{siteSignUps.toLocaleString()}</p>
+                <>
+                  <p className="text-4xl font-bold text-primary">{siteSignUps.toLocaleString()}</p>
+                  <p className="text-muted-foreground mt-2">Students enrolled</p>
+                </>
               )}
-              <p className="text-muted-foreground mt-2">Active Learners</p>
             </CardContent>
           </Card>
 
