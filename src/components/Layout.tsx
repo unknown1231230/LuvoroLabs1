@@ -48,7 +48,7 @@ const Layout = () => {
                 <nav className="flex items-center space-x-2 sm:space-x-4">
                   {session ? (
                     <>
-                      <Button variant="ghost" asChild className="text-foreground hover:text-primary enhanced-button">
+                      <Button variant="ghost" asChild className="text-foreground hover:text-primary enhanced-button btn-secondary-hover-fix">
                         <Link to="/profile">
                           <span className="flex items-center">
                             <LayoutDashboard className="h-4 w-4 md:mr-2" />
@@ -56,7 +56,7 @@ const Layout = () => {
                           </span>
                         </Link>
                       </Button>
-                      <Button variant="ghost" asChild className="text-foreground hover:text-primary enhanced-button">
+                      <Button variant="ghost" asChild className="text-foreground hover:text-primary enhanced-button btn-secondary-hover-fix">
                         <Link to="/courses">
                           <span className="flex items-center">
                             <BookOpen className="h-4 w-4 md:mr-2" />
@@ -64,20 +64,20 @@ const Layout = () => {
                           </span>
                         </Link>
                       </Button>
-                      <Button variant="ghost" asChild className="text-foreground hover:text-primary enhanced-button">
+                      <Button variant="ghost" asChild className="text-foreground hover:text-primary enhanced-button btn-secondary-hover-fix">
                         <Link to="/settings">
                           <span className="flex items-center">
                             <Settings className="mr-2 h-4 w-4" />Settings
                           </span>
                         </Link>
                       </Button>
-                      <Button variant="ghost" onClick={handleLogout} className="justify-start text-destructive hover:text-destructive enhanced-button">
+                      <Button variant="ghost" onClick={handleLogout} className="justify-start text-destructive hover:text-destructive enhanced-button btn-secondary-hover-fix">
                         <LogOut className="mr-2 h-4 w-4" />Logout
                       </Button>
                     </>
                   ) : (
                     <>
-                      <Button variant="ghost" asChild className="text-foreground hover:text-primary enhanced-button">
+                      <Button variant="ghost" asChild className="text-foreground hover:text-primary enhanced-button btn-secondary-hover-fix">
                         <Link to="/">
                           <span className="flex items-center">
                             <Home className="h-4 w-4 md:mr-2" />
@@ -85,7 +85,7 @@ const Layout = () => {
                           </span>
                         </Link>
                       </Button>
-                      <Button variant="ghost" asChild className="text-foreground hover:text-primary enhanced-button">
+                      <Button variant="ghost" asChild className="text-foreground hover:text-primary enhanced-button btn-secondary-hover-fix">
                         <Link to="/courses">
                           <span className="flex items-center">
                             <BookOpen className="h-4 w-4 md:mr-2" />
@@ -93,7 +93,7 @@ const Layout = () => {
                           </span>
                         </Link>
                       </Button>
-                      <Button asChild className="justify-start enhanced-button glow">
+                      <Button asChild className="justify-start enhanced-button glow btn-hover-fix">
                         <Link to="/auth">
                           <span>Login / Sign Up</span>
                         </Link>

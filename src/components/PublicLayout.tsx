@@ -48,7 +48,7 @@ const PublicLayout = () => {
                 <nav className="flex items-center space-x-2 sm:space-x-4">
                   {session ? (
                     <>
-                      <Button variant="ghost" asChild className="text-foreground hover:text-primary enhanced-button">
+                      <Button variant="ghost" asChild className="text-foreground hover:text-primary enhanced-button btn-secondary-hover-fix">
                         <Link to="/profile">
                           <span className="flex items-center">
                             <LayoutDashboard className="h-4 w-4 md:mr-2" />
@@ -56,7 +56,7 @@ const PublicLayout = () => {
                           </span>
                         </Link>
                       </Button>
-                      <Button variant="ghost" asChild className="text-foreground hover:text-primary enhanced-button">
+                      <Button variant="ghost" asChild className="text-foreground hover:text-primary enhanced-button btn-secondary-hover-fix">
                         <Link to="/courses">
                           <span className="flex items-center">
                             <BookOpen className="h-4 w-4 md:mr-2" />
@@ -64,14 +64,14 @@ const PublicLayout = () => {
                           </span>
                         </Link>
                       </Button>
-                      <Button variant="ghost" onClick={handleLogout} className="text-foreground hover:text-primary enhanced-button">
+                      <Button variant="ghost" onClick={handleLogout} className="text-foreground hover:text-primary enhanced-button btn-secondary-hover-fix">
                         <LogOut className="h-4 w-4 md:mr-2" />
                         <span className="hidden md:inline">Logout</span>
                       </Button>
                     </>
                   ) : (
                     <>
-                      <Button variant="ghost" asChild className="text-foreground hover:text-primary enhanced-button">
+                      <Button variant="ghost" asChild className="text-foreground hover:text-primary enhanced-button btn-secondary-hover-fix">
                         <Link to="/">
                           <span className="flex items-center">
                             <Home className="h-4 w-4 md:mr-2" />
@@ -81,7 +81,7 @@ const PublicLayout = () => {
                       </Button>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button variant="ghost" asChild className="text-foreground hover:text-primary enhanced-button">
+                          <Button variant="ghost" asChild className="text-foreground hover:text-primary enhanced-button btn-secondary-hover-fix">
                             <Link to="/courses">
                               <span className="flex items-center">
                                 <BookOpen className="h-4 w-4 md:mr-2" />
@@ -94,7 +94,7 @@ const PublicLayout = () => {
                           <p>Explore Courses</p>
                         </TooltipContent>
                       </Tooltip>
-                      <Button asChild className="enhanced-button glow">
+                      <Button asChild className="enhanced-button glow btn-hover-fix">
                         <Link to="/auth">
                           <span className="flex items-center">
                             <span className="hidden md:inline">Login / Sign Up</span>

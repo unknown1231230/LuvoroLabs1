@@ -41,7 +41,7 @@ const HomePage = () => {
                 <Button 
                   asChild 
                   size="lg" 
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 enhanced-button glow px-8 py-4 text-lg"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 enhanced-button glow px-8 py-4 text-lg btn-hover-fix"
                 >
                   <Link to="/dashboard">
                     <TrendingUp className="mr-2 h-5 w-5" />
@@ -52,7 +52,7 @@ const HomePage = () => {
                 <Button 
                   asChild 
                   size="lg" 
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 enhanced-button glow px-8 py-4 text-lg"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 enhanced-button glow px-8 py-4 text-lg btn-hover-fix"
                 >
                   <Link to="/auth">
                     <Sparkles className="mr-2 h-5 w-5" />
@@ -138,7 +138,7 @@ const HomePage = () => {
                   ) : (
                     <Button 
                       asChild 
-                      className="w-full enhanced-button glow bg-primary text-primary-foreground hover:bg-primary/90"
+                      className="w-full enhanced-button glow bg-primary text-primary-foreground hover:bg-primary/90 btn-hover-fix"
                     >
                       <Link to={course.link!}>
                         <Sparkles className="mr-2 h-4 w-4" />
@@ -155,7 +155,7 @@ const HomePage = () => {
               asChild 
               size="lg" 
               variant="outline" 
-              className="enhanced-button border-2 hover:border-primary hover:bg-primary/10 px-8 py-3"
+              className="enhanced-button border-2 hover:border-primary hover:bg-primary/10 px-8 py-3 btn-outline-hover-fix"
             >
               <Link to="/courses">
                 <BookOpen className="mr-2 h-5 w-5" />

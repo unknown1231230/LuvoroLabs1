@@ -24,7 +24,7 @@ const MobileFooterNav = () => {
               <Button 
                 variant="ghost" 
                 asChild 
-                className={`flex flex-col items-center justify-center h-full enhanced-button ${isActive('/profile') ? 'text-primary' : 'text-muted-foreground'}`}
+                className={`flex flex-col items-center justify-center h-full enhanced-button ${isActive('/profile') ? 'text-primary' : 'text-muted-foreground'} btn-secondary-hover-fix`}
               >
                 <Link to="/profile" className="flex flex-col items-center">
                   <GraduationCap className={`h-6 w-6 ${isActive('/profile') ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -35,7 +35,7 @@ const MobileFooterNav = () => {
               <Button 
                 variant="ghost" 
                 asChild 
-                className={`flex flex-col items-center justify-center h-full enhanced-button ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`}
+                className={`flex flex-col items-center justify-center h-full enhanced-button ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'} btn-secondary-hover-fix`}
               >
                 <Link to="/courses" className="flex flex-col items-center">
                   <BookOpen className={`h-6 w-6 ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -46,7 +46,7 @@ const MobileFooterNav = () => {
               <Button 
                 variant="ghost" 
                 asChild 
-                className={`flex flex-col items-center justify-center h-full enhanced-button ${isActive('/settings') ? 'text-primary' : 'text-muted-foreground'}`}
+                className={`flex flex-col items-center justify-center h-full enhanced-button ${isActive('/settings') ? 'text-primary' : 'text-muted-foreground'} btn-secondary-hover-fix`}
               >
                 <Link to="/settings" className="flex flex-col items-center">
                   <Settings className={`h-6 w-6 ${isActive('/settings') ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -59,7 +59,7 @@ const MobileFooterNav = () => {
               <Button 
                 variant="ghost" 
                 asChild 
-                className={`flex flex-col items-center justify-center h-full enhanced-button ${isActive('/') ? 'text-primary' : 'text-muted-foreground'}`}
+                className={`flex flex-col items-center justify-center h-full enhanced-button ${isActive('/') ? 'text-primary' : 'text-muted-foreground'} btn-secondary-hover-fix`}
               >
                 <Link to="/" className="flex flex-col items-center">
                   <Home className={`h-6 w-6 ${isActive('/') ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -70,7 +70,7 @@ const MobileFooterNav = () => {
               <Button 
                 variant="ghost" 
                 asChild 
-                className={`flex flex-col items-center justify-center h-full enhanced-button ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`}
+                className={`flex flex-col items-center justify-center h-full enhanced-button ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'} btn-secondary-hover-fix`}
               >
                 <Link to="/courses" className="flex flex-col items-center">
                   <BookOpen className={`h-6 w-6 ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -81,7 +81,7 @@ const MobileFooterNav = () => {
               <Button 
                 variant="ghost" 
                 asChild 
-                className={`flex flex-col items-center justify-center h-full enhanced-button ${isActive('/auth') ? 'text-primary' : 'text-muted-foreground'}`}
+                className={`flex flex-col items-center justify-center h-full enhanced-button ${isActive('/auth') ? 'text-primary' : 'text-muted-foreground'} btn-secondary-hover-fix`}
               >
                 <Link to="/auth" className="flex flex-col items-center">
                   <LogIn className={`h-6 w-6 ${isActive('/auth') ? 'text-primary' : 'text-muted-foreground'}`} />

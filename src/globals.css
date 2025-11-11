@@ -234,4 +234,21 @@
       background-position: 200% 0;
     }
   }
+
+  /* Fix button hover transparency */
+  .btn-hover-fix:hover {
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+  }
+
+  .btn-secondary-hover-fix:hover {
+    background-color: hsl(var(--secondary)) !important;
+    color: hsl(var(--secondary-foreground)) !important;
+  }
+
+  .btn-outline-hover-fix:hover {
+    background-color: hsl(var(--accent)) !important;
+    color: hsl(var(--accent-foreground)) !important;
+    border-color: hsl(var(--border)) !important;
+  }
 }
