@@ -32,6 +32,7 @@ const App = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [initialLoad, setInitialLoad] = useState(true);
 
   useEffect(() => {
     incrementSiteMetric('site_views');
@@ -40,6 +41,7 @@ const App = () => {
       setSession(session);
       setUser(session?.user || null);
       setLoading(false);
+      setInitialLoad(false);
       console.log("Initial session:", session);
     });
 
@@ -55,7 +57,8 @@ const App = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  if (loading) {
+  // Only show loading screen on initial load
+  if (initialLoad) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground">
         <div className="relative w-32 h-32 mb-8">
