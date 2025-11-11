@@ -152,12 +152,10 @@
   /* Floating navigation styles */
   .floating-nav {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
     z-index: 50;
-    padding: 0 1rem;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
     pointer-events: none;
   }
   
@@ -165,18 +163,18 @@
     pointer-events: auto;
     margin: 0 auto;
     max-width: 28rem;
-    border-radius: 1rem 1rem 0 0;
+    border-radius: 1rem;
     border: 1px solid rgba(255, 255, 255, 0.18);
     background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 -8px 32px 0 rgba(31, 38, 135, 0.15);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 -8px 32px 0 rgba(31, 38, 135, 0.15), 0 8px 32px 0 rgba(31, 38, 135, 0.15);
   }
   
   .dark .floating-nav-content {
     background: rgba(0, 0, 0, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 -8px 32px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: 0 -8px 32px 0 rgba(0, 0, 0, 0.3), 0 8px 32px 0 rgba(0, 0, 0, 0.3);
   }
   
   /* Floating animation */

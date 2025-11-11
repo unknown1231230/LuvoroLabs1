@@ -17,8 +17,8 @@ const MobileFooterNav = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-[env(safe-area-inset-bottom)] pointer-events-none">
-      <div className="glass rounded-2xl rounded-b-none border border-border shadow-lg pointer-events-auto mx-auto max-w-md">
+    <div className="fixed bottom-4 left-4 right-4 z-50 pointer-events-none">
+      <div className="glass rounded-2xl border border-border shadow-lg pointer-events-auto mx-auto max-w-md backdrop-blur-xl">
         <div className="flex justify-around items-center h-[64px] px-2">
           {session ? (
             <>
