@@ -127,27 +127,33 @@ const Profile = () => {
   }));
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-16">
       <div className="text-center">
-        <div className="w-24 h-24 rounded-full bg-muted mx-auto mb-4 flex items-center justify-center">
-          <span className="text-4xl font-bold text-primary">L</span>
+        <div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 mx-auto mb-4 flex items-center justify-center">
+          <span className="text-4xl font-bold text-white">L</span>
         </div>
-        <h1 className="text-3xl font-bold text-primary">Your Learning Profile</h1>
-        <p className="text-muted-foreground mt-2">Track your progress and achievements</p>
+        <h1 className="text-5xl font-bold text-gradient mb-4 float-animation">Your Learning Profile</h1>
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          Track your progress and achievements on your personalized learning journey.
+        </p>
       </div>
 
       {/* Stats Summary */}
       <div className="grid grid-cols-2 gap-4">
-        <Card className="shadow-sm bg-card border-border">
-          <CardContent className="p-4 text-center">
-            <Flame className="h-6 w-6 text-orange-500 mx-auto mb-2" />
+        <Card className="enhanced-card text-center">
+          <CardContent className="p-4">
+            <div className="mx-auto w-12 h-12 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center mb-2">
+              <Flame className="h-6 w-6 text-white" />
+            </div>
             <p className="text-2xl font-bold text-orange-600">{currentStreak} Days</p>
             <p className="text-sm text-muted-foreground">Streak</p>
           </CardContent>
         </Card>
-        <Card className="shadow-sm bg-card border-border">
-          <CardContent className="p-4 text-center">
-            <Trophy className="h-6 w-6 text-yellow-500 mx-auto mb-2" />
+        <Card className="enhanced-card text-center">
+          <CardContent className="p-4">
+            <div className="mx-auto w-12 h-12 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-full flex items-center justify-center mb-2">
+              <Trophy className="h-6 w-6 text-white" />
+            </div>
             <p className="text-2xl font-bold text-yellow-600">{achievementsUnlocked}</p>
             <p className="text-sm text-muted-foreground">Achievements</p>
           </CardContent>
@@ -155,9 +161,12 @@ const Profile = () => {
       </div>
 
       {/* Progress Section */}
-      <Card className="shadow-sm bg-card border-border">
+      <Card className="enhanced-card">
         <CardHeader>
-          <CardTitle className="text-foreground">Overall Progress</CardTitle>
+          <div className="mx-auto w-16 h-16 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center mb-4">
+            <BookOpen className="h-8 w-8 text-white" />
+          </div>
+          <CardTitle className="text-2xl text-gradient">Overall Progress</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoadingTotalLessons || isLoadingUserCompletedLessons || authLoading ? (
@@ -175,9 +184,12 @@ const Profile = () => {
       </Card>
 
       {/* Activity Summary */}
-      <Card className="shadow-sm bg-card border-border">
+      <Card className="enhanced-card">
         <CardHeader>
-          <CardTitle className="text-foreground">Today's Activity</CardTitle>
+          <div className="mx-auto w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center mb-4">
+            <Lightbulb className="h-8 w-8 text-white" />
+          </div>
+          <CardTitle className="text-2xl text-gradient">Today's Activity</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-4">
           <div className="text-center">
@@ -190,13 +202,26 @@ const Profile = () => {
             <p className="text-xl font-bold text-foreground">{quizzesTakenToday}</p>
             <p className="text-sm text-muted-foreground">Quizzes</p>
           </div>
+          <div className="text-center">
+            <CheckCircle className="h-6 w-6 text-green-500 mx-auto mb-2" />
+            <p className="text-xl font-bold text-foreground">{userCompletedLessonsCount}</p>
+            <p className="text-sm text-muted-foreground">Total Lessons</p>
+          </div>
+          <div className="text-center">
+            <ClipboardCheck className="h-6 w-6 text-primary mx-auto mb-2" />
+            <p className="text-xl font-bold text-foreground">{totalQuizAttempts}</p>
+            <p className="text-sm text-muted-foreground">Total Quizzes</p>
+          </div>
         </CardContent>
       </Card>
 
       {/* Streak History */}
-      <Card className="shadow-sm bg-card border-border">
+      <Card className="enhanced-card">
         <CardHeader>
-          <CardTitle className="text-foreground">Streak History</CardTitle>
+          <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
+            <Flame className="h-8 w-8 text-white" />
+          </div>
+          <CardTitle className="text-2xl text-gradient">Streak History</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoadingStreakHistory || authLoading ? (
@@ -219,9 +244,12 @@ const Profile = () => {
       </Card>
 
       {/* Recommendations */}
-      <Card className="shadow-sm bg-card border-border">
+      <Card className="enhanced-card">
         <CardHeader>
-          <CardTitle className="text-foreground">Recommended Next Steps</CardTitle>
+          <div className="mx-auto w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
+            <Lightbulb className="h-8 w-8 text-white" />
+          </div>
+          <CardTitle className="text-2xl text-gradient">Recommended Next Steps</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoadingRecommendations || authLoading ? (

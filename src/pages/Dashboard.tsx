@@ -128,20 +128,22 @@ const Dashboard = () => {
   }));
 
   return (
-    <div className="space-y-8">
-      <h1 className="text-4xl font-bold text-center text-primary flex items-center justify-center gap-3">
-        <img src="/logo.png" alt="Luvoro Labs Logo" className="h-10 w-10" />
-        <span>Luvoro Labs Dashboard</span>
-      </h1>
-      <p className="text-center text-muted-foreground max-w-2xl mx-auto">
-        Welcome to your personalized learning hub. Track your progress, unlock achievements, and explore new courses!
-      </p>
+    <div className="space-y-16">
+      <div className="text-center">
+        <h1 className="text-5xl font-bold text-gradient mb-4 float-animation">Luvoro Labs Dashboard</h1>
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          Welcome to your personalized learning hub. Track your progress, unlock achievements, and explore new courses!
+        </p>
+      </div>
 
       {/* Features Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card className="shadow-sm bg-card border-border">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <Card className="enhanced-card text-center">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-foreground"><Flame className="text-orange-500" />Current Streak</CardTitle>
+            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center mb-4">
+              <Flame className="h-8 w-8 text-white" />
+            </div>
+            <CardTitle className="text-2xl text-gradient">Current Streak</CardTitle>
           </CardHeader>
           <CardContent>
             {isLoadingStreak || authLoading ? (
@@ -155,9 +157,12 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm bg-card border-border">
+        <Card className="enhanced-card text-center">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-foreground"><Trophy className="text-yellow-500" />Achievements</CardTitle>
+            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-full flex items-center justify-center mb-4">
+              <Trophy className="h-8 w-8 text-white" />
+            </div>
+            <CardTitle className="text-2xl text-gradient">Achievements</CardTitle>
           </CardHeader>
           <CardContent>
             {isLoadingAchievements || authLoading ? (
@@ -171,9 +176,12 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm bg-card border-border">
+        <Card className="enhanced-card text-center">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-foreground"><Lightbulb className="text-primary" />Personalized Recommendations</CardTitle>
+            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center mb-4">
+              <Lightbulb className="h-8 w-8 text-white" />
+            </div>
+            <CardTitle className="text-2xl text-gradient">Personalized Recommendations</CardTitle>
           </CardHeader>
           <CardContent>
             {isLoadingRecommendations || authLoading ? (
@@ -192,10 +200,13 @@ const Dashboard = () => {
       <Separator className="bg-border" />
 
       {/* Global Metrics Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="shadow-sm bg-card border-border">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <Card className="enhanced-card text-center">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-foreground"><Users className="text-purpleAccent-foreground" />Site Views</CardTitle>
+            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
+              <Users className="h-8 w-8 text-white" />
+            </div>
+            <CardTitle className="text-2xl text-gradient">Site Views</CardTitle>
           </CardHeader>
           <CardContent>
             {isLoadingSiteViews ? (
@@ -215,7 +226,11 @@ const Dashboard = () => {
 
       {/* Course Catalog Link */}
       <div className="text-center">
-        <Button asChild size="lg" variant="default" className="bg-primary text-primary-foreground hover:bg-primary/90">
+        <Button 
+          asChild 
+          size="lg" 
+          className="enhanced-button glow bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-4 btn-hover-fix"
+        >
           <Link to="/courses">
             <>
               <BookOpen className="mr-2 h-5 w-5" /> Explore Our Course Catalog
@@ -227,10 +242,10 @@ const Dashboard = () => {
       <Separator className="bg-border" />
 
       {/* Progress & Activity Summary Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="shadow-sm bg-card border-border">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <Card className="enhanced-card">
           <CardHeader>
-            <CardTitle className="text-foreground">Overall Progress</CardTitle>
+            <CardTitle className="text-2xl text-gradient">Overall Progress</CardTitle>
           </CardHeader>
           <CardContent>
             {isLoadingTotalLessons || isLoadingUserCompletedLessons || authLoading ? (
@@ -247,9 +262,9 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm bg-card border-border">
+        <Card className="enhanced-card">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-foreground">Activity Summary</CardTitle>
+            <CardTitle className="text-2xl text-gradient flex items-center gap-2">Activity Summary</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-2 gap-4">
             <div className="text-center">
@@ -291,9 +306,9 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-2 shadow-sm bg-card border-border">
+        <Card className="lg:col-span-2 enhanced-card">
           <CardHeader>
-            <CardTitle className="text-foreground">Streak History</CardTitle>
+            <CardTitle className="text-2xl text-gradient">Streak History</CardTitle>
           </CardHeader>
           <CardContent>
             {isLoadingStreakHistory || authLoading ? (

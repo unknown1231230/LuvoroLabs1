@@ -35,33 +35,42 @@ const CourseCatalog = () => {
   ];
 
   return (
-    <div className="space-y-8">
-      <h1 className="text-4xl font-bold text-center text-primary">Course Catalog</h1>
-      <p className="text-center text-muted-foreground max-w-2xl mx-auto">
-        Discover a variety of AP courses designed to help you excel in your studies and prepare for college-level exams.
-      </p>
+    <div className="space-y-16">
+      <div className="text-center">
+        <h1 className="text-5xl font-bold text-gradient mb-4 float-animation">Course Catalog</h1>
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          Discover a variety of AP courses designed to help you excel in your studies and prepare for college-level exams.
+        </p>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {courses.map((course) => (
-          <Card key={course.id} className="flex flex-col shadow-sm">
-            <CardHeader className="flex-row items-center space-x-4 pb-2">
-              {course.icon}
-              <CardTitle>{course.title}</CardTitle>
+          <Card key={course.id} className="enhanced-card group">
+            <CardHeader className="text-center">
+              <div className="mx-auto w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                {course.icon}
+              </div>
+              <CardTitle className="text-xl text-gradient">{course.title}</CardTitle>
             </CardHeader>
-            <CardContent className="flex-grow">
-              <CardDescription>{course.description}</CardDescription>
-            </CardContent>
-            <div className="p-6 pt-0">
+            <CardContent className="text-center">
+              <CardDescription className="text-muted-foreground mb-6 leading-relaxed">
+                {course.description}
+              </CardDescription>
               {course.isComingSoon ? (
-                <Button className="w-full" disabled>
+                <Button className="w-full enhanced-button" disabled>
                   Coming Soon
                 </Button>
               ) : (
-                <Button asChild className="w-full">
-                  <Link to={course.link!}>View Course</Link>
+                <Button 
+                  asChild 
+                  className="w-full enhanced-button glow bg-primary text-primary-foreground hover:bg-primary/90 btn-hover-fix"
+                >
+                  <Link to={course.link!}>
+                    View Course
+                  </Link>
                 </Button>
               )}
-            </div>
+            </CardContent>
           </Card>
         ))}
       </div>
