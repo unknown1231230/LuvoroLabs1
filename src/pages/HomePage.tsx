@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useContext } from 'react'; // Explicitly import React
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Users, Atom, FlaskConical, Brain, Rocket } from 'lucide-react';
+import { BookOpen, Users, Atom, FlaskConical, Brain } from 'lucide-react';
 import { AuthContext } from '@/context/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { fetchSiteMetric } from '@/utils/supabaseUtils';
 import { courses as allCourses } from '@/utils/courseContent';
+import AnimatedRocket from '@/components/AnimatedRocket';
 
 const HomePage = () => {
   const { session, loading: authLoading } = useContext(AuthContext);
@@ -25,7 +26,7 @@ const HomePage = () => {
       <div className="space-y-12">
         {/* Hero Section */}
         <section className="text-center py-16 bg-transparent text-foreground rounded-lg">
-          <Rocket className="h-24 w-24 mx-auto mb-6 text-primary" />
+          <AnimatedRocket />
           <h1 className="text-5xl font-extrabold mb-4 text-foreground">Launch Your Learning Journey</h1>
           <p className="text-xl max-w-3xl mx-auto mb-8 text-muted-foreground">
             Welcome to Luvoro Labs, your launchpad for mastering AP subjects. Dive into
