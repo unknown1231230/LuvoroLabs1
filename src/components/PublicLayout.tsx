@@ -113,7 +113,6 @@ const PublicLayout = () => {
       )}
       <main className="flex-grow container py-8">
         <Outlet />
-        <div style={{ height: 'calc(64px + env(safe-area-inset-bottom))' }} aria-hidden="true" />
       </main>
       {isMobile && <MobileFooterNav />}
     </div>

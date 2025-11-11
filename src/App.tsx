@@ -130,7 +130,7 @@ const App = () => {
           <AnimatedBackground />
           <BrowserRouter>
             <AuthContext.Provider value={{ session, user, loading }}>
-              <div className="min-h-screen flex flex-col bg-background text-foreground safe-area-inset-top safe-area-inset-bottom">
+              <div className="min-h-screen flex flex-col bg-background text-foreground safe-area-inset-top">
                 <Routes>
                   <Route path="/" element={<PublicLayout />}>
                     <Route index element={session ? <Navigate to="/profile" replace /> : <HomePage />} />
