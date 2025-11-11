@@ -2,9 +2,10 @@
 
 import React, { useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, BookOpen, User, LogIn, GraduationCap, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Home, BookOpen, User, LogIn, GraduationCap, Settings } from 'lucide-react';
 import { AuthContext } from '@/context/AuthContext';
+import { cn } from '@/lib/utils';
 
 const MobileFooterNav = () => {
   const { session } = useContext(AuthContext);
@@ -16,41 +17,53 @@ const MobileFooterNav = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 px-4">
-      <div className="glass rounded-2xl rounded-b-none border border-border shadow-lg pb-[env(safe-area-inset-bottom)]">
-        <div className="flex justify-around items-center h-[64px]">
+    <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-[env(safe-area-inset-bottom)]">
+      <div className="glass rounded-2xl rounded-b-none border border-border shadow-lg">
+        <div className="flex justify-around items-center h-[64px] px-2">
           {session ? (
             <>
               <Button 
                 variant="ghost" 
                 asChild 
-                className={`flex flex-col items-center justify-center h-full enhanced-button ${isActive('/profile') ? 'text-primary' : 'text-muted-foreground'} btn-secondary-hover-fix`}
+                className={cn(
+                  "flex flex-col items-center justify-center h-full enhanced-button",
+                  isActive('/profile') ? 'text-primary' : 'text-muted-foreground',
+                  "btn-secondary-hover-fix"
+                )}
               >
                 <Link to="/profile" className="flex flex-col items-center">
-                  <GraduationCap className={`h-6 w-6 ${isActive('/profile') ? 'text-primary' : 'text-muted-foreground'}`} />
-                  <span className={`text-xs mt-1 font-medium ${isActive('/profile') ? 'text-primary' : 'text-muted-foreground'}`}>Profile</span>
+                  <GraduationCap className={cn("h-6 w-6", isActive('/profile') ? 'text-primary' : 'text-muted-foreground')} />
+                  <span className={cn("text-xs mt-1 font-medium", isActive('/profile') ? 'text-primary' : 'text-muted-foreground')}>Profile</span>
                 </Link>
               </Button>
               
               <Button 
                 variant="ghost" 
                 asChild 
-                className={`flex flex-col items-center justify-center h-full enhanced-button ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'} btn-secondary-hover-fix`}
+                className={cn(
+                  "flex flex-col items-center justify-center h-full enhanced-button",
+                  isActive('/courses') ? 'text-primary' : 'text-muted-foreground',
+                  "btn-secondary-hover-fix"
+                )}
               >
                 <Link to="/courses" className="flex flex-col items-center">
-                  <BookOpen className={`h-6 w-6 ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`} />
-                  <span className={`text-xs mt-1 font-medium ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`}>Courses</span>
+                  <BookOpen className={cn("h-6 w-6", isActive('/courses') ? 'text-primary' : 'text-muted-foreground')} />
+                  <span className={cn("text-xs mt-1 font-medium", isActive('/courses') ? 'text-primary' : 'text-muted-foreground')}>Courses</span>
                 </Link>
               </Button>
               
               <Button 
                 variant="ghost" 
                 asChild 
-                className={`flex flex-col items-center justify-center h-full enhanced-button ${isActive('/settings') ? 'text-primary' : 'text-muted-foreground'} btn-secondary-hover-fix`}
+                className={cn(
+                  "flex flex-col items-center justify-center h-full enhanced-button",
+                  isActive('/settings') ? 'text-primary' : 'text-muted-foreground',
+                  "btn-secondary-hover-fix"
+                )}
               >
                 <Link to="/settings" className="flex flex-col items-center">
-                  <Settings className={`h-6 w-6 ${isActive('/settings') ? 'text-primary' : 'text-muted-foreground'}`} />
-                  <span className={`text-xs mt-1 font-medium ${isActive('/settings') ? 'text-primary' : 'text-muted-foreground'}`}>Settings</span>
+                  <Settings className={cn("h-6 w-6", isActive('/settings') ? 'text-primary' : 'text-muted-foreground')} />
+                  <span className={cn("text-xs mt-1 font-medium", isActive('/settings') ? 'text-primary' : 'text-muted-foreground')}>Settings</span>
                 </Link>
               </Button>
             </>
@@ -59,33 +72,45 @@ const MobileFooterNav = () => {
               <Button 
                 variant="ghost" 
                 asChild 
-                className={`flex flex-col items-center justify-center h-full enhanced-button ${isActive('/') ? 'text-primary' : 'text-muted-foreground'} btn-secondary-hover-fix`}
+                className={cn(
+                  "flex flex-col items-center justify-center h-full enhanced-button",
+                  isActive('/') ? 'text-primary' : 'text-muted-foreground',
+                  "btn-secondary-hover-fix"
+                )}
               >
                 <Link to="/" className="flex flex-col items-center">
-                  <Home className={`h-6 w-6 ${isActive('/') ? 'text-primary' : 'text-muted-foreground'}`} />
-                  <span className={`text-xs mt-1 font-medium ${isActive('/') ? 'text-primary' : 'text-muted-foreground'}`}>Home</span>
+                  <Home className={cn("h-6 w-6", isActive('/') ? 'text-primary' : 'text-muted-foreground')} />
+                  <span className={cn("text-xs mt-1 font-medium", isActive('/') ? 'text-primary' : 'text-muted-foreground')}>Home</span>
                 </Link>
               </Button>
               
               <Button 
                 variant="ghost" 
                 asChild 
-                className={`flex flex-col items-center justify-center h-full enhanced-button ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'} btn-secondary-hover-fix`}
+                className={cn(
+                  "flex flex-col items-center justify-center h-full enhanced-button",
+                  isActive('/courses') ? 'text-primary' : 'text-muted-foreground',
+                  "btn-secondary-hover-fix"
+                )}
               >
                 <Link to="/courses" className="flex flex-col items-center">
-                  <BookOpen className={`h-6 w-6 ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`} />
-                  <span className={`text-xs mt-1 font-medium ${isActive('/courses') ? 'text-primary' : 'text-muted-foreground'}`}>Courses</span>
+                  <BookOpen className={cn("h-6 w-6", isActive('/courses') ? 'text-primary' : 'text-muted-foreground')} />
+                  <span className={cn("text-xs mt-1 font-medium", isActive('/courses') ? 'text-primary' : 'text-muted-foreground')}>Courses</span>
                 </Link>
               </Button>
               
               <Button 
                 variant="ghost" 
                 asChild 
-                className={`flex flex-col items-center justify-center h-full enhanced-button ${isActive('/auth') ? 'text-primary' : 'text-muted-foreground'} btn-secondary-hover-fix`}
+                className={cn(
+                  "flex flex-col items-center justify-center h-full enhanced-button",
+                  isActive('/auth') ? 'text-primary' : 'text-muted-foreground',
+                  "btn-secondary-hover-fix"
+                )}
               >
                 <Link to="/auth" className="flex flex-col items-center">
-                  <LogIn className={`h-6 w-6 ${isActive('/auth') ? 'text-primary' : 'text-muted-foreground'}`} />
-                  <span className={`text-xs mt-1 font-medium ${isActive('/auth') ? 'text-primary' : 'text-muted-foreground'}`}>Login</span>
+                  <LogIn className={cn("h-6 w-6", isActive('/auth') ? 'text-primary' : 'text-muted-foreground')} />
+                  <span className={cn("text-xs mt-1 font-medium", isActive('/auth') ? 'text-primary' : 'text-muted-foreground')}>Login</span>
                 </Link>
               </Button>
             </>
