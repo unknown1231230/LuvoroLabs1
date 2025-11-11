@@ -13,9 +13,9 @@ import { courses as allCourses } from '@/utils/courseContent';
 const HomePage = () => {
   const { session, loading: authLoading } = useContext(AuthContext);
 
-  const { data: siteViews = 0, isLoading: isLoadingSiteViews } = useQuery({
-    queryKey: ['siteViews'],
-    queryFn: () => fetchSiteMetric('site_views'),
+  const { data: siteSignUps = 0, isLoading: isLoadingSiteSignUps } = useQuery({
+    queryKey: ['siteSignUps'],
+    queryFn: () => fetchSiteMetric('site_sign_ups'),
   });
 
   const featuredCourses = allCourses.slice(0, 3);
@@ -53,14 +53,14 @@ const HomePage = () => {
           <Card className="w-full max-w-md mx-auto shadow-lg bg-card border-border">
             <CardHeader>
               <CardTitle className="flex items-center justify-center gap-2 text-2xl text-purpleAccent-foreground">
-                <Users className="text-purpleAccent-foreground" /> Site Views
+                <Users className="text-purpleAccent-foreground" /> Site Sign Ups
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {isLoadingSiteViews ? (
+              {isLoadingSiteSignUps ? (
                 <p className="text-center text-muted-foreground">Loading...</p>
               ) : (
-                <p className="text-6xl font-extrabold text-center text-purpleAccent">{siteViews.toLocaleString()}</p>
+                <p className="text-6xl font-extrabold text-center text-purpleAccent">{siteSignUps.toLocaleString()}</p>
               )}
               <p className="text-center text-muted-foreground mt-2">Join our growing community of learners!</p>
             </CardContent>
