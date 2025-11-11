@@ -107,7 +107,7 @@ const Layout = () => {
           </div>
         </header>
       )}
-      <main className={`flex-grow container py-8 ${isMobile ? 'pb-20' : ''}`}>
+      <main className={`flex-grow container py-8 ${isMobile ? 'pb-16' : ''}`}>
         <Outlet />
       </main>
       {isMobile && <MobileFooterNav />}
